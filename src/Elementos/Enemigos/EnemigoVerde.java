@@ -1,5 +1,6 @@
 package Elementos.Enemigos;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import Elementos.Enemigo;
@@ -9,8 +10,8 @@ import Utilz.Animaciones;
 
 public class EnemigoVerde extends Enemigo {
     // Constantes específicas de este tipo de enemigo
-    private static final int ANCHO_DEFAULT = 32;
-    private static final int ALTO_DEFAULT = 32;
+    private static final int ANCHO_DEFAULT = 96;
+    private static final int ALTO_DEFAULT = 64;
     private static final int VIDA_DEFAULT = 50;
     
     public EnemigoVerde(float x, float y) {
@@ -20,11 +21,11 @@ public class EnemigoVerde extends Enemigo {
             VIDA_DEFAULT);
         
         // Ajustar el offset para este enemigo específico
-        this.xDrawOffset = 8 * Juego.SCALE;
-        this.yDrawOffset = 5 * Juego.SCALE;
+        this.xDrawOffset = 16 * Juego.SCALE;
+        this.yDrawOffset = 16 * Juego.SCALE;
         
         // Configurar hitbox específico para el enemigo verde
-        initHitBox(x, y, 20 * Juego.SCALE, 14 * Juego.SCALE);
+        initHitBox(x, y, 48 * Juego.SCALE, 48 * Juego.SCALE);
         
         // Cargar animaciones
         cargarAnimaciones();
@@ -61,7 +62,7 @@ public class EnemigoVerde extends Enemigo {
         
         // Ancho y alto de cada frame del sprite 
         int frameWidth = 48;
-        int frameHeight = 48;
+        int frameHeight = 32;
         
         // Extraer cada frame de la hoja de sprites
         for (int j = 0; j < spritesEnemigo.length; j++) {
@@ -97,5 +98,12 @@ public class EnemigoVerde extends Enemigo {
     protected void mover() {
         // Podemos añadir comportamiento específico aquí
         super.mover(); // O llamar al comportamiento básico
+    }
+
+    @Override
+    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
+        // Podemos añadir comportamiento específico aquí
+        super.render(g, xLvlOffset, yLvlOffset); // O llamar al comportamiento básico
+        drawHitBox(g, xLvlOffset, yLvlOffset); // Dibujar hitbox
     }
 }
