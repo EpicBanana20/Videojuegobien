@@ -70,24 +70,49 @@ public class EnemigoVerde extends Enemigo {
     
     @Override
     protected void aplicarGravedad() {
-        // Usar el nuevo método centralizado para aplicar gravedad
-        float[] velocidadAireRef = { velocidadAire };
-        boolean[] enAireRef = { enAire };
+        // Verificar primero si estamos en el suelo
+        boolean enSuelo = MetodoAyuda.isEntityOnFloor(hitbox, Juego.NIVEL_ACTUAL_DATA);
         
-        // Llamar al método centralizado con un valor personalizado de gravedad
-        float gravedadPersonalizada = 0.05f * Juego.SCALE; // Gravedad un poco mayor para este enemigo
+        if (enSuelo) {
+            enAire = false;
+            velocidadAire = 0;  // Asegurarnos de resetear la velocidad de aire
+        } else {
+            enAire = true;
+        }
         
-        hitbox.y = MetodoAyuda.aplicarGravedad(
-            hitbox, 
-            velocidadAireRef, 
-            enAireRef, 
-            Juego.NIVEL_ACTUAL_DATA,
-            gravedadPersonalizada
-        );
+        // Aplicar gravedad SOLO si estamos en el aire
+        if (enAire) {
+            // Gravedad personalizada para este enemigo
+            float gravedadPersonalizada = 0.03f * Juego.SCALE;
+            
+            velocidadAire += gravedadPersonalizada;
+            
+            // Verificar si podemos movernos hacia abajo
+            if (MetodoAyuda.CanMoveHere(
+                    hitbox.x, 
+                    hitbox.y + velocidadAire, 
+                    hitbox.width, 
+                    hitbox.height, 
+                    Juego.NIVEL_ACTUAL_DATA)) {
+                
+                hitbox.y += velocidadAire;
+            } else {
+                // Si hay colisión, ajustar posición y resetear velocidad aire
+                hitbox.y = MetodoAyuda.GetEntityYPosUnderRoofOrAboveFloor(hitbox, velocidadAire);
+                
+                // Resetear valores
+                if (velocidadAire > 0) {
+                    // Tocando el suelo
+                    velocidadAire = 0;
+                    enAire = false;
+                } else {
+                    // Chocando con el techo
+                    velocidadAire = 0.1f;
+                }
+            }
+        }
         
-        // Actualizar las variables de la instancia con los valores de referencia
-        velocidadAire = velocidadAireRef[0];
-        enAire = enAireRef[0];
+        // Actualizar la coordenada y
         y = hitbox.y;
     }
     
@@ -153,7 +178,13 @@ public class EnemigoVerde extends Enemigo {
         // De lo contrario, determinar animación basada en el estado
         int nuevaAnimacion = INACTIVO; // Por defecto, estamos inactivos
         
-        if (velocidadX != 0) {
+        if (enAire) {
+            // Si tuviéramos una animación de salto/caída, la usaríamos aquí
+            // Por ahora, seguimos usando CORRER o INACTIVO dependiendo de la velocidad
+            if (velocidadX != 0) {
+                nuevaAnimacion = CORRER;
+            }
+        } else if (velocidadX != 0) {
             nuevaAnimacion = CORRER;
         }
         
@@ -223,7 +254,7 @@ public class EnemigoVerde extends Enemigo {
         if (!activo) return;
         
         // Guardar flip horizontal basado en dirección
-        boolean flipX = !movimientoHaciaIzquierda;  // Flip si va a la derecha
+        boolean flipX = movimientoHaciaIzquierda;
         
         // Dibujar enemigo con posible flip horizontal
         if (animaciones != null) {

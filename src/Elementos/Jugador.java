@@ -18,6 +18,7 @@ public class Jugador extends Cascaron {
     private BufferedImage[][] spritesJugador; // Mantenemos esto para cargar los sprites
     
     // Dejamos el resto de variables como estaban
+    private boolean mirandoIzquierda = false;
     private boolean moving = false;
     private boolean attacking = false;
     private boolean left, right, down, up, jump;
@@ -74,17 +75,19 @@ public class Jugador extends Cascaron {
     }
 
     public void update(int xlvlOffset, int yLvlOffset) {
-        aimController.update(getXCenter() - xlvlOffset, getYCenter() - yLvlOffset, currentMouseX, currentMouseY);
-        armaActual.update(getXCenter(), getYCenter(), aimController);
-        if(attacking)
-            armaActual.disparar();
+        actuPosicion();
+        
         // Actualizamos las animaciones usando nuestra nueva clase
         animaciones.actualizarAnimacion();
         
         // Actualizamos qué animación mostrar basado en el estado del jugador
         determinarAnimacion();
         
-        actuPosicion();
+        aimController.update(getXCenter() - xlvlOffset, getYCenter() - yLvlOffset, currentMouseX, currentMouseY);
+        armaActual.update(getXCenter(), getYCenter(), aimController);
+        
+        if(attacking)
+            armaActual.disparar();
     }
 
     public void update() {
@@ -93,22 +96,20 @@ public class Jugador extends Cascaron {
 
     // Nuevo método para determinar qué animación mostrar
     private void determinarAnimacion() {
-        int nuevaAnimacion = INACTIVO; // Por defecto, estamos inactivos
+            int nuevaAnimacion = INACTIVO; // Por defecto, estamos inactivos
         
-        if (moving) {
-            nuevaAnimacion = CORRER;
+        if (attacking) {
+            nuevaAnimacion = ATACAR1;
         }
-        
-        if (inAir) {
+        else if (inAir) {
             if (airSpeed < 0) {
                 nuevaAnimacion = SALTAR;
             } else {
                 nuevaAnimacion = CAYENDO;
             }
         }
-        
-        if (attacking) {
-            nuevaAnimacion = ATACAR1;
+        else if (moving) {
+            nuevaAnimacion = CORRER;
         }
         
         // Configuramos la nueva acción en el objeto de animaciones
@@ -117,15 +118,24 @@ public class Jugador extends Cascaron {
 
     public void loadLvlData(int[][] lvlData) {
         this.lvlData = lvlData;
-        if(!isEntityOnFloor(hitbox, lvlData))
-           inAir=true;
+        inAir = !isEntityOnFloor(hitbox, lvlData);
     }
 
     public void render(Graphics g, int xlvlOffset, int yLvlOffset) {
-        // Usamos la clase Animaciones para obtener la imagen actual
-        g.drawImage(animaciones.getImagenActual(),
-                (int) (hitbox.x - xDrawOffset)-xlvlOffset, (int) (hitbox.y - yDrawOffset)-yLvlOffset,
+        BufferedImage currentImage = animaciones.getImagenActual();
+        if (mirandoIzquierda) {
+            // Dibujar volteado horizontalmente
+            g.drawImage(currentImage,
+                (int) (hitbox.x - xDrawOffset + w) - xlvlOffset, 
+                (int) (hitbox.y - yDrawOffset) - yLvlOffset,
+                -w, h, null);
+        } else {
+            // Dibujar normal
+            g.drawImage(currentImage,
+                (int) (hitbox.x - xDrawOffset) - xlvlOffset, 
+                (int) (hitbox.y - yDrawOffset) - yLvlOffset,
                 w, h, null);
+        }
                 
         renderAim(g, xlvlOffset, yLvlOffset);
         armaActual.render(g, xlvlOffset, yLvlOffset);
@@ -133,39 +143,70 @@ public class Jugador extends Cascaron {
 
     private void actuPosicion() {
         moving = false;
-        if (jump) {
+        
+        // Verificar primero si estamos en el suelo
+        boolean enSuelo = isEntityOnFloor(hitbox, lvlData);
+        if (enSuelo) {
+            inAir = false;
+            airSpeed = 0;  // Asegurarnos de resetear la velocidad de aire cuando toca el suelo
+        } else {
+            inAir = true;
+        }
+        
+        // Procesar salto
+        if (jump && !inAir) {
             jump();
         }
+        
+        // Si no hay movimiento y no estamos en el aire, salir temprano
         if (!left && !right && !inAir)
             return;
     
+        // Procesar movimiento horizontal
         float xSpeed = 0;
-        if (left)
+        if (left) {
             xSpeed -= playerSpeed;
-        if (right)
+            mirandoIzquierda = true;
+        }
+        if (right) {
             xSpeed += playerSpeed;
+            mirandoIzquierda = false;
+        }
         
-        // Manejar movimiento en X usando el método centralizado
+        // Aplicar movimiento horizontal
         if (xSpeed != 0) {
             MetodoAyuda.moverHorizontal(hitbox, xSpeed, lvlData);
             moving = true;
         }
         
-        // Manejar gravedad usando el método centralizado
-        float[] airSpeedRef = { airSpeed };
-        boolean[] inAirRef = { inAir };
-        
-        hitbox.y = MetodoAyuda.aplicarGravedad(
-            hitbox, 
-            airSpeedRef, 
-            inAirRef, 
-            lvlData,
-            gravity // Usar gravedad específica del jugador
-        );
-        
-        // Actualizar las variables de instancia
-        airSpeed = airSpeedRef[0];
-        inAir = inAirRef[0];
+        // Aplicar gravedad SOLO si estamos en el aire
+        if (inAir) {
+            airSpeed += gravity;
+            
+            // Verificar si podemos movernos hacia abajo
+            if (CanMoveHere(
+                    hitbox.x, 
+                    hitbox.y + airSpeed, 
+                    hitbox.width, 
+                    hitbox.height, 
+                    lvlData)) {
+                
+                hitbox.y += airSpeed;
+            } else {
+                // Si hay colisión, ajustar posición y resetear velocidad aire
+                hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
+                
+                // Resetear valores
+                if (airSpeed > 0) {
+                    // Tocando el suelo
+                    airSpeed = 0;
+                    inAir = false;
+                } else {
+                    // Chocando con el techo
+                    airSpeed = 0.1f;
+                }
+            }
+        }
     }
     
     private void jump() {
