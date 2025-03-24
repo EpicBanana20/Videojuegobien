@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import Juegos.Juego;
 import Utilz.Animaciones;
+import Utilz.MetodoAyuda;
 
 public abstract class Enemigo extends Cascaron {
     // Constantes para animaciones (cada tipo de enemigo puede definir sus propias)
@@ -21,7 +22,7 @@ public abstract class Enemigo extends Cascaron {
     protected float velocidadX;
     protected float velocidadY;
     protected boolean enAire = false;
-    protected float gravedad = 0.015f * Juego.SCALE;
+    protected float gravedad = 0.04f * Juego.SCALE;
     protected float velocidadAire = 0;
     
     // Propiedades para animación
@@ -53,26 +54,18 @@ public abstract class Enemigo extends Cascaron {
         }
     }
     
-    protected void aplicarGravedad() {
-        // Implementación básica de gravedad
-        if (enAire) {
-            velocidadAire += gravedad;
-            hitbox.y += velocidadAire;
-            y = hitbox.y;
-            
-            // Aquí se comprobaría colisión con el suelo
-            // Si toca el suelo, velocidadAire = 0 y enAire = false
+    protected void aplicarGravedad() {}
+    
+    protected void mover() {
+        // Comportamiento básico de movimiento horizontal utilizando el método centralizado
+        if (velocidadX != 0) {
+            MetodoAyuda.moverHorizontal(hitbox, velocidadX, Juego.NIVEL_ACTUAL_DATA);
+            x = hitbox.x;
         }
     }
     
-    protected void mover() {
-        // Comportamiento básico de movimiento
-        hitbox.x += velocidadX;
-        x = hitbox.x;
-    }
-    
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (!activo && animaciones == null) return;
+        if (!activo) return;
         
         // Dibujar enemigo (si tiene animaciones)
         if (animaciones != null) {
@@ -166,5 +159,13 @@ public abstract class Enemigo extends Cascaron {
     
     public float getVelocidadX() {
         return velocidadX;
+    }
+    
+    public boolean estaEnAire() {
+        return enAire;
+    }
+    
+    public void setEnAire(boolean enAire) {
+        this.enAire = enAire;
     }
 }

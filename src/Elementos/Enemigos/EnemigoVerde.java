@@ -7,12 +7,23 @@ import Elementos.Enemigo;
 import Juegos.Juego;
 import Utilz.LoadSave;
 import Utilz.Animaciones;
+import Utilz.MetodoAyuda;
 
 public class EnemigoVerde extends Enemigo {
     // Constantes específicas de este tipo de enemigo
     private static final int ANCHO_DEFAULT = 96;
     private static final int ALTO_DEFAULT = 64;
     private static final int VIDA_DEFAULT = 50;
+    
+    // Variables para el comportamiento de patrulla
+    private boolean movimientoHaciaIzquierda = false;
+    private float velocidadMovimiento = 0.5f * Juego.SCALE;
+    private float distanciaRecorrida = 0;
+    private float distanciaMaxima = 100 * Juego.SCALE; // Distancia máxima antes de cambiar dirección
+    private boolean patrullando = true;
+    
+    // Variable para comprobar si hay suelo
+    private float checkOffset = 15 * Juego.SCALE; // Distancia para comprobar suelo delante
     
     public EnemigoVerde(float x, float y) {
         super(x, y, 
@@ -27,8 +38,109 @@ public class EnemigoVerde extends Enemigo {
         // Configurar hitbox específico para el enemigo verde
         initHitBox(x, y, 48 * Juego.SCALE, 48 * Juego.SCALE);
         
+        // Inicializar velocidad (negativa para moverse a la izquierda al inicio)
+        this.velocidadX = -velocidadMovimiento;
+        movimientoHaciaIzquierda = true;
+        
         // Cargar animaciones
         cargarAnimaciones();
+    }
+    
+    @Override
+    public void update() {
+        if (!activo) return;
+        
+        // Aplicar gravedad primero
+        aplicarGravedad();
+        
+        // Comportamiento de patrulla solo si estamos en el suelo
+        if (!enAire && patrullando) {
+            patrullar();
+        }
+        
+        // Actualizar posición basado en velocidad actual
+        mover();
+        
+        // Actualizar animaciones
+        if (animaciones != null) {
+            animaciones.actualizarAnimacion();
+            determinarAnimacion();
+        }
+    }
+    
+    @Override
+    protected void aplicarGravedad() {
+        // Usar el nuevo método centralizado para aplicar gravedad
+        float[] velocidadAireRef = { velocidadAire };
+        boolean[] enAireRef = { enAire };
+        
+        // Llamar al método centralizado con un valor personalizado de gravedad
+        float gravedadPersonalizada = 0.05f * Juego.SCALE; // Gravedad un poco mayor para este enemigo
+        
+        hitbox.y = MetodoAyuda.aplicarGravedad(
+            hitbox, 
+            velocidadAireRef, 
+            enAireRef, 
+            Juego.NIVEL_ACTUAL_DATA,
+            gravedadPersonalizada
+        );
+        
+        // Actualizar las variables de la instancia con los valores de referencia
+        velocidadAire = velocidadAireRef[0];
+        enAire = enAireRef[0];
+        y = hitbox.y;
+    }
+    
+    private void patrullar() {
+        // Usar los nuevos métodos centralizados para comprobar pared y suelo
+        boolean hayPared = MetodoAyuda.hayParedAdelante(
+            hitbox, 
+            Juego.NIVEL_ACTUAL_DATA, 
+            movimientoHaciaIzquierda ? -checkOffset : checkOffset
+        );
+        
+        boolean haySueloAdelante = MetodoAyuda.haySueloAdelante(
+            hitbox, 
+            Juego.NIVEL_ACTUAL_DATA, 
+            movimientoHaciaIzquierda ? -checkOffset : checkOffset
+        );
+        
+        // Si hay una pared adelante o no hay suelo, cambiar dirección
+        if (hayPared || !haySueloAdelante) {
+            cambiarDireccion();
+        }
+        
+        // Actualizar distancia recorrida
+        distanciaRecorrida += Math.abs(velocidadX);
+        
+        // Si hemos recorrido la distancia máxima de patrulla, cambiar dirección
+        if (distanciaRecorrida >= distanciaMaxima) {
+            cambiarDireccion();
+            distanciaRecorrida = 0;
+        }
+    }
+    
+    private void cambiarDireccion() {
+        movimientoHaciaIzquierda = !movimientoHaciaIzquierda;
+        velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+    }
+    
+    @Override
+    protected void mover() {
+        // Usar el método centralizado para mover horizontalmente
+        boolean movimientoExitoso = MetodoAyuda.moverHorizontal(
+            hitbox, 
+            velocidadX, 
+            Juego.NIVEL_ACTUAL_DATA
+        );
+        
+        // Actualizar la posición x
+        x = hitbox.x;
+        
+        // Si hubo colisión, cambiar de dirección
+        if (!movimientoExitoso) {
+            cambiarDireccion();
+        }
     }
     
     @Override
@@ -81,29 +193,58 @@ public class EnemigoVerde extends Enemigo {
         animaciones.setNumFramesPorAnimacion(HERIDO, 2);   // 2 frames para herido
         
         // Establecer animación inicial
-        animaciones.setAccion(INACTIVO);
+        animaciones.setAccion(CORRER);  // Comenzamos en animación de correr ya que estará en movimiento
     }
     
-    // Métodos específicos para el comportamiento del enemigo verde
-    
-    // Método para implementar un comportamiento simple de patrulla
-    public void iniciarPatrulla(float velocidad, float distanciaMaxima) {
-        // Implementar lógica de patrulla (ir y venir)
-        this.velocidadX = velocidad;
-        // Código para cambiar dirección cuando llega a cierta distancia...
+    // Métodos para configurar el comportamiento
+    public void setPatrullando(boolean patrullando) {
+        this.patrullando = patrullando;
+        if (!patrullando) {
+            velocidadX = 0;
+        } else if (velocidadX == 0) {
+            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+        }
     }
     
-    // Sobrescribir el método mover para incluir comportamiento específico
-    @Override
-    protected void mover() {
-        // Podemos añadir comportamiento específico aquí
-        super.mover(); // O llamar al comportamiento básico
+    public void setVelocidadMovimiento(float velocidad) {
+        this.velocidadMovimiento = velocidad;
+        // Actualizar la velocidad actual manteniendo la dirección
+        if (velocidadX != 0) {
+            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+        }
     }
-
+    
+    public void setDistanciaMaxima(float distancia) {
+        this.distanciaMaxima = distancia;
+    }
+    
     @Override
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        // Podemos añadir comportamiento específico aquí
-        super.render(g, xLvlOffset, yLvlOffset); // O llamar al comportamiento básico
-        drawHitBox(g, xLvlOffset, yLvlOffset); // Dibujar hitbox
+        if (!activo) return;
+        
+        // Guardar flip horizontal basado en dirección
+        boolean flipX = !movimientoHaciaIzquierda;  // Flip si va a la derecha
+        
+        // Dibujar enemigo con posible flip horizontal
+        if (animaciones != null) {
+            // Calcular posición con offset
+            int drawX = (int) (hitbox.x - xDrawOffset) - xLvlOffset;
+            int drawY = (int) (hitbox.y - yDrawOffset) - yLvlOffset;
+            
+            if (flipX) {
+                // Dibujar volteado horizontalmente
+                g.drawImage(animaciones.getImagenActual(),
+                    drawX + w, drawY,
+                    -w, h, null);
+            } else {
+                // Dibujar normal
+                g.drawImage(animaciones.getImagenActual(),
+                    drawX, drawY,
+                    w, h, null);
+            }
+        }
+        
+        // Para debugging
+        // drawHitBox(g, xLvlOffset, yLvlOffset);
     }
 }

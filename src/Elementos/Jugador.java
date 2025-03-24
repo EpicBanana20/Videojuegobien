@@ -6,7 +6,8 @@ import java.awt.image.BufferedImage;
 
 import Juegos.Juego;
 import Utilz.LoadSave;
-import Utilz.Animaciones; // Importamos la nueva clase
+import Utilz.Animaciones;
+import Utilz.MetodoAyuda;
 
 import static Utilz.Constantes.ConstanteJugador.*;
 import static Utilz.MetodoAyuda.*;
@@ -27,9 +28,8 @@ public class Jugador extends Cascaron {
 
     ///// graveda y salto
     private float airSpeed = -1f;
-    private float gravity = 0.015f * Juego.SCALE;
-    private float jumpSpeed = -1.5f * Juego.SCALE;
-    private float fallSpeedAfterCollision = 0.5f * Juego.SCALE;
+    private float gravity = 0.02f * Juego.SCALE; // Aumentamos ligeramente la gravedad
+    private float jumpSpeed = -1.8f * Juego.SCALE; // Hacemos el salto un poco más potente
     private boolean inAir = false;
 
     // Apuntado
@@ -144,63 +144,35 @@ public class Jugador extends Cascaron {
             xSpeed -= playerSpeed;
         if (right)
             xSpeed += playerSpeed;
-    
-        // Verificar si está en el suelo ANTES de activar inAir
-        boolean enSuelo = isEntityOnFloor(hitbox, lvlData);
         
-        if (!inAir && !enSuelo)
-            inAir = true;
-    
-        if (inAir) {
-            if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, lvlData)) {
-                hitbox.y += airSpeed;
-                airSpeed += gravity;
-                updateXPos(xSpeed);
-            } else {
-                hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
-    
-                // Solo desactivar inAir si realmente está tocando el suelo
-                if (enSuelo) {
-                    resetInAir();
-                } else {
-                    if (airSpeed > 0)
-                        resetInAir();
-                    else
-                        airSpeed = fallSpeedAfterCollision;
-                }
-                updateXPos(xSpeed);
-            }
-        } else {
-            updateXPos(xSpeed);
+        // Manejar movimiento en X usando el método centralizado
+        if (xSpeed != 0) {
+            MetodoAyuda.moverHorizontal(hitbox, xSpeed, lvlData);
+            moving = true;
         }
-    
-        // Si el personaje está en el suelo después de moverse, quitar inAir
-        if (isEntityOnFloor(hitbox, lvlData)) {
-            inAir = false;
-        }
-    
-        moving = true;
+        
+        // Manejar gravedad usando el método centralizado
+        float[] airSpeedRef = { airSpeed };
+        boolean[] inAirRef = { inAir };
+        
+        hitbox.y = MetodoAyuda.aplicarGravedad(
+            hitbox, 
+            airSpeedRef, 
+            inAirRef, 
+            lvlData,
+            gravity // Usar gravedad específica del jugador
+        );
+        
+        // Actualizar las variables de instancia
+        airSpeed = airSpeedRef[0];
+        inAir = inAirRef[0];
     }
     
     private void jump() {
         if(inAir)
-         return;
-        inAir=true;
-        airSpeed=jumpSpeed;
-    }
-
-    private void updateXPos(float xSpeed) {
-        if (CanMoveHere(hitbox.x + xSpeed, hitbox.y,
-                 hitbox.width,  hitbox.height, lvlData))
-            hitbox.x += xSpeed;
-        else {
-            hitbox.x = GetEntityXPosNexttoWall(hitbox, xSpeed);
-        }
-    }
-
-    private void resetInAir() {
-        inAir = false;
-        airSpeed = 0;
+            return;
+        inAir = true;
+        airSpeed = jumpSpeed;
     }
 
     private void loadAnimation() {
