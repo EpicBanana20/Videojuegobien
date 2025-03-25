@@ -22,7 +22,7 @@ public class MachineGun extends Arma {
     private static final int FRAMES_POR_SEGUNDO = 60;
 
     public MachineGun() {
-        super("machinegun.png", 30 * Juegos.Juego.SCALE, 3.0f);
+        super("armas/machinegun.png", 30 * Juegos.Juego.SCALE, 3.0f);
         this.nombre = "MachineGun";
         this.armaCooldown = Math.round(FRAMES_POR_SEGUNDO / cadenciaDisparo);
     }

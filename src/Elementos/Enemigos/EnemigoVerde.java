@@ -195,7 +195,7 @@ public class EnemigoVerde extends Enemigo {
     @Override
     protected void cargarAnimaciones() {
         // Cargar la hoja de sprites del enemigo verde
-        BufferedImage img = LoadSave.GetSpriteAtlas("ENEMIGO1.png");
+        BufferedImage img = LoadSave.GetSpriteAtlas("enemigos/ENEMIGO1.png");
         
         // Basado en la imagen, tiene 3 filas (acciones) con varios frames cada una
         // Fila 1 (índice 0): 6 frames - Inactivo/Idle

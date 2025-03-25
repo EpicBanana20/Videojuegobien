@@ -8,14 +8,11 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 public class LoadSave {
-    public static final String LEVEL_ATLAS="Mossy - TileSet.png";
-    public static final String PLAYER_ATLAS="player_sprites.png";
-    public static final String LEVEL_ONE_DATA="NEWMP.png";
+    public static final String LEVEL_ATLAS="tiles/Mossy - TileSet.png";
+    public static final String PLAYER_ATLAS="personajes/player_sprites.png";
+    public static final String LEVEL_ONE_DATA="lvlData/NEWMP.png";
     public static final String PLAYING_BG_IMG="BACKGR.png";
-    public static final String BIG_CLOUD="big_clouds.png";
-    public static final String SMALL_CLOUD="small_clouds.png";
-    public static final String BULLET_SPRITE="BulletSprite.png";
-    public static final String ENEMIGO1_SPRITE="ENEMIGO1.png";
+    public static final String BULLET_SPRITE="balas/BulletSprite.png";
 
     
     public static BufferedImage GetSpriteAtlas(String name) {
