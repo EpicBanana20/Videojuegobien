@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 public class LoadSave {
-    public static final String LEVEL_ATLAS = "tiles/Mossy - TileSet.png";
+    public static final String LEVEL_ATLAS = "tiles/TEST TILE 1.png";
     public static final String PLAYER_ATLAS = "personajes/player_sprites.png";
     public static final String LEVEL_ONE_DATA = "lvlData/NEWMP.png";
     public static final String PLAYING_BG_IMG = "BACKGR.png";
@@ -66,8 +66,8 @@ public class LoadSave {
             for (int i = 0; i < img.getWidth(); i++) {
                 Color color = new Color(img.getRGB(i, j));
                 int valor = color.getRed();
-                if (valor >= 48)
-                    valor = 47;
+                if (valor >= 60)
+                    valor = 58;
                 lvlData[j][i] = valor;
             }
         }

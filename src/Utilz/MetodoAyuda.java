@@ -32,7 +32,7 @@ public class MetodoAyuda {
         int xIndex = (int) (x / Juego.TILES_SIZE);
         int yIndex = (int) (y / Juego.TILES_SIZE);
         int value = lvlData[yIndex][xIndex];
-        return value >= 49 || value < 0 || value != 47;
+        return value >= 60 || value < 0 || value != 58;
     }
 
     public static boolean isEntityOnFloor(Rectangle2D.Float hitbox, int[][] lvlData) {

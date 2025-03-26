@@ -50,7 +50,7 @@ public class Juego {
         player = new Jugador(200, 200, (int) (64 * SCALE), (int) (40 * SCALE));
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
 
-        levelMan.cargarEntidades(this);
+        //levelMan.cargarEntidades(this);
 
         
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);

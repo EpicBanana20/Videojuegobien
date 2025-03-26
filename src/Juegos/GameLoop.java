@@ -2,7 +2,7 @@ package Juegos;
 
 public class GameLoop extends Thread {
     private Juego game;
-    private int FPS_SET = 60;
+    private int FPS_SET = 120;
     private int UPS_SET = 200;
 
     public GameLoop(Juego game) {
