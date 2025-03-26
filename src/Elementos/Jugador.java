@@ -140,6 +140,17 @@ public class Jugador extends Cascaron {
         renderAim(g, xlvlOffset, yLvlOffset);
         armaActual.render(g, xlvlOffset, yLvlOffset);
     }
+    
+    public void resetPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+        hitbox.x = x;
+        hitbox.y = y;
+        // Reiniciar otras propiedades si es necesario
+        resetDirBooleans();
+        inAir = false;
+        airSpeed = 0;
+    }
 
     private void actuPosicion() {
         moving = false;

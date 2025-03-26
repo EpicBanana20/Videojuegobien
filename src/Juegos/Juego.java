@@ -50,9 +50,7 @@ public class Juego {
         player = new Jugador(200, 200, (int) (64 * SCALE), (int) (40 * SCALE));
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
 
-        adminEnemigos.crearEnemigoVerde(400, 200);
-        adminEnemigos.crearEnemigoVerde(550, 200);
-        adminEnemigos.crearEnemigoVerde(700, 200);
+        levelMan.cargarEntidades(this);
 
         
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);
@@ -78,7 +76,7 @@ public class Juego {
         adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
     }
-
+    
     public Jugador getPlayer() {
         return player;
     }

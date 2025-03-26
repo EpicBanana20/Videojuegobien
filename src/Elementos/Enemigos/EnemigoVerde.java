@@ -18,8 +18,6 @@ public class EnemigoVerde extends Enemigo {
     // Variables para el comportamiento de patrulla
     private boolean movimientoHaciaIzquierda = false;
     private float velocidadMovimiento = 0.5f * Juego.SCALE;
-    private float distanciaRecorrida = 0;
-    private float distanciaMaxima = 100 * Juego.SCALE; // Distancia máxima antes de cambiar dirección
     private boolean patrullando = true;
     
     // Variable para comprobar si hay suelo
@@ -50,18 +48,12 @@ public class EnemigoVerde extends Enemigo {
     public void update() {
         if (!activo) return;
         
-        // Aplicar gravedad primero
         aplicarGravedad();
-        
-        // Comportamiento de patrulla solo si estamos en el suelo
         if (!enAire && patrullando) {
             patrullar();
         }
-        
-        // Actualizar posición basado en velocidad actual
         mover();
         
-        // Actualizar animaciones
         if (animaciones != null) {
             animaciones.actualizarAnimacion();
             determinarAnimacion();
@@ -133,15 +125,6 @@ public class EnemigoVerde extends Enemigo {
         // Si hay una pared adelante o no hay suelo, cambiar dirección
         if (hayPared || !haySueloAdelante) {
             cambiarDireccion();
-        }
-        
-        // Actualizar distancia recorrida
-        distanciaRecorrida += Math.abs(velocidadX);
-        
-        // Si hemos recorrido la distancia máxima de patrulla, cambiar dirección
-        if (distanciaRecorrida >= distanciaMaxima) {
-            cambiarDireccion();
-            distanciaRecorrida = 0;
         }
     }
     
@@ -243,10 +226,6 @@ public class EnemigoVerde extends Enemigo {
         if (velocidadX != 0) {
             velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
         }
-    }
-    
-    public void setDistanciaMaxima(float distancia) {
-        this.distanciaMaxima = distancia;
     }
     
     @Override
