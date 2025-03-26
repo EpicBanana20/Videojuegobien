@@ -2,23 +2,15 @@ package Juegos;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 import Utilz.LoadSave;
 
 public class Background {
     private BufferedImage backgroundImg;
-    private int[] small_cloudsPos;
-    private Random rnd = new Random();
     private int backgroundWidth;
 
     public Background() {
         backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.PLAYING_BG_IMG);
-        small_cloudsPos = new int[8];
-        for (int i = 0; i < small_cloudsPos.length; i++) {
-            small_cloudsPos[i] = (int) (90 * Juego.SCALE) + rnd.nextInt((int) (100 * Juego.SCALE));
-        }
-        // Asegurarnos de que el fondo sea suficientemente ancho
         backgroundWidth = (int) (Juego.GAME_WIDTH * 1);
     }
 

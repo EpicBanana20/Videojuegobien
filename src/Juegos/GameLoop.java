@@ -41,6 +41,12 @@ public class GameLoop extends Thread {
                 //frame = 0;
                 //update = 0;
             }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        
     }
 }
