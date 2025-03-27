@@ -6,6 +6,9 @@ public class Constantes {
         public static final int RIGHT=2;
         public static final int DOWN=3;
     }
+    public static class Mapas{
+        
+    }
     public static class  ConstanteJugador {
         public static final int CORRER=1;
         public static final int INACTIVO=0;

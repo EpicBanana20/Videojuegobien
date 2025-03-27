@@ -1,6 +1,7 @@
 package Utilz;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Set;
 
 import Juegos.Juego;
 
@@ -22,6 +23,7 @@ public class MetodoAyuda {
         return false;
     }
 
+    private static final Set<Integer> bloquesSinHitbox = Set.of(58);
     public static boolean isSolido(float x, float y, int[][] lvlData) {
         int maxWidth = lvlData[0].length * Juego.TILES_SIZE;
         int maxHeight = lvlData.length * Juego.TILES_SIZE;
@@ -32,7 +34,7 @@ public class MetodoAyuda {
         int xIndex = (int) (x / Juego.TILES_SIZE);
         int yIndex = (int) (y / Juego.TILES_SIZE);
         int value = lvlData[yIndex][xIndex];
-        return value >= 60 || value < 0 || value != 58;
+        return !bloquesSinHitbox.contains(value);
     }
 
     public static boolean isEntityOnFloor(Rectangle2D.Float hitbox, int[][] lvlData) {

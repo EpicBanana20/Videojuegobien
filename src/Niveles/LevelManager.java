@@ -44,24 +44,17 @@ public class LevelManager {
                 float x = i * Juego.TILES_SIZE;
                 float y = j * Juego.TILES_SIZE;
                 
-                // Valores del 50-100 para la posición inicial del jugador
+
                 if (valorRojo >= 50 && valorRojo < 60) {
                     game.getPlayer().resetPosition(x, y);
                     System.out.println("Posición inicial del jugador establecida en: " + x + ", " + y);
                 }
-                // Valores del 100-150 para enemigos
+
                 else if (valorRojo >= 100 && valorRojo < 110) {
                     // Enemigo Verde
                     game.getAdminEnemigos().crearEnemigoVerde(x, y);
                     System.out.println("Enemigo Verde creado en: " + x + ", " + y);
                 }
-                // Aquí puedes agregar más rangos para diferentes tipos de enemigos
-                // Por ejemplo: 110-120 para otro tipo de enemigo
-                
-                // Valores del 150-200 para decoraciones (si las implementas en el futuro)
-                // else if (valorRojo >= 150 && valorRojo < 200) {
-                //    // Código para crear decoraciones
-                // }
             }
         }
     }
