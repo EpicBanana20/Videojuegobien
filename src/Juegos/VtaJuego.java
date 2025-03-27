@@ -11,7 +11,7 @@ public class VtaJuego extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.add(n);
         
-        // Configurar ventana maximizada sin bordes por defecto
+        // Configurar ventana maximizada sin bordes por defectoo
         setUndecorated(true);
         
         this.addWindowFocusListener(new WindowFocusListener() {
