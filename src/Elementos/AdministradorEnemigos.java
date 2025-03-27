@@ -82,13 +82,5 @@ public class AdministradorEnemigos {
         return nuevoEnemigo;
     }
     
-    // Método para crear varios enemigos verdes distribuidos
-    public void crearGrupoEnemigosVerdes(int cantidad, float xInicial, float yInicial, float separacion) {
-        for (int i = 0; i < cantidad; i++) {
-            float x = xInicial + i * separacion;
-            crearEnemigoVerde(x, yInicial);
-        }
-    }
-    
     // Aquí puedes añadir más métodos para crear otros tipos de enemigos en el futuro
 }

@@ -11,7 +11,7 @@ public class Background {
 
     public Background() {
         backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.PLAYING_BG_IMG);
-        backgroundWidth = (int) (Juego.GAME_WIDTH * 1);
+        backgroundWidth = (int) (Juego.GAME_WIDTH);
     }
 
     public void draw(Graphics g, int xLvlOffset) {
