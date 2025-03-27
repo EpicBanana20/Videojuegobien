@@ -10,11 +10,34 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 public class LoadSave {
-    public static final String LEVEL_ATLAS = "tiles/TEST TILE 1.png";
+    // Atlases de tiles para diferentes niveles
+    public static final String LEVEL_ATLAS = "tiles/TILES_1.png";
+    public static final String LEVEL_ATLAS2 = "tiles/TILES_2.png";
+    public static final String LEVEL_ATLAS3 = "tiles/TILES_3.png";
+    
+    // Datos de niveles
+    public static final String LEVEL_ONE_DATA = "lvlData/LEVEL1.png";
+    public static final String LEVEL_TWO_DATA = "lvlData/LEVEL2.png";
+    public static final String LEVEL_THREE_DATA = "lvlData/LEVEL3.png";
+    
     public static final String PLAYER_ATLAS = "personajes/player_sprites.png";
-    public static final String LEVEL_ONE_DATA = "lvlData/NEWMP.png";
     public static final String PLAYING_BG_IMG = "BACKGR.png";
     public static final String BULLET_SPRITE = "balas/BulletSprite.png";
+    
+    // Información de niveles: maxTileIndex, y lista de tiles sin hitbox
+    public static final int[][] LEVEL_INFO = {
+        {60, 58, 6, 10}, // Nivel 1: max=60, air=58
+        {81, 80, 9, 9}, // Nivel 2: max=70, air=68
+        {64, 48, 9, 10}, // Nivel 3: max=80, air=78
+    };
+    
+    // Tiles sin hitbox adicionales para cada nivel (además del tile de aire)
+    // Incluye tiles como vegetación, agua poco profunda, decoraciones, etc.
+    public static final int[][] TILES_SIN_HITBOX = {
+        {}, // Nivel 1: tiles sin hitbox adicionales
+        {4,5,6,7,34,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78}, // Nivel 2
+        {49,50,51,52,53,54,55,56,57,58,59,60,61,62,63}, // Nivel 3
+    };
     
     // HashMap para almacenar las imágenes ya cargadas
     private static final Map<String, BufferedImage> imageCache = new HashMap<>();
@@ -27,8 +50,6 @@ public class LoadSave {
             try {
                 img = ImageIO.read(is);
                 imageCache.put(name, img);
-                
-                //System.out.println("Cargada imagen: " + name);
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -40,9 +61,6 @@ public class LoadSave {
                     e.printStackTrace();
                 }
             }
-        } else {
-            // Para debug: comenta esta línea en producción
-            //System.out.println("Imagen recuperada de caché: " + name);
         }
         
         return img;
@@ -59,18 +77,30 @@ public class LoadSave {
         return imageCache.size();
     }
     
-    public static int[][] GetLevelData() {
-        BufferedImage img = LoadSave.GetSpriteAtlas(LEVEL_ONE_DATA);
+    public static int[][] GetLevelData(String levelFile, int nivelIndex) {
+        BufferedImage img = LoadSave.GetSpriteAtlas(levelFile);
         int[][] lvlData = new int[img.getHeight()][img.getWidth()];
+        
+        int maxTileIndex = LEVEL_INFO[nivelIndex][0];
+        int airTileIndex = LEVEL_INFO[nivelIndex][1];
+        
         for (int j = 0; j < img.getHeight(); j++) {
             for (int i = 0; i < img.getWidth(); i++) {
                 Color color = new Color(img.getRGB(i, j));
                 int valor = color.getRed();
-                if (valor >= 60)
-                    valor = 58;
+                
+                // Si el valor es mayor que el máximo de tiles, lo reemplazamos con el valor de aire
+                if (valor >= maxTileIndex)
+                    valor = airTileIndex;
+                    
                 lvlData[j][i] = valor;
             }
         }
         return lvlData;
+    }
+    
+    // Mantener el método original para compatibilidad
+    public static int[][] GetLevelData() {
+        return GetLevelData(LEVEL_ONE_DATA, 0);
     }
 }

@@ -1,6 +1,7 @@
 package Utilz;
 
 import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
 import java.util.Set;
 
 import Juegos.Juego;
@@ -11,7 +12,30 @@ public class MetodoAyuda {
     public static final int ENTIDAD_ENEMIGO = 1;
     public static final int ENTIDAD_OBJETO = 2;
     
-    // Valores predeterminados de gravedad por tipo de entidad
+    // Set de bloques sin hitbox (se irá actualizando según el nivel actual)
+    private static Set<Integer> bloquesSinHitbox = new HashSet<>();
+    
+    // Inicializar con el bloque de aire del nivel 1
+    static {
+        // Añadir el bloque de aire del nivel 1 por defecto
+        bloquesSinHitbox.add(58);
+    }
+    
+    // Método para actualizar los bloques sin hitbox según el nivel
+    public static void actualizarBloquesSinHitbox(int nivelIndex) {
+        bloquesSinHitbox.clear();
+        
+        // Añadir el bloque de aire principal para este nivel
+        bloquesSinHitbox.add(LoadSave.LEVEL_INFO[nivelIndex][1]);
+        
+        // Añadir los tiles adicionales sin hitbox para este nivel
+        for (int tileId : LoadSave.TILES_SIN_HITBOX[nivelIndex]) {
+            bloquesSinHitbox.add(tileId);
+        }
+        
+        System.out.println("Nivel " + (nivelIndex + 1) + ": Configurados " + 
+                           bloquesSinHitbox.size() + " tiles sin hitbox");
+    }
     
     public static boolean CanMoveHere(float x, float y,
             float width, float height, int[][] lvlData) {
@@ -23,7 +47,6 @@ public class MetodoAyuda {
         return false;
     }
 
-    private static final Set<Integer> bloquesSinHitbox = Set.of(58);
     public static boolean isSolido(float x, float y, int[][] lvlData) {
         int maxWidth = lvlData[0].length * Juego.TILES_SIZE;
         int maxHeight = lvlData.length * Juego.TILES_SIZE;
@@ -87,11 +110,6 @@ public class MetodoAyuda {
     
     /**
      * Comprueba si hay suelo en una dirección específica a cierta distancia
-     * 
-     * @param hitbox Hitbox de la entidad
-     * @param lvlData Datos del nivel para detectar colisiones
-     * @param distancia Distancia a comprobar (positiva para derecha, negativa para izquierda)
-     * @return true si hay suelo, false si no lo hay
      */
     public static boolean haySueloAdelante(
             Rectangle2D.Float hitbox,
@@ -107,11 +125,6 @@ public class MetodoAyuda {
     
     /**
      * Comprueba si hay pared en una dirección específica a cierta distancia
-     * 
-     * @param hitbox Hitbox de la entidad
-     * @param lvlData Datos del nivel para detectar colisiones
-     * @param distancia Distancia a comprobar (positiva para derecha, negativa para izquierda)
-     * @return true si hay pared, false si no la hay
      */
     public static boolean hayParedAdelante(
             Rectangle2D.Float hitbox,

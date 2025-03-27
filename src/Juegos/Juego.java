@@ -29,6 +29,10 @@ public class Juego {
     public final static int GAME_HEIGHT = TILES_SIZE * TILES_HEIGHT;
 
     private AdministradorEnemigos adminEnemigos;
+    
+    // Para control de niveles
+    private boolean cambiandoNivel = false;
+    private int nivelDestino = -1;
 
     public Juego() {
         inicializar();
@@ -49,15 +53,21 @@ public class Juego {
         NIVEL_ACTUAL_DATA = levelMan.getCurrentLevel().getLvlData();  
         player = new Jugador(200, 200, (int) (64 * SCALE), (int) (40 * SCALE));
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
-
-        //levelMan.cargarEntidades(this);
-
         
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);
         background = new Background();
+        
+        // Cargar entidades para el nivel inicial
+        levelMan.cargarEntidades(this);
     }
 
     public void updates() {
+        // Verificar si estamos en proceso de cambio de nivel
+        if (cambiandoNivel) {
+            completarCambioNivel();
+            return;
+        }
+        
         player.update(camera.getxLvlOffset(), camera.getyLvlOffset());
         levelMan.update();
         pan.updateGame();
@@ -68,6 +78,47 @@ public class Juego {
         }
 
         camera.checkCloseToBorder((int) player.getHitBox().getX(), (int) player.getHitBox().getY());
+        
+        // Aquí se podría agregar lógica para detectar cuándo cambiar de nivel
+        // Por ejemplo, al tocar un portal o llegar al final del nivel
+    }
+    
+    // Método para iniciar un cambio de nivel
+    public void cambiarNivel(int nivelIndex) {
+        if (nivelIndex >= 0 && nivelIndex < levelMan.getTotalLevels()) {
+            cambiandoNivel = true;
+            nivelDestino = nivelIndex;
+            System.out.println("Iniciando cambio al nivel " + (nivelIndex + 1));
+            
+            // Desactivar controles del jugador durante la transición
+            player.resetDirBooleans();
+        }
+    }
+    
+    // Cambiar al siguiente nivel
+    public void siguienteNivel() {
+        cambiarNivel((levelMan.getCurrentLevelIndex() + 1) % levelMan.getTotalLevels());
+    }
+    
+    // Completar el cambio de nivel
+    private void completarCambioNivel() {
+        // Limpiar balas y otros objetos
+        if (player.getArmaActual() != null) {
+            player.getArmaActual().getAdminBalas().limpiarBalas();
+        }
+        
+        // Cambiar nivel a través del LevelManager
+        levelMan.changeLevel(nivelDestino);
+        
+        // Actualizar cámara para el nuevo nivel
+        camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);
+        
+        // Cargar datos del nivel para el jugador
+        player.loadLvlData(NIVEL_ACTUAL_DATA);
+        
+        // Completar la transición
+        cambiandoNivel = false;
+        nivelDestino = -1;
     }
 
     public void render(Graphics g) {
@@ -75,6 +126,11 @@ public class Juego {
         levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+        
+        // Aquí se podría agregar un efecto de transición entre niveles
+        if (cambiandoNivel) {
+            // Por ejemplo, dibujar una pantalla de carga o un efecto de fade
+        }
     }
     
     public Jugador getPlayer() {
@@ -96,5 +152,17 @@ public class Juego {
 
     public AdministradorEnemigos getAdminEnemigos() {
         return adminEnemigos;
+    }
+    
+    public LevelManager getLevelManager() {
+        return levelMan;
+    }
+    
+    // Método para detectar eventos específicos (puede usarse para cambiar niveles)
+    public void procesarEvento(String tipoEvento, Object... args) {
+        if ("cambiar_nivel".equals(tipoEvento) && args.length > 0) {
+            int nivelDestino = (int)args[0];
+            cambiarNivel(nivelDestino);
+        }
     }
 }
