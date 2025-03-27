@@ -77,7 +77,7 @@ public class LevelManager {
     }
 
     public void cargarEntidades(Juego game) {
-        /*BufferedImage img = LoadSave.GetSpriteAtlas(LEVEL_DATA_FILES[currentLevelIndex]);
+        BufferedImage img = LoadSave.GetSpriteAtlas(LEVEL_DATA_FILES[currentLevelIndex]);
         
         // Limpiar enemigos existentes antes de cargar nuevos
         game.getAdminEnemigos().limpiarEnemigos();
@@ -92,17 +92,17 @@ public class LevelManager {
                 float x = i * Juego.TILES_SIZE;
                 float y = j * Juego.TILES_SIZE;
                 
-                if (valorRojo >= 50 && valorRojo < 60) {
+                if (valorRojo ==101) {
                     game.getPlayer().resetPosition(x, y);
                     System.out.println("Posición inicial del jugador establecida en: " + x + ", " + y);
                 }
-                else if (valorRojo >= 100 && valorRojo < 110) {
+                else if (valorRojo==102) {
                     // Enemigo Verde
                     game.getAdminEnemigos().crearEnemigoVerde(x, y);
                     System.out.println("Enemigo Verde creado en: " + x + ", " + y);
                 }
             }
-        }*/
+        }
     }
 
     public void update() {

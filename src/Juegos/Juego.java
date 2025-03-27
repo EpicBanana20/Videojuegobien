@@ -109,6 +109,7 @@ public class Juego {
         
         // Cambiar nivel a través del LevelManager
         levelMan.changeLevel(nivelDestino);
+        levelMan.cargarEntidades(this);
         
         // Actualizar cámara para el nuevo nivel
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);

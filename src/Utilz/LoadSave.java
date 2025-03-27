@@ -28,7 +28,7 @@ public class LoadSave {
     public static final int[][] LEVEL_INFO = {
         {60, 58, 6, 10}, // Nivel 1: max=60, air=58
         {81, 80, 9, 9}, // Nivel 2: max=70, air=68
-        {64, 48, 9, 10}, // Nivel 3: max=80, air=78
+        {64, 48, 8, 8}, // Nivel 3: max=80, air=78
     };
     
     // Tiles sin hitbox adicionales para cada nivel (además del tile de aire)
