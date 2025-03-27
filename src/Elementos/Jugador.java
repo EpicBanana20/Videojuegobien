@@ -64,14 +64,6 @@ public class Jugador extends Cascaron {
         g.setColor(Color.RED);
         g.fillOval((int)aimX - cursorSize/2, (int)aimY - cursorSize/2, cursorSize, cursorSize);
         
-        // Opcional: Dibuja una línea desde el jugador hasta el cursor
-        g.setColor(Color.WHITE);
-        g.drawLine(
-            (int)(getXCenter() - xlvlOffset), 
-            (int)(getYCenter() - ylvlOffset), 
-            (int)aimX, 
-            (int)aimY
-        );
     }
 
     public void update(int xlvlOffset, int yLvlOffset) {
@@ -90,9 +82,6 @@ public class Jugador extends Cascaron {
             armaActual.disparar();
     }
 
-    public void update() {
-        update(0,0);
-    }
 
     // Nuevo método para determinar qué animación mostrar
     private void determinarAnimacion() {
