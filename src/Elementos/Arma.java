@@ -3,6 +3,9 @@ package Elementos;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
+import Elementos.Administradores.AdministradorBalas;
+
 import java.awt.geom.AffineTransform;
 import Utilz.LoadSave;
 

@@ -2,8 +2,8 @@ package Juegos;
 
 import java.awt.Graphics;
 
-import Elementos.AdministradorEnemigos;
 import Elementos.Jugador;
+import Elementos.Administradores.AdministradorEnemigos;
 import Niveles.LevelManager;
 
 
