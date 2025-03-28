@@ -106,10 +106,10 @@ public class Juego {
         if (player.getArmaActual() != null) {
             player.getArmaActual().getAdminBalas().limpiarBalas();
         }
+        adminEnemigos.limpiarEnemigos();
         
         // Cambiar nivel a través del LevelManager
         levelMan.changeLevel(nivelDestino);
-        levelMan.cargarEntidades(this);
         
         // Actualizar cámara para el nuevo nivel
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);
@@ -117,6 +117,8 @@ public class Juego {
         // Cargar datos del nivel para el jugador
         player.loadLvlData(NIVEL_ACTUAL_DATA);
         
+        levelMan.cargarEntidades(this);
+
         // Completar la transición
         cambiandoNivel = false;
         nivelDestino = -1;

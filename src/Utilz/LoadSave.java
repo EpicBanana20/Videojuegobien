@@ -16,9 +16,13 @@ public class LoadSave {
     public static final String LEVEL_ATLAS3 = "tiles/TILES_3.png";
     
     // Datos de niveles
-    public static final String LEVEL_ONE_DATA = "lvlData/LEVEL1.png";
-    public static final String LEVEL_TWO_DATA = "lvlData/LEVEL2.png";
-    public static final String LEVEL_THREE_DATA = "lvlData/LEVEL3.png";
+        public static final String LEVEL_ONE_DATA = "lvlData/LEVEL1.png";
+        public static final String LEVEL_TWO_DATA = "lvlData/LEVEL2.png";
+        public static final String LEVEL_THREE_DATA = "lvlData/LEVEL3.png";
+        // Datos de entidades
+        public static final String LEVEL_ONE_ENTITIES = "lvlData/LEVEL1_ENTITIES.png";
+        public static final String LEVEL_TWO_ENTITIES = "lvlData/LEVEL2_ENTITIES.png";
+        public static final String LEVEL_THREE_ENTITIES = "lvlData/LEVEL3_ENTITIES.png";
     
     public static final String PLAYER_ATLAS = "personajes/player_sprites.png";
     public static final String PLAYING_BG_IMG = "BACKGR.png";
