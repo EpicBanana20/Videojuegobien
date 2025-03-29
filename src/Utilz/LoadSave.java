@@ -28,8 +28,12 @@ public class LoadSave {
         public static final String LEVEL_TWO_ENVIRONMENT = "lvlData/lvlEnvironment/LEVEL2_ENVIRONMENT.png";
         public static final String LEVEL_THREE_ENVIRONMENT = "lvlData/lvlEnvironment/LEVEL3_ENVIRONMENT.png";
     
+    // Fondo de juego
+    public static final String PLAYING_BG1_IMG = "BACKGR.png";
+    public static final String PLAYING_BG2_IMG = "BACKGR2.png";
+    public static final String PLAYING_BG3_IMG = "BACKGR3.png";
     public static final String PLAYER_ATLAS = "personajes/player_sprites.png";
-    public static final String PLAYING_BG_IMG = "BACKGR.png";
+    
     public static final String BULLET_SPRITE = "balas/BulletSprite.png";
     
     // Información de niveles: maxTileIndex, y lista de tiles sin hitbox
@@ -49,6 +53,7 @@ public class LoadSave {
     
     // HashMap para almacenar las imágenes ya cargadas
     private static final Map<String, BufferedImage> imageCache = new HashMap<>();
+    public static final String[] LEVEL_BACKGROUND_FILES = null;
     
     public static BufferedImage GetSpriteAtlas(String name) {
         BufferedImage img = imageCache.get(name);

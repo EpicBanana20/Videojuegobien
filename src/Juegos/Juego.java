@@ -55,7 +55,7 @@ public class Juego {
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
         
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);
-        background = new Background();
+        background = new Background(levelMan.getCurrentLevelIndex());
         
         // Cargar entidades para el nivel inicial
         levelMan.cargarEntidades(this);
@@ -88,7 +88,6 @@ public class Juego {
         if (nivelIndex >= 0 && nivelIndex < levelMan.getTotalLevels()) {
             cambiandoNivel = true;
             nivelDestino = nivelIndex;
-            System.out.println("Iniciando cambio al nivel " + (nivelIndex + 1));
             
             // Desactivar controles del jugador durante la transición
             player.resetDirBooleans();
@@ -110,6 +109,7 @@ public class Juego {
         
         // Cambiar nivel a través del LevelManager
         levelMan.changeLevel(nivelDestino);
+        background = new Background(levelMan.getCurrentLevelIndex());
         
         // Actualizar cámara para el nuevo nivel
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);

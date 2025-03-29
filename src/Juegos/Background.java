@@ -9,8 +9,14 @@ public class Background {
     private BufferedImage backgroundImg;
     private int backgroundWidth;
 
-    public Background() {
-        backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.PLAYING_BG_IMG);
+    private static final String[] LEVEL_BACKGROUND_FILES = {
+        LoadSave.PLAYING_BG1_IMG,
+        LoadSave.PLAYING_BG2_IMG,
+        LoadSave.PLAYING_BG3_IMG,
+    };
+    public Background(int currentLevelIndex) {
+        // Cargamos el fondo correspondiente al nivel
+        backgroundImg = LoadSave.GetSpriteAtlas(LEVEL_BACKGROUND_FILES[currentLevelIndex]);
         backgroundWidth = (int) (Juego.GAME_WIDTH);
     }
 
