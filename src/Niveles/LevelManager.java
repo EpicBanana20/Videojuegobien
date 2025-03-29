@@ -28,6 +28,18 @@ public class LevelManager {
         LoadSave.LEVEL_THREE_DATA,
     };
 
+    private static final String[] LEVEL_ENVIRONMENT_FILES = {
+        LoadSave.LEVEL_ONE_ENVIRONMENT,
+        LoadSave.LEVEL_TWO_ENVIRONMENT,
+        LoadSave.LEVEL_THREE_ENVIRONMENT,
+    };
+
+    private static final String[] LEVEL_ENTITIES_FILES = {
+        LoadSave.LEVEL_ONE_ENTITIES,
+        LoadSave.LEVEL_TWO_ENTITIES,
+        LoadSave.LEVEL_THREE_ENTITIES,
+    };
+
     public LevelManager(Juego game) {
         this.game = game;
         // Inicializamos con el nivel 1
@@ -77,7 +89,7 @@ public class LevelManager {
     }
 
     public void cargarEntidades(Juego game) {
-        BufferedImage img = LoadSave.GetSpriteAtlas(LEVEL_DATA_FILES[currentLevelIndex]);
+        BufferedImage img = LoadSave.GetSpriteAtlas(LEVEL_ENTITIES_FILES[currentLevelIndex]);
         
         // Limpiar enemigos existentes antes de cargar nuevos
         game.getAdminEnemigos().limpiarEnemigos();
@@ -91,18 +103,22 @@ public class LevelManager {
                 // Convertir la posición del píxel a posición del mundo
                 float x = i * Juego.TILES_SIZE;
                 float y = j * Juego.TILES_SIZE;
-                
-                if (valorRojo ==101) {
+                switch (valorRojo) {
+                    case 1:
                     game.getPlayer().resetPosition(x, y);
-                    System.out.println("Posición inicial del jugador establecida en: " + x + ", " + y);
-                }
-                else if (valorRojo==102) {
-                    // Enemigo Verde
+                        break;
+                    case 2:
                     game.getAdminEnemigos().crearEnemigoVerde(x, y);
-                    System.out.println("Enemigo Verde creado en: " + x + ", " + y);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
+    }
+    public void cargarDecoraciones() {
+        BufferedImage img = LoadSave.GetSpriteAtlas(LEVEL_ENVIRONMENT_FILES[currentLevelIndex]);
+        // Procesar decoraciones - Puedes crear una nueva clase AdministradorDecoraciones
     }
 
     public void update() {
@@ -165,6 +181,7 @@ public class LevelManager {
             
             // Cargar entidades para el nuevo nivel
             cargarEntidades(game);
+            cargarDecoraciones();
             
             // Resetear jugador y otros elementos si es necesario
             // (esto puede variar según la implementación específica)

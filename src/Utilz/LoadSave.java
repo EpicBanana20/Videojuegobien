@@ -19,10 +19,14 @@ public class LoadSave {
         public static final String LEVEL_ONE_DATA = "lvlData/LEVEL1.png";
         public static final String LEVEL_TWO_DATA = "lvlData/LEVEL2.png";
         public static final String LEVEL_THREE_DATA = "lvlData/LEVEL3.png";
-        // Datos de entidades
-        public static final String LEVEL_ONE_ENTITIES = "lvlData/LEVEL1_ENTITIES.png";
-        public static final String LEVEL_TWO_ENTITIES = "lvlData/LEVEL2_ENTITIES.png";
-        public static final String LEVEL_THREE_ENTITIES = "lvlData/LEVEL3_ENTITIES.png";
+    // Añade estas constantes para las nuevas rutas
+        public static final String LEVEL_ONE_ENTITIES = "lvlData/lvlEntities/LEVEL1_ENTITIES.png";
+        public static final String LEVEL_TWO_ENTITIES = "lvlData/lvlEntities/LEVEL2_ENTITIES.png";
+        public static final String LEVEL_THREE_ENTITIES = "lvlData/lvlEntities/LEVEL3_ENTITIES.png";
+
+        public static final String LEVEL_ONE_ENVIRONMENT = "lvlData/lvlEnvironment/LEVEL1_ENVIRONMENT.png";
+        public static final String LEVEL_TWO_ENVIRONMENT = "lvlData/lvlEnvironment/LEVEL2_ENVIRONMENT.png";
+        public static final String LEVEL_THREE_ENVIRONMENT = "lvlData/lvlEnvironment/LEVEL3_ENVIRONMENT.png";
     
     public static final String PLAYER_ATLAS = "personajes/player_sprites.png";
     public static final String PLAYING_BG_IMG = "BACKGR.png";
