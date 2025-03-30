@@ -16,9 +16,9 @@ public abstract class Cascaron {
         this.w = w;
     }
 
-    protected void drawHitBox(Graphics g){
+    protected void drawHitBox(Graphics g, int xLvlOffset, int yLvlOffset) {
         g.setColor(Color.PINK);
-        g.drawRect((int)hitbox.x, (int)hitbox.y,
+        g.drawRect((int)hitbox.x - xLvlOffset, (int)hitbox.y - yLvlOffset,
          (int)hitbox.width, (int)hitbox.height);         
     }
     protected void initHitBox(float x,float y,float w,float h){

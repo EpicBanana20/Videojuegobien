@@ -54,7 +54,7 @@ public class Juego {
         NIVEL_ACTUAL_ALTO = levelMan.getCurrentLevel().getLvlData().length * TILES_SIZE;
         NIVEL_ACTUAL_ANCHO = levelMan.getCurrentLevel().getLvlData()[0].length * TILES_SIZE;
         NIVEL_ACTUAL_DATA = levelMan.getCurrentLevel().getLvlData();  
-        player = new Jugador(200, 200, (int) (64 * SCALE), (int) (40 * SCALE));
+        player = new Jugador(200, 200, (int) (48 * SCALE), (int) (48 * SCALE));
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
         
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);

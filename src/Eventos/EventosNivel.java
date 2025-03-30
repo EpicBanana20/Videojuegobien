@@ -4,9 +4,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import Juegos.Juego;
 
-/**
- * Clase para manejar eventos específicos de cambio de nivel
- */
 public class EventosNivel implements KeyListener {
     private Juego juego;
     
@@ -20,7 +17,6 @@ public class EventosNivel implements KeyListener {
     
     @Override
     public void keyPressed(KeyEvent e) {
-        // Cambiar niveles con las teclas F1, F2, F3, F4
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1:
                 juego.cambiarNivel(0);
@@ -35,7 +31,6 @@ public class EventosNivel implements KeyListener {
                 juego.cambiarNivel(3);
                 break;
             case KeyEvent.VK_F5:
-                // Siguiente nivel
                 juego.siguienteNivel();
                 break;
         }

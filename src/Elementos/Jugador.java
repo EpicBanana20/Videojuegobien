@@ -24,8 +24,8 @@ public class Jugador extends Cascaron {
     private boolean left, right, down, up, jump;
     private float playerSpeed = 1.5f;
     private int[][] lvlData;
-    private float xDrawOffset = 21 * Juego.SCALE;
-    private float yDrawOffset = 4 * Juego.SCALE;
+    private float xDrawOffset = 15 * Juego.SCALE;
+    private float yDrawOffset = 20 * Juego.SCALE;
 
     ///// graveda y salto
     private float airSpeed = -1f;
@@ -86,11 +86,7 @@ public class Jugador extends Cascaron {
     // Nuevo método para determinar qué animación mostrar
     private void determinarAnimacion() {
             int nuevaAnimacion = INACTIVO; // Por defecto, estamos inactivos
-        
-        if (attacking) {
-            nuevaAnimacion = ATACAR1;
-        }
-        else if (inAir) {
+        if (inAir) {
             if (airSpeed < 0) {
                 nuevaAnimacion = SALTAR;
             } else {
@@ -125,7 +121,7 @@ public class Jugador extends Cascaron {
                 (int) (hitbox.y - yDrawOffset) - yLvlOffset,
                 w, h, null);
         }
-                
+        drawHitBox(g, xlvlOffset, yLvlOffset);
         renderAim(g, xlvlOffset, yLvlOffset);
         armaActual.render(g, xlvlOffset, yLvlOffset);
     }
@@ -219,10 +215,10 @@ public class Jugador extends Cascaron {
     private void loadAnimation() {
         // Cargamos los sprites como antes
         BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
-        spritesJugador = new BufferedImage[9][6];
+        spritesJugador = new BufferedImage[7][7];
         for (int i = 0; i < spritesJugador.length; i++)
             for (int j = 0; j < spritesJugador[i].length; j++)
-                spritesJugador[i][j] = img.getSubimage(j * 64, i * 40, 64, 40);
+                spritesJugador[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
 
         // Creamos la instancia de Animaciones con los sprites cargados
         animaciones = new Animaciones(spritesJugador);
@@ -233,11 +229,6 @@ public class Jugador extends Cascaron {
         animaciones.setNumFramesPorAnimacion(CORRER, GetNoSprite(CORRER));
         animaciones.setNumFramesPorAnimacion(SALTAR, GetNoSprite(SALTAR));
         animaciones.setNumFramesPorAnimacion(CAYENDO, GetNoSprite(CAYENDO));
-        animaciones.setNumFramesPorAnimacion(AGACHAR, GetNoSprite(AGACHAR));
-        animaciones.setNumFramesPorAnimacion(GOLPEAR, GetNoSprite(GOLPEAR));
-        animaciones.setNumFramesPorAnimacion(ATACAR1, GetNoSprite(ATACAR1));
-        animaciones.setNumFramesPorAnimacion(ATACAR_BRINCAR1, GetNoSprite(ATACAR_BRINCAR1));
-        animaciones.setNumFramesPorAnimacion(ATACAR_BRINCAR2, GetNoSprite(ATACAR_BRINCAR2));
     }
 
     //GETTERS Y SETTERS
