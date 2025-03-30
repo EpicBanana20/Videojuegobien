@@ -34,7 +34,7 @@ public class LoadSave {
     public static final String PLAYING_BG3_IMG = "BACKGR3.png";
     public static final String PLAYER_ATLAS = "personajes/Sprite_Cientifico_PUTO.png";
     
-    public static final String BULLET_SPRITE = "balas/BulletSprite.png";
+    public static final String BULLET_SPRITE = "balas/Bala_Mercurio.png";
     
     // Información de niveles: maxTileIndex, y lista de tiles sin hitbox
     public static final int[][] LEVEL_INFO = {

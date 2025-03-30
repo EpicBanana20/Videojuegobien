@@ -38,14 +38,14 @@ public class Jugador extends Cascaron {
     private int currentMouseX, currentMouseY;
 
     // Armas
-    private Elementos.Armas.MachineGun armaActual;
+    private Elementos.Armas.ArmaMercurio armaActual;
 
     public Jugador(float x, float y, int w, int h) {
         super(x, y, w, h);
         loadAnimation();  // Cargamos las animaciones
         initHitBox(x, y, 20 * Juego.SCALE, 27 * Juego.SCALE);
         aimController = new AimController(200* Juego.SCALE);
-        armaActual = new Elementos.Armas.MachineGun();
+        armaActual = new Elementos.Armas.ArmaMercurio();
     }
 
     // FUNCIONES DE MOUSE
@@ -86,7 +86,7 @@ public class Jugador extends Cascaron {
     // Nuevo método para determinar qué animación mostrar
     private void determinarAnimacion() {
             int nuevaAnimacion = INACTIVO; // Por defecto, estamos inactivos
-        if (inAir) {
+    if (inAir) {
             if (airSpeed < 0) {
                 nuevaAnimacion = SALTAR;
             } else {
