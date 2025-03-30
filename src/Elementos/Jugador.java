@@ -3,7 +3,9 @@ package Elementos;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
+import Elementos.Administradores.AdministradorBalas;
 import Juegos.Juego;
 import Utilz.LoadSave;
 import Utilz.Animaciones;
@@ -38,14 +40,20 @@ public class Jugador extends Cascaron {
     private int currentMouseX, currentMouseY;
 
     // Armas
-    private Elementos.Armas.ArmaMercurio armaActual;
+    private Arma armaActual;
+    private ArrayList<Arma> inventarioArmas = new ArrayList<>();
+    private int indiceArmaActual = 0;
+
+    //Balas
+    private AdministradorBalas adminBalasCentral;
 
     public Jugador(float x, float y, int w, int h) {
         super(x, y, w, h);
         loadAnimation();  // Cargamos las animaciones
         initHitBox(x, y, 20 * Juego.SCALE, 27 * Juego.SCALE);
         aimController = new AimController(200* Juego.SCALE);
-        armaActual = new Elementos.Armas.ArmaMercurio();
+        adminBalasCentral = new AdministradorBalas();
+        inicializarArmas();
     }
 
     // FUNCIONES DE MOUSE
@@ -77,6 +85,7 @@ public class Jugador extends Cascaron {
         
         aimController.update(getXCenter() - xlvlOffset, getYCenter() - yLvlOffset, currentMouseX, currentMouseY);
         armaActual.update(getXCenter(), getYCenter(), aimController);
+        adminBalasCentral.update();
         
         if(attacking)
             armaActual.disparar();
@@ -124,6 +133,7 @@ public class Jugador extends Cascaron {
         drawHitBox(g, xlvlOffset, yLvlOffset);
         renderAim(g, xlvlOffset, yLvlOffset);
         armaActual.render(g, xlvlOffset, yLvlOffset);
+        adminBalasCentral.render(g, xlvlOffset, yLvlOffset);
     }
     
     public void resetPosition(float x, float y) {
@@ -136,7 +146,27 @@ public class Jugador extends Cascaron {
         inAir = false;
         airSpeed = 0;
     }
+    // Añadir al final de la clase Jugador
+    public void cambiarArma() {
+        indiceArmaActual = (indiceArmaActual + 1) % inventarioArmas.size();
+        armaActual = inventarioArmas.get(indiceArmaActual);
+        System.out.println("Cambiado a: " + armaActual.getNombre());
+    }
 
+    public void inicializarArmas() {
+        // Vaciar el inventario por si acaso
+        inventarioArmas.clear();
+        
+        // Añadir las armas disponibles
+        inventarioArmas.add(new Elementos.Armas.ArmaMercurio(adminBalasCentral));
+        inventarioArmas.add(new Elementos.Armas.MachineGun(adminBalasCentral));
+        
+        // Establecer la primera arma como actual
+        if (!inventarioArmas.isEmpty()) {
+            indiceArmaActual = 0;
+            armaActual = inventarioArmas.get(0);
+        }
+    }
     private void actuPosicion() {
         moving = false;
         

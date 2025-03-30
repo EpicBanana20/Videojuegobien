@@ -21,11 +21,11 @@ public abstract class Arma {
 
     private float[] positionResult = new float[2];
 
-    public Arma(String spritePath, float offsetDistance, float escala) {
+    public Arma(String spritePath, float offsetDistance, float escala, AdministradorBalas adminBalas) {
         this.sprite = LoadSave.GetSpriteAtlas(spritePath);
         this.offsetDistance = offsetDistance;
         this.escala = escala;
-        this.adminBalas = new AdministradorBalas();
+        this.adminBalas = adminBalas;
     }
 
     public void update(float playerX, float playerY, AimController aimController) {
@@ -40,8 +40,6 @@ public abstract class Arma {
 
         x = positionResult[0];
         y = positionResult[1];
-
-        adminBalas.update();
     }
 
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
@@ -72,8 +70,6 @@ public abstract class Arma {
             // CRÍTICO: Siempre restaurar la transformación original
             g2d.setTransform(originalTransform);
         }
-
-        adminBalas.render(g, xLvlOffset, yLvlOffset);
     }
 
     // Métodos que se implementarán en clases derivadas

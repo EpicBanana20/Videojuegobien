@@ -2,6 +2,7 @@ package Elementos.Armas;
 
 import Elementos.Arma;
 import Elementos.Bala;
+import Elementos.Administradores.AdministradorBalas;
 import Juegos.Juego;
 import Elementos.AimController;
 
@@ -21,8 +22,8 @@ public class ArmaMercurio extends Arma {
     private int armaCooldown;
     private static final int FRAMES_POR_SEGUNDO = 60;
 
-    public ArmaMercurio() {
-        super("armas/PistolaMercurio.png", 30 * Juegos.Juego.SCALE, 3.0f);
+    public ArmaMercurio(AdministradorBalas adminBalas) {
+        super("armas/PistolaMercurio.png", 30 * Juegos.Juego.SCALE, 3.0f, adminBalas);
         this.nombre = "MachineGun";
         this.armaCooldown = Math.round(FRAMES_POR_SEGUNDO / cadenciaDisparo);
     }

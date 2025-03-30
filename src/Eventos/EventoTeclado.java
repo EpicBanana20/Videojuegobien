@@ -32,9 +32,12 @@ public class EventoTeclado implements KeyListener {
             case KeyEvent.VK_D:
                 pan.getGame().getPlayer().setRight(true);
                 break;
-                case KeyEvent.VK_SPACE:
+            case KeyEvent.VK_SPACE:
                 pan.getGame().getPlayer().setJump(true);
-                break;    
+                break;
+            case KeyEvent.VK_Q:
+                pan.getGame().getPlayer().cambiarArma();
+                break;
         }
     }
 
