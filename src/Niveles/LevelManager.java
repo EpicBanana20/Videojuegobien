@@ -118,7 +118,36 @@ public class LevelManager {
     }
     public void cargarDecoraciones() {
         BufferedImage img = LoadSave.GetSpriteAtlas(LEVEL_ENVIRONMENT_FILES[currentLevelIndex]);
-        // Procesar decoraciones - Puedes crear una nueva clase AdministradorDecoraciones
+        
+        // Limpiar decoraciones existentes
+        game.getAdminDecoraciones().limpiarDecoraciones();
+        
+        // Iterar a través de cada píxel de la imagen
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int valorRojo = color.getRed();
+                int valorVerde = color.getGreen();
+                int valorAzul = color.getBlue();
+                
+                // Si hay información en el píxel (no es negro)
+                if (valorRojo > 0 || valorVerde > 0 || valorAzul > 0) {
+                    // Convertir la posición del píxel a posición del mundo
+                    float x = i * Juego.TILES_SIZE;
+                    float y = j * Juego.TILES_SIZE;
+                    
+                    // Usar valor Rojo para identificar el tipo de decoración
+                    if (valorRojo > 0) {
+                        // Usar valores Verde y Azul para determinar ancho y alto en tiles (si son 0, usar 1)
+                        int anchoTiles = valorVerde > 0 ? valorVerde : 1;
+                        int altoTiles = valorAzul > 0 ? valorAzul : 1;
+                        
+                        // Crear la decoración según su tipo
+                        game.getAdminDecoraciones().crearDecoracion(valorRojo, x, y, anchoTiles, altoTiles);
+                    }
+                }
+            }
+        }
     }
 
     public void update() {

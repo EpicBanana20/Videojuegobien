@@ -4,6 +4,7 @@ import java.awt.Graphics;
 
 import Elementos.Jugador;
 import Elementos.Administradores.AdministradorEnemigos;
+import Elementos.Administradores.AdministradorDecoraciones;
 import Niveles.LevelManager;
 
 
@@ -15,6 +16,7 @@ public class Juego {
     private Camera camera;
     private Background background;
     private GameLoop gameLoop;
+    private AdministradorDecoraciones adminDecoraciones;
 
     public static int NIVEL_ACTUAL_ANCHO;
     public static int NIVEL_ACTUAL_ALTO;
@@ -47,6 +49,7 @@ public class Juego {
     private void inicializar() {
         levelMan = new LevelManager(this);
         adminEnemigos = new AdministradorEnemigos();
+        adminDecoraciones = new AdministradorDecoraciones();
 
         NIVEL_ACTUAL_ALTO = levelMan.getCurrentLevel().getLvlData().length * TILES_SIZE;
         NIVEL_ACTUAL_ANCHO = levelMan.getCurrentLevel().getLvlData()[0].length * TILES_SIZE;
@@ -57,7 +60,7 @@ public class Juego {
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);
         background = new Background(levelMan.getCurrentLevelIndex());
         
-        // Cargar entidades para el nivel inicial
+        levelMan.cargarDecoraciones();
         levelMan.cargarEntidades(this);
     }
 
@@ -72,6 +75,7 @@ public class Juego {
         levelMan.update();
         pan.updateGame();
         adminEnemigos.update();
+        adminDecoraciones.update();
 
         if (player.getArmaActual() != null) {
             adminEnemigos.comprobarColisionesBalas(player.getArmaActual().getAdminBalas());
@@ -106,6 +110,7 @@ public class Juego {
             player.getArmaActual().getAdminBalas().limpiarBalas();
         }
         adminEnemigos.limpiarEnemigos();
+        adminDecoraciones.limpiarDecoraciones();
         
         // Cambiar nivel a través del LevelManager
         levelMan.changeLevel(nivelDestino);
@@ -128,6 +133,7 @@ public class Juego {
         background.draw(g, camera.getxLvlOffset());
         levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+        adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         
         // Aquí se podría agregar un efecto de transición entre niveles
@@ -167,5 +173,9 @@ public class Juego {
             int nivelDestino = (int)args[0];
             cambiarNivel(nivelDestino);
         }
+    }
+
+    public AdministradorDecoraciones getAdminDecoraciones() {
+        return adminDecoraciones;
     }
 }
