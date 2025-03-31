@@ -48,7 +48,9 @@ public class AdministradorDecoraciones {
         
         // Según el tipo, crear decoración estática o animada
         switch (tipo) {
+
             // Tipos 10-49: Decoraciones estáticas
+                //MUNDO 1
             case 1: //ARBOL1
                 crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOL1.png");
                 break;
@@ -88,6 +90,29 @@ public class AdministradorDecoraciones {
             case 13: //LIANAS1
                 crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/LIANAS1.png");
                 break;
+
+                //MUNDO 2
+            case 14: //CARTEL1
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/CARTEL1.png");
+                break;
+            case 15: //CARTEL2
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/CARTEL2.png");
+                break;
+            case 16: //ARBOLOP1
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLOP1.png");
+                break;
+            case 17: //ARBOLOP2
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLOP2.png");
+                break;
+            case 18: //ARBOLOP3
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLOP3.png");
+                break;
+            case 19: //ARBOLOP4
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLOP4.png");
+                break;
+            case 20: //ARBOLOP5
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLOP5.png");
+                break;
             
             
             
@@ -98,6 +123,10 @@ public class AdministradorDecoraciones {
             case 51: // Ejemplo: Fuente de agua
                 crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/fuente.png", 0, new int[]{6});
                 break;
+            case 52: //LUVIA1
+                crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/LLUVIA1.png", 0, new int[]{3});
+                break;
+
             
             // Añadir más tipos según sea necesario
         }

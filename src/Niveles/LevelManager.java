@@ -156,7 +156,7 @@ public class LevelManager {
 
     public void draw(Graphics g, int xLvlOffset, int yLvlOffset) {
         // Aumentar el área de dibujo añadiendo un margen de tiles extra
-        int margenExtra = 15; // Número de tiles adicionales en cada dirección
+        int margenExtra = 5; // Número de tiles adicionales en cada dirección
         
         int filaInicio = Math.max(0, (yLvlOffset / Juego.TILES_SIZE) - margenExtra);
         int filaFin = Math.min(getCurrentLevel().getLvlData().length,
