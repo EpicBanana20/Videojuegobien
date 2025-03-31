@@ -49,11 +49,49 @@ public class AdministradorDecoraciones {
         // Según el tipo, crear decoración estática o animada
         switch (tipo) {
             // Tipos 10-49: Decoraciones estáticas
-            case 10: // Ejemplo: Planta pequeña
-                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/3.png");
+            case 1: //ARBOL1
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOL1.png");
                 break;
-                
-            // Tipos 50-99: Decoraciones animadas
+            case 2: //ARBOL2
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOL2.png");
+                break;
+            case 3: //ARBOL3
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOL3.png");
+                break;
+            case 4: //TRONCO1
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/TRONCO1.png");
+                break;
+            case 5: //TRONCO2
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/TRONCO2.png");
+                break;
+            case 6: //TRONCO3
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/TRONCO3.png");
+                break;
+            case 7: //TRONCO4
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/TRONCO4.png");
+                break;
+            case 8: //ARBOLSECO1
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLSECO1.png");
+                break;
+            case 9: //ARBOLSECO2
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLSECO2.png");
+                break;
+            case 10: //ARBOLSECO3
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLSECO3.png");
+                break;
+            case 11: //PIEDRA1
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/PIEDRA1.png");
+                break;
+            case 12: //PIEDRA2
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/PIEDRA2.png");
+                break;
+            case 13: //LIANAS1
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/LIANAS1.png");
+                break;
+            
+            
+            
+                // Tipos 50-99: Decoraciones animadas
             case 50: // Ejemplo: Antorcha
                 crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/Card.png", 0, new int[]{8});
                 break;
