@@ -91,6 +91,7 @@ public class AdministradorDecoraciones {
                 crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/LIANAS1.png");
                 break;
 
+                
                 //MUNDO 2
             case 14: //CARTEL1
                 crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/CARTEL1.png");
@@ -113,6 +114,54 @@ public class AdministradorDecoraciones {
             case 20: //ARBOLOP5
                 crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLOP5.png");
                 break;
+            case 21: //TUBO1
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/TUBO1.png");
+                break;
+            case 22: //TUBO2
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/TUBO2.png");
+                break;
+            case 23: //TUBO3
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/TUBO3.png");
+                break;
+            case 24: //TUBO4
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/TUBO4.png");
+                break;
+            case 25: //FONDOS1
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS1.png");
+                break;
+            case 26: //FONDOS2
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS2.png");
+                break;
+            case 27: //FONDOS3
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS3.png");
+                break;
+            case 28: //FONDOS4
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS4.png");
+                break;
+            case 29: //FONDOS5
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS5.png");
+                break;
+            case 30: //FONDOS6
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS6.png");
+                break;
+            case 31: //FONDOS7
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS7.png");
+                break;
+            case 32: //FONDOS8
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS8.png");
+                break;
+            case 33: //FONDOS9
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS9.png");
+                break;
+            case 34: //FONDOS10
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS10.png");
+                break;
+            case 35: //FONDOS11
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS11.png");
+                break;
+            case 36: //FONDOS12
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS12.png");
+                break;
             
             
             
@@ -125,6 +174,9 @@ public class AdministradorDecoraciones {
                 break;
             case 52: //LUVIA1
                 crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/LLUVIA1.png", 0, new int[]{3});
+                break;
+            case 53: // REACTOR1
+                crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/LLUVIA1.png", 0, new int[]{4});
                 break;
 
             
