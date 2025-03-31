@@ -5,7 +5,18 @@ import java.util.ArrayList;
 
 import Elementos.Bala;
 import Elementos.Enemigo;
+import Elementos.Enemigos.BossRadon;
+import Elementos.Enemigos.BossZefir;
+import Elementos.Enemigos.EnemigoAranara;
+import Elementos.Enemigos.EnemigoEnergy;
+import Elementos.Enemigos.EnemigoHibit;
+import Elementos.Enemigos.EnemigoKoko;
+import Elementos.Enemigos.EnemigoPiedrora;
+import Elementos.Enemigos.EnemigoSkeler;
+import Elementos.Enemigos.EnemigoThor;
 import Elementos.Enemigos.EnemigoVerde;
+import Elementos.Enemigos.EnemigoYbirth;
+import Elementos.Enemigos.Ommi;
 
 public class AdministradorEnemigos {
     // Lista para almacenar todos los enemigos activos
@@ -84,6 +95,70 @@ public class AdministradorEnemigos {
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }
-    
+    public Ommi crearEnemigoHongo(float x, float y) {
+        Ommi nuevoEnemigo = new Ommi(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoYbirth crearEnemigoPlanta(float x, float y){
+        EnemigoYbirth nuevoEnemigo = new EnemigoYbirth(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoKoko crearEnemigoCocodrilo(float x, float y){
+        EnemigoKoko nuevoEnemigo = new EnemigoKoko(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoThor crearEnemigoTortuga(float x, float y){
+        EnemigoThor nuevoEnemigo = new EnemigoThor(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public BossRadon crearBossRadon(float x, float y){
+        BossRadon nuevoEnemigo = new BossRadon(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoAranara crearEnemigoAranara(float x, float y){
+        EnemigoAranara nuevoEnemigo = new EnemigoAranara(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoEnergy crearEnemigoEnergy(float x, float y){
+        EnemigoEnergy nuevoEnemigo = new EnemigoEnergy(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoHibit crearEnemigoHibit(float x, float y){
+        EnemigoHibit nuevoEnemigo = new EnemigoHibit(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoPiedrora crearEnemigoPiedrora(float x, float y){
+        EnemigoPiedrora nuevoEnemigo = new EnemigoPiedrora(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoSkeler crearEnemigoSkeler(float x, float y){
+        EnemigoSkeler nuevoEnemigo = new EnemigoSkeler(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public BossZefir crearBossZefir(float x, float y){
+        BossZefir nuevoEnemigo = new BossZefir(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
     // Aquí puedes añadir más métodos para crear otros tipos de enemigos en el futuro
 }
