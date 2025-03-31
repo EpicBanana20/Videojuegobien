@@ -131,8 +131,14 @@ public class Juego {
 
     public void render(Graphics g) {
         background.draw(g, camera.getxLvlOffset());
-        adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
-        levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+        
+        if(levelMan.getCurrentLevelIndex() != 2){
+            adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+            levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+        } else {
+            levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+            adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+        }
         adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         
