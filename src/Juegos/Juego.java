@@ -131,9 +131,9 @@ public class Juego {
 
     public void render(Graphics g) {
         background.draw(g, camera.getxLvlOffset());
+        adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
-        adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         
         // Aquí se podría agregar un efecto de transición entre niveles
