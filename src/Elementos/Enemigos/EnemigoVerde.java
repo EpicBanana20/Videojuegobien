@@ -255,6 +255,6 @@ public class EnemigoVerde extends Enemigo {
         }
         
         // Para debugging
-        // drawHitBox(g, xLvlOffset, yLvlOffset);
+        drawHitBox(g, xLvlOffset, yLvlOffset);
     }
 }

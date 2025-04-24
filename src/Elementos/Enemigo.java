@@ -12,6 +12,7 @@ public abstract class Enemigo extends Cascaron {
     public static final int INACTIVO = 0;
     public static final int CORRER = 1;
     public static final int HERIDO = 2;
+    public static final int DISPARO = 3;
     
     // Propiedades básicas del enemigo
     protected int vida;

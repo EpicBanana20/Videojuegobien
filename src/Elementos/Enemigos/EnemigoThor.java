@@ -1,27 +1,27 @@
 package Elementos.Enemigos;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import Elementos.Enemigo;
 import Juegos.Juego;
 import Utilz.LoadSave;
+import Utilz.Animaciones;
 import Utilz.MetodoAyuda;
 
 public class EnemigoThor extends Enemigo {
-    // Constantes específicas
-    private static final int ANCHO_DEFAULT = 64;
-    private static final int ALTO_DEFAULT = 64;
-    private static final int VIDA_DEFAULT = 30;
+    // Constantes específicas de este tipo de enemigo
+    private static final int ANCHO_DEFAULT = 96;
+    private static final int ALTO_DEFAULT = 72;
+    private static final int VIDA_DEFAULT = 50;
     
-    // Propiedades para el comportamiento
+    // Variables para el comportamiento de patrulla
     private boolean movimientoHaciaIzquierda = false;
-    private float velocidadMovimiento = 0.3f * Juego.SCALE;
+    private float velocidadMovimiento = 0.5f * Juego.SCALE;
     private boolean patrullando = true;
     
-    // Sprite único
-    private BufferedImage sprite;
+    // Variable para comprobar si hay suelo
+    private float checkOffset = 15 * Juego.SCALE; // Distancia para comprobar suelo delante
     
     public EnemigoThor(float x, float y) {
         super(x, y, 
@@ -29,36 +29,19 @@ public class EnemigoThor extends Enemigo {
             (int)(ALTO_DEFAULT * Juego.SCALE), 
             VIDA_DEFAULT);
         
-        // Ajustar el offset para dibujar correctamente
-        this.xDrawOffset = 8 * Juego.SCALE;
-        this.yDrawOffset = 8 * Juego.SCALE;
+        // Ajustar el offset para este enemigo específico
+        this.xDrawOffset = 24 * Juego.SCALE;
+        this.yDrawOffset = 24 * Juego.SCALE;
         
-        // Configurar hitbox específico
-        initHitBox(x, y, 48 * Juego.SCALE, 48 * Juego.SCALE);
+        // Configurar hitbox específico para el enemigo verde
+        initHitBox(x, y, 72 * Juego.SCALE, 40 * Juego.SCALE);
         
         // Inicializar velocidad (negativa para moverse a la izquierda al inicio)
         this.velocidadX = -velocidadMovimiento;
         movimientoHaciaIzquierda = true;
         
-        // Cargar el sprite único
-        cargarSprite();
-    }
-    
-    private void cargarSprite() {
-        // Carga tu sprite - reemplaza "enemigos/mi_enemigo.png" con la ruta a tu imagen
-        sprite = LoadSave.GetSpriteAtlas("enemigos/Battle_turtle.png");
-        
-        // Si no encuentras el sprite, usar un cuadrado de color como alternativa
-        if (sprite == null) {
-            System.out.println("Sprite no encontrado, usando placeholder");
-            sprite = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-            Graphics g = sprite.getGraphics();
-            g.setColor(Color.MAGENTA);
-            g.fillRect(0, 0, 64, 64);
-            g.setColor(Color.BLACK);
-            g.drawRect(0, 0, 63, 63);
-            g.dispose();
-        }
+        // Cargar animaciones
+        cargarAnimaciones();
     }
     
     @Override
@@ -70,6 +53,11 @@ public class EnemigoThor extends Enemigo {
             patrullar();
         }
         mover();
+        
+        if (animaciones != null) {
+            animaciones.actualizarAnimacion();
+            determinarAnimacion();
+        }
     }
     
     @Override
@@ -79,14 +67,17 @@ public class EnemigoThor extends Enemigo {
         
         if (enSuelo) {
             enAire = false;
-            velocidadAire = 0;
+            velocidadAire = 0;  // Asegurarnos de resetear la velocidad de aire
         } else {
             enAire = true;
         }
         
         // Aplicar gravedad SOLO si estamos en el aire
         if (enAire) {
-            velocidadAire += gravedad;
+            // Gravedad personalizada para este enemigo
+            float gravedadPersonalizada = 0.03f * Juego.SCALE;
+            
+            velocidadAire += gravedadPersonalizada;
             
             // Verificar si podemos movernos hacia abajo
             if (MetodoAyuda.CanMoveHere(
@@ -118,8 +109,7 @@ public class EnemigoThor extends Enemigo {
     }
     
     private void patrullar() {
-        // Usar los métodos centralizados para comprobar pared y suelo
-        float checkOffset = 15 * Juego.SCALE;
+        // Usar los nuevos métodos centralizados para comprobar pared y suelo
         boolean hayPared = MetodoAyuda.hayParedAdelante(
             hitbox, 
             Juego.NIVEL_ACTUAL_DATA, 
@@ -162,41 +152,62 @@ public class EnemigoThor extends Enemigo {
     }
     
     @Override
-    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (!activo) return;
-        
-        // Dibujar enemigo con posible flip horizontal
-        if (sprite != null) {
-            // Calcular posición con offset
-            int drawX = (int) (hitbox.x - xDrawOffset) - xLvlOffset;
-            int drawY = (int) (hitbox.y - yDrawOffset) - yLvlOffset;
-            
-            if (movimientoHaciaIzquierda) {
-                // Dibujar volteado horizontalmente
-                g.drawImage(sprite,
-                    drawX + w, drawY,
-                    -w, h, null);
-            } else {
-                // Dibujar normal
-                g.drawImage(sprite,
-                    drawX, drawY,
-                    w, h, null);
-            }
+    protected void determinarAnimacion() {
+        // Si la animación actual es HERIDO y no ha terminado, no cambiar
+        if (animaciones.getAccionActual() == HERIDO && !animaciones.esUltimoFrame()) {
+            return;
         }
         
-        // Para debugging (descomentar si necesitas ver el hitbox)
-        drawHitBox(g, xLvlOffset, yLvlOffset);
-    }
-    
-    // Estos métodos son requeridos por la clase abstracta Enemigo
-    @Override
-    protected void determinarAnimacion() {
-        // No hacemos nada aquí ya que no usamos animaciones
+        // De lo contrario, determinar animación basada en el estado
+        int nuevaAnimacion = INACTIVO; // Por defecto, estamos inactivos
+        
+        if (enAire) {
+            // Si tuviéramos una animación de salto/caída, la usaríamos aquí
+            // Por ahora, seguimos usando CORRER o INACTIVO dependiendo de la velocidad
+            if (velocidadX != 0) {
+                nuevaAnimacion = CORRER;
+            }
+        } else if (velocidadX != 0) {
+            nuevaAnimacion = CORRER;
+        }
+        
+        // Configuramos la nueva acción en el objeto de animaciones
+        animaciones.setAccion(nuevaAnimacion);
     }
     
     @Override
     protected void cargarAnimaciones() {
-        // No hacemos nada aquí ya que no usamos animaciones
+        // Cargar la hoja de sprites del enemigo verde
+        BufferedImage img = LoadSave.GetSpriteAtlas("enemigos/Thor 72x72.png");
+        
+        // Basado en la imagen, tiene 3 filas (acciones) con varios frames cada una
+        // Fila 1 (índice 0): 6 frames - Inactivo/Idle
+        // Fila 2 (índice 1): 6 frames - Correr/Moverse
+        // Fila 3 (índice 2): 2 frames - Daño/Herido
+        spritesEnemigo = new BufferedImage[4][4]; // 3 acciones, máximo 6 frames
+        
+        // Ancho y alto de cada frame del sprite 
+        int frameWidth = 72;
+        int frameHeight = 72;
+        
+        // Extraer cada frame de la hoja de sprites
+        for (int j = 0; j < spritesEnemigo.length; j++) {
+             int framesEnFila = (j == 4) ? 2 : 4; // Última fila tiene 4 frames, las demás 6
+            for (int i = 0; i < framesEnFila; i++) {
+                spritesEnemigo[j][i] = img.getSubimage(i * frameWidth, j * frameHeight, frameWidth, frameHeight);
+            }
+        }
+        
+        // Crear animaciones
+        animaciones = new Animaciones(spritesEnemigo);
+        
+        // Configurar el número correcto de frames para cada animación
+        animaciones.setNumFramesPorAnimacion(INACTIVO, 6); // 6 frames para inactivo/idle
+        animaciones.setNumFramesPorAnimacion(CORRER, 6);   // 6 frames para correr/moverse
+        animaciones.setNumFramesPorAnimacion(HERIDO, 2);   // 2 frames para herido
+        
+        // Establecer animación inicial
+        animaciones.setAccion(CORRER);  // Comenzamos en animación de correr ya que estará en movimiento
     }
     
     // Métodos para configurar el comportamiento
@@ -215,5 +226,35 @@ public class EnemigoThor extends Enemigo {
         if (velocidadX != 0) {
             velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
         }
+    }
+    
+    @Override
+    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
+        if (!activo) return;
+        
+        // Guardar flip horizontal basado en dirección
+        boolean flipX = !movimientoHaciaIzquierda;
+        
+        // Dibujar enemigo con posible flip horizontal
+        if (animaciones != null) {
+            // Calcular posición con offset
+            int drawX = (int) (hitbox.x - xDrawOffset) - xLvlOffset;
+            int drawY = (int) (hitbox.y - yDrawOffset) - yLvlOffset;
+            
+            if (flipX) {
+                // Dibujar volteado horizontalmente
+                g.drawImage(animaciones.getImagenActual(),
+                    drawX + w, drawY,
+                    -w, h, null);
+            } else {
+                // Dibujar normal
+                g.drawImage(animaciones.getImagenActual(),
+                    drawX, drawY,
+                    w, h, null);
+            }
+        }
+        
+        // Para debugging
+        drawHitBox(g, xLvlOffset, yLvlOffset);
     }
 }
