@@ -182,7 +182,7 @@ public class AdministradorDecoraciones {
                 crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/HOJAS1.png", 0, new int[]{7});
                 break;
             case 55: //DESTELLO1
-                crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/DESTELLO1.png", 0, new int[]{50});
+                crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/DESTELLO1.png", 0, new int[]{60});
                 break;
 
             
