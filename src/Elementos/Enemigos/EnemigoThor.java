@@ -19,9 +19,12 @@ public class EnemigoThor extends Enemigo {
     private boolean movimientoHaciaIzquierda = false;
     private float velocidadMovimiento = 0.5f * Juego.SCALE;
     private boolean patrullando = true;
+    private int ajuste = -23;
+    
     
     // Variable para comprobar si hay suelo
     private float checkOffset = 15 * Juego.SCALE; // Distancia para comprobar suelo delante
+    
     
     public EnemigoThor(float x, float y) {
         super(x, y, 
@@ -31,7 +34,7 @@ public class EnemigoThor extends Enemigo {
         
         // Ajustar el offset para este enemigo específico
         this.xDrawOffset = 24 * Juego.SCALE;
-        this.yDrawOffset = 24 * Juego.SCALE;
+        this.yDrawOffset = 29 * Juego.SCALE;
         
         // Configurar hitbox específico para el enemigo verde
         initHitBox(x, y, 72 * Juego.SCALE, 40 * Juego.SCALE);
@@ -179,11 +182,7 @@ public class EnemigoThor extends Enemigo {
     protected void cargarAnimaciones() {
         // Cargar la hoja de sprites del enemigo verde
         BufferedImage img = LoadSave.GetSpriteAtlas("enemigos/Thor 72x72.png");
-        
-        // Basado en la imagen, tiene 3 filas (acciones) con varios frames cada una
-        // Fila 1 (índice 0): 6 frames - Inactivo/Idle
-        // Fila 2 (índice 1): 6 frames - Correr/Moverse
-        // Fila 3 (índice 2): 2 frames - Daño/Herido
+
         spritesEnemigo = new BufferedImage[4][4]; // 3 acciones, máximo 6 frames
         
         // Ancho y alto de cada frame del sprite 
@@ -192,7 +191,7 @@ public class EnemigoThor extends Enemigo {
         
         // Extraer cada frame de la hoja de sprites
         for (int j = 0; j < spritesEnemigo.length; j++) {
-             int framesEnFila = (j == 4) ? 2 : 4; // Última fila tiene 4 frames, las demás 6
+             int framesEnFila = (j == 3) ? 2 : 4;
             for (int i = 0; i < framesEnFila; i++) {
                 spritesEnemigo[j][i] = img.getSubimage(i * frameWidth, j * frameHeight, frameWidth, frameHeight);
             }
@@ -202,9 +201,10 @@ public class EnemigoThor extends Enemigo {
         animaciones = new Animaciones(spritesEnemigo);
         
         // Configurar el número correcto de frames para cada animación
-        animaciones.setNumFramesPorAnimacion(INACTIVO, 6); // 6 frames para inactivo/idle
-        animaciones.setNumFramesPorAnimacion(CORRER, 6);   // 6 frames para correr/moverse
+        animaciones.setNumFramesPorAnimacion(INACTIVO, 4); // 6 frames para inactivo/idle
+        animaciones.setNumFramesPorAnimacion(CORRER, 4);   // 6 frames para correr/moverse
         animaciones.setNumFramesPorAnimacion(HERIDO, 2);   // 2 frames para herido
+        animaciones.setNumFramesPorAnimacion(DISPARO, 4);
         
         // Establecer animación inicial
         animaciones.setAccion(CORRER);  // Comenzamos en animación de correr ya que estará en movimiento
@@ -244,7 +244,7 @@ public class EnemigoThor extends Enemigo {
             if (flipX) {
                 // Dibujar volteado horizontalmente
                 g.drawImage(animaciones.getImagenActual(),
-                    drawX + w, drawY,
+                    drawX + w - ajuste, drawY,
                     -w, h, null);
             } else {
                 // Dibujar normal

@@ -19,6 +19,7 @@ public class EnemigoVerde extends Enemigo {
     private boolean movimientoHaciaIzquierda = false;
     private float velocidadMovimiento = 0.5f * Juego.SCALE;
     private boolean patrullando = true;
+    private int ajuste = 20;
     
     // Variable para comprobar si hay suelo
     private float checkOffset = 15 * Juego.SCALE; // Distancia para comprobar suelo delante
@@ -244,7 +245,7 @@ public class EnemigoVerde extends Enemigo {
             if (flipX) {
                 // Dibujar volteado horizontalmente
                 g.drawImage(animaciones.getImagenActual(),
-                    drawX + w, drawY,
+                    drawX + w - ajuste, drawY,
                     -w, h, null);
             } else {
                 // Dibujar normal
