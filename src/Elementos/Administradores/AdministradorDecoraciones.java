@@ -184,6 +184,9 @@ public class AdministradorDecoraciones {
             case 55: //DESTELLO1
                 crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/DESTELLO1.png", 0, new int[]{60});
                 break;
+            case 56: //REACTOR1
+                crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/REACTOR1.png", 0, new int[]{4});
+                break;
 
             
             // Añadir más tipos según sea necesario
