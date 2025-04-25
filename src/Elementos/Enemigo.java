@@ -50,7 +50,6 @@ public abstract class Enemigo extends Cascaron {
             patrullar();
         }
         mover();
-        
         // Actualizar animaciones
         if (animaciones != null) {
             animaciones.actualizarAnimacion();
@@ -101,6 +100,7 @@ public abstract class Enemigo extends Cascaron {
     }
     
     protected void patrullar() {
+        // Verificar si puede moverse en la dirección actual
         boolean hayPared = MetodoAyuda.hayParedAdelante(
             hitbox, 
             Juego.NIVEL_ACTUAL_DATA, 
@@ -114,7 +114,33 @@ public abstract class Enemigo extends Cascaron {
         );
         
         if (hayPared || !haySueloAdelante) {
-            cambiarDireccion();
+            // Intentar cambiar dirección
+            movimientoHaciaIzquierda = !movimientoHaciaIzquierda;
+            
+            // Verificar si puede moverse en la nueva dirección
+            boolean hayParedEnNuevaDireccion = MetodoAyuda.hayParedAdelante(
+                hitbox, 
+                Juego.NIVEL_ACTUAL_DATA, 
+                movimientoHaciaIzquierda ? -checkOffset : checkOffset
+            );
+            
+            boolean haySueloEnNuevaDireccion = MetodoAyuda.haySueloAdelante(
+                hitbox, 
+                Juego.NIVEL_ACTUAL_DATA, 
+                movimientoHaciaIzquierda ? -checkOffset : checkOffset
+            );
+            
+            if (hayParedEnNuevaDireccion || !haySueloEnNuevaDireccion) {
+                // No puede moverse en ninguna dirección, quieto
+                velocidadX = 0;
+                patrullando = false;
+                if (animaciones != null) {
+                    animaciones.setAccion(INACTIVO);
+                }
+            } else {
+                // Puede moverse en la nueva dirección
+                velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+            }
         }
     }
     
