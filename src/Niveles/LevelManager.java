@@ -110,6 +110,9 @@ public class LevelManager {
                     case 2:
                     game.getAdminEnemigos().crearEnemigoVerde(x, y);
                         break;
+                    case 3:
+                    game.getAdminEnemigos().crearEnemigoThor(x, y);
+                        break;
                     default:
                         break;
                 }

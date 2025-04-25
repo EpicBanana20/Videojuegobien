@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import Elementos.Bala;
 import Elementos.Enemigo;
+import Elementos.Enemigos.EnemigoThor;
 import Elementos.Enemigos.EnemigoVerde;
 
 public class AdministradorEnemigos {
@@ -81,6 +82,12 @@ public class AdministradorEnemigos {
     // Crear un enemigo verde en una posición determinada
     public EnemigoVerde crearEnemigoVerde(float x, float y) {
         EnemigoVerde nuevoEnemigo = new EnemigoVerde(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoThor crearEnemigoThor(float x, float y) {
+        EnemigoThor nuevoEnemigo = new EnemigoThor(x, y);
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }
