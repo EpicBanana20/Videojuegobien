@@ -99,9 +99,7 @@ public class EnemigoVerde extends Enemigo {
         int drawX = (int) (hitbox.x - xDrawOffset) - xLvlOffset;
         int drawY = (int) (hitbox.y - yDrawOffset) - yLvlOffset;
         
-        boolean voltearHorizontal = invertirOrientacion ? !movimientoHaciaIzquierda : movimientoHaciaIzquierda;
-        
-        if (voltearHorizontal) {
+        if (movimientoHaciaIzquierda) {
             // Dibujar volteado horizontalmente con ajuste
             g.drawImage(animaciones.getImagenActual(),
                 drawX + w - ajuste, drawY,

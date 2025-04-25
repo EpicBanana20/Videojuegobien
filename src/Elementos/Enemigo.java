@@ -28,7 +28,7 @@ public abstract class Enemigo extends Cascaron {
     public static final int DISPARO = 3;
    
     // Nuevas propiedades para comportamiento común
-    protected boolean movimientoHaciaIzquierda = false;
+    protected boolean movimientoHaciaIzquierda = true;
     protected float velocidadMovimiento = 0.3f * Juego.SCALE;
     protected boolean patrullando = true;
     protected float checkOffset = 15 * Juego.SCALE;
@@ -61,6 +61,12 @@ public abstract class Enemigo extends Cascaron {
     protected void aplicarGravedad() {
         // Verificar primero si estamos en el suelo
         boolean enSuelo = MetodoAyuda.isEntityOnFloor(hitbox, Juego.NIVEL_ACTUAL_DATA);
+        boolean movimientoExitoso = MetodoAyuda.CanMoveHere(
+            hitbox.x, 
+            hitbox.y + velocidadAire, 
+            hitbox.width, 
+            hitbox.height, 
+            Juego.NIVEL_ACTUAL_DATA);
         
         if (enSuelo) {
             enAire = false;
@@ -74,12 +80,7 @@ public abstract class Enemigo extends Cascaron {
             velocidadAire += gravedad;
             
             // Verificar si podemos movernos hacia abajo
-            if (MetodoAyuda.CanMoveHere(
-                    hitbox.x, 
-                    hitbox.y + velocidadAire, 
-                    hitbox.width, 
-                    hitbox.height, 
-                    Juego.NIVEL_ACTUAL_DATA)) {
+            if (movimientoExitoso) {
                 
                 hitbox.y += velocidadAire;
             } else {
@@ -145,41 +146,12 @@ public abstract class Enemigo extends Cascaron {
         // Para animaciones
         if (animaciones != null) {
             renderizarConAnimacion(g, xLvlOffset, yLvlOffset);
-        } else {
-            renderizarBasico(g, xLvlOffset, yLvlOffset);
         }
-        
         // Para debugging
         drawHitBox(g, xLvlOffset, yLvlOffset);
     }
     
-    protected void renderizarConAnimacion(Graphics g, int xLvlOffset, int yLvlOffset) {
-        int drawX = (int) (hitbox.x - xDrawOffset) - xLvlOffset;
-        int drawY = (int) (hitbox.y - yDrawOffset) - yLvlOffset;
-        
-        // Determinar si voltear el sprite basado en la dirección y configuración
-        boolean voltearHorizontal = invertirOrientacion ? !movimientoHaciaIzquierda : movimientoHaciaIzquierda;
-        
-        if (voltearHorizontal) {
-            g.drawImage(animaciones.getImagenActual(),
-                drawX + w, drawY,
-                -w, h, null);
-        } else {
-            g.drawImage(animaciones.getImagenActual(),
-                drawX, drawY,
-                w, h, null);
-        }
-    }
-    
-    protected void renderizarBasico(Graphics g, int xLvlOffset, int yLvlOffset) {
-        g.setColor(Color.RED);
-        g.fillRect(
-            (int) (hitbox.x - xLvlOffset),
-            (int) (hitbox.y - yLvlOffset),
-            (int) hitbox.width,
-            (int) hitbox.height
-        );
-    }
+
     
     public void recibirDaño(int cantidad) {
         if (!activo) return;
@@ -248,6 +220,7 @@ public abstract class Enemigo extends Cascaron {
         }
     }
 
+    protected void renderizarConAnimacion(Graphics g, int xLvlOffset, int yLvlOffset) {}
     protected abstract void cargarAnimaciones();
     protected abstract void determinarAnimacion();
     
