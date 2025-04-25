@@ -110,39 +110,6 @@ public class LevelManager {
                     case 2:
                     game.getAdminEnemigos().crearEnemigoVerde(x, y);
                         break;
-                    case 3:
-                    game.getAdminEnemigos().crearEnemigoHongo(x, y);
-                        break;
-                    case 4:
-                    game.getAdminEnemigos().crearEnemigoPlanta(x, y);
-                        break;
-                    case 5:
-                    game.getAdminEnemigos().crearEnemigoCocodrilo(x, y);
-                        break;
-                    case 6:
-                    game.getAdminEnemigos().crearEnemigoTortuga(x, y);
-                        break;
-                    case 7:
-                    game.getAdminEnemigos().crearBossRadon(x, y);
-                        break;
-                    case 8:
-                    game.getAdminEnemigos().crearEnemigoAranara(x, y);
-                        break;
-                    case 9:
-                    game.getAdminEnemigos().crearEnemigoEnergy(x, y);
-                        break;
-                    case 10:
-                    game.getAdminEnemigos().crearEnemigoHibit(x, y);
-                        break;
-                    case 11:
-                    game.getAdminEnemigos().crearEnemigoPiedrora(x, y);
-                        break;
-                    case 12:
-                    game.getAdminEnemigos().crearEnemigoSkeler(x, y);
-                        break;
-                    case 13:
-                    game.getAdminEnemigos().crearBossZefir(x, y);
-                        break;
                     default:
                         break;
                 }

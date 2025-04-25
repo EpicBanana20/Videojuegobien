@@ -7,7 +7,6 @@ import Elementos.Enemigo;
 import Juegos.Juego;
 import Utilz.LoadSave;
 import Utilz.Animaciones;
-import Utilz.MetodoAyuda;
 
 public class EnemigoVerde extends Enemigo {
     // Constantes específicas de este tipo de enemigo
@@ -15,13 +14,8 @@ public class EnemigoVerde extends Enemigo {
     private static final int ALTO_DEFAULT = 64;
     private static final int VIDA_DEFAULT = 50;
     
-    // Variables para el comportamiento de patrulla
-    private boolean movimientoHaciaIzquierda = false;
-    private float velocidadMovimiento = 0.5f * Juego.SCALE;
-    private boolean patrullando = true;
-    
-    // Variable para comprobar si hay suelo
-    private float checkOffset = 15 * Juego.SCALE; // Distancia para comprobar suelo delante
+    // Ajuste específico para este enemigo
+    private int ajuste = 20;
     
     public EnemigoVerde(float x, float y) {
         super(x, y, 
@@ -29,126 +23,13 @@ public class EnemigoVerde extends Enemigo {
             (int)(ALTO_DEFAULT * Juego.SCALE), 
             VIDA_DEFAULT);
         
-        // Ajustar el offset para este enemigo específico
-        this.xDrawOffset = 16 * Juego.SCALE;
-        this.yDrawOffset = 16 * Juego.SCALE;
-        
-        // Configurar hitbox específico para el enemigo verde
-        initHitBox(x, y, 48 * Juego.SCALE, 48 * Juego.SCALE);
-        
-        // Inicializar velocidad (negativa para moverse a la izquierda al inicio)
-        this.velocidadX = -velocidadMovimiento;
-        movimientoHaciaIzquierda = true;
+        // Configurar propiedades específicas
+        inicializarEnemigo(16, 16, 48, 48, true, true);
+        this.velocidadMovimiento = 0.5f * Juego.SCALE;
+        this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         
         // Cargar animaciones
         cargarAnimaciones();
-    }
-    
-    @Override
-    public void update() {
-        if (!activo) return;
-        
-        aplicarGravedad();
-        if (!enAire && patrullando) {
-            patrullar();
-        }
-        mover();
-        
-        if (animaciones != null) {
-            animaciones.actualizarAnimacion();
-            determinarAnimacion();
-        }
-    }
-    
-    @Override
-    protected void aplicarGravedad() {
-        // Verificar primero si estamos en el suelo
-        boolean enSuelo = MetodoAyuda.isEntityOnFloor(hitbox, Juego.NIVEL_ACTUAL_DATA);
-        
-        if (enSuelo) {
-            enAire = false;
-            velocidadAire = 0;  // Asegurarnos de resetear la velocidad de aire
-        } else {
-            enAire = true;
-        }
-        
-        // Aplicar gravedad SOLO si estamos en el aire
-        if (enAire) {
-            // Gravedad personalizada para este enemigo
-            float gravedadPersonalizada = 0.03f * Juego.SCALE;
-            
-            velocidadAire += gravedadPersonalizada;
-            
-            // Verificar si podemos movernos hacia abajo
-            if (MetodoAyuda.CanMoveHere(
-                    hitbox.x, 
-                    hitbox.y + velocidadAire, 
-                    hitbox.width, 
-                    hitbox.height, 
-                    Juego.NIVEL_ACTUAL_DATA)) {
-                
-                hitbox.y += velocidadAire;
-            } else {
-                // Si hay colisión, ajustar posición y resetear velocidad aire
-                hitbox.y = MetodoAyuda.GetEntityYPosUnderRoofOrAboveFloor(hitbox, velocidadAire);
-                
-                // Resetear valores
-                if (velocidadAire > 0) {
-                    // Tocando el suelo
-                    velocidadAire = 0;
-                    enAire = false;
-                } else {
-                    // Chocando con el techo
-                    velocidadAire = 0.1f;
-                }
-            }
-        }
-        
-        // Actualizar la coordenada y
-        y = hitbox.y;
-    }
-    
-    private void patrullar() {
-        // Usar los nuevos métodos centralizados para comprobar pared y suelo
-        boolean hayPared = MetodoAyuda.hayParedAdelante(
-            hitbox, 
-            Juego.NIVEL_ACTUAL_DATA, 
-            movimientoHaciaIzquierda ? -checkOffset : checkOffset
-        );
-        
-        boolean haySueloAdelante = MetodoAyuda.haySueloAdelante(
-            hitbox, 
-            Juego.NIVEL_ACTUAL_DATA, 
-            movimientoHaciaIzquierda ? -checkOffset : checkOffset
-        );
-        
-        // Si hay una pared adelante o no hay suelo, cambiar dirección
-        if (hayPared || !haySueloAdelante) {
-            cambiarDireccion();
-        }
-    }
-    
-    private void cambiarDireccion() {
-        movimientoHaciaIzquierda = !movimientoHaciaIzquierda;
-        velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
-    }
-    
-    @Override
-    protected void mover() {
-        // Usar el método centralizado para mover horizontalmente
-        boolean movimientoExitoso = MetodoAyuda.moverHorizontal(
-            hitbox, 
-            velocidadX, 
-            Juego.NIVEL_ACTUAL_DATA
-        );
-        
-        // Actualizar la posición x
-        x = hitbox.x;
-        
-        // Si hubo colisión, cambiar de dirección
-        if (!movimientoExitoso) {
-            cambiarDireccion();
-        }
     }
     
     @Override
@@ -210,51 +91,26 @@ public class EnemigoVerde extends Enemigo {
         animaciones.setAccion(CORRER);  // Comenzamos en animación de correr ya que estará en movimiento
     }
     
-    // Métodos para configurar el comportamiento
-    public void setPatrullando(boolean patrullando) {
-        this.patrullando = patrullando;
-        if (!patrullando) {
-            velocidadX = 0;
-        } else if (velocidadX == 0) {
-            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
-        }
-    }
-    
-    public void setVelocidadMovimiento(float velocidad) {
-        this.velocidadMovimiento = velocidad;
-        // Actualizar la velocidad actual manteniendo la dirección
-        if (velocidadX != 0) {
-            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
-        }
-    }
-    
+    // Sobrescribir renderizado para aplicar el ajuste específico
     @Override
-    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
+    protected void renderizarConAnimacion(Graphics g, int xLvlOffset, int yLvlOffset) {
         if (!activo) return;
         
-        // Guardar flip horizontal basado en dirección
-        boolean flipX = movimientoHaciaIzquierda;
+        int drawX = (int) (hitbox.x - xDrawOffset) - xLvlOffset;
+        int drawY = (int) (hitbox.y - yDrawOffset) - yLvlOffset;
         
-        // Dibujar enemigo con posible flip horizontal
-        if (animaciones != null) {
-            // Calcular posición con offset
-            int drawX = (int) (hitbox.x - xDrawOffset) - xLvlOffset;
-            int drawY = (int) (hitbox.y - yDrawOffset) - yLvlOffset;
-            
-            if (flipX) {
-                // Dibujar volteado horizontalmente
-                g.drawImage(animaciones.getImagenActual(),
-                    drawX + w, drawY,
-                    -w, h, null);
-            } else {
-                // Dibujar normal
-                g.drawImage(animaciones.getImagenActual(),
-                    drawX, drawY,
-                    w, h, null);
-            }
+        boolean voltearHorizontal = invertirOrientacion ? !movimientoHaciaIzquierda : movimientoHaciaIzquierda;
+        
+        if (voltearHorizontal) {
+            // Dibujar volteado horizontalmente con ajuste
+            g.drawImage(animaciones.getImagenActual(),
+                drawX + w - ajuste, drawY,
+                -w, h, null);
+        } else {
+            // Dibujar normal
+            g.drawImage(animaciones.getImagenActual(),
+                drawX, drawY,
+                w, h, null);
         }
-        
-        // Para debugging
-        // drawHitBox(g, xLvlOffset, yLvlOffset);
     }
 }
