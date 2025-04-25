@@ -27,6 +27,13 @@ public abstract class Enemigo extends Cascaron {
     public static final int HERIDO = 2;
     public static final int DISPARO = 3;
    
+    // Nuevas propiedades para comportamiento común
+    protected boolean movimientoHaciaIzquierda = false;
+    protected float velocidadMovimiento = 0.3f * Juego.SCALE;
+    protected boolean patrullando = true;
+    protected float checkOffset = 15 * Juego.SCALE;
+    protected boolean invertirOrientacion = false;
+
     protected float gravedad = 0.04f * Juego.SCALE;
     
     public Enemigo(float x, float y, int width, int height, int vidaMaxima) {
@@ -39,6 +46,9 @@ public abstract class Enemigo extends Cascaron {
         if (!activo) return;
 
         aplicarGravedad();
+        if (!enAire && patrullando) {
+            patrullar();
+        }
         mover();
         
         // Actualizar animaciones
@@ -48,38 +58,127 @@ public abstract class Enemigo extends Cascaron {
         }
     }
     
-   
+    protected void aplicarGravedad() {
+        // Verificar primero si estamos en el suelo
+        boolean enSuelo = MetodoAyuda.isEntityOnFloor(hitbox, Juego.NIVEL_ACTUAL_DATA);
+        
+        if (enSuelo) {
+            enAire = false;
+            velocidadAire = 0;
+        } else {
+            enAire = true;
+        }
+        
+        // Aplicar gravedad SOLO si estamos en el aire
+        if (enAire) {
+            velocidadAire += gravedad;
+            
+            // Verificar si podemos movernos hacia abajo
+            if (MetodoAyuda.CanMoveHere(
+                    hitbox.x, 
+                    hitbox.y + velocidadAire, 
+                    hitbox.width, 
+                    hitbox.height, 
+                    Juego.NIVEL_ACTUAL_DATA)) {
+                
+                hitbox.y += velocidadAire;
+            } else {
+                // Si hay colisión, ajustar posición y resetear velocidad aire
+                hitbox.y = MetodoAyuda.GetEntityYPosUnderRoofOrAboveFloor(hitbox, velocidadAire);
+                
+                // Resetear valores
+                if (velocidadAire > 0) {
+                    // Tocando el suelo
+                    velocidadAire = 0;
+                    enAire = false;
+                } else {
+                    // Chocando con el techo
+                    velocidadAire = 0.1f;
+                }
+            }
+        }
+        
+        // Actualizar la coordenada y
+        y = hitbox.y;
+    }
+    
+    protected void patrullar() {
+        boolean hayPared = MetodoAyuda.hayParedAdelante(
+            hitbox, 
+            Juego.NIVEL_ACTUAL_DATA, 
+            movimientoHaciaIzquierda ? -checkOffset : checkOffset
+        );
+        
+        boolean haySueloAdelante = MetodoAyuda.haySueloAdelante(
+            hitbox, 
+            Juego.NIVEL_ACTUAL_DATA, 
+            movimientoHaciaIzquierda ? -checkOffset : checkOffset
+        );
+        
+        if (hayPared || !haySueloAdelante) {
+            cambiarDireccion();
+        }
+    }
+    
+    protected void cambiarDireccion() {
+        movimientoHaciaIzquierda = !movimientoHaciaIzquierda;
+        velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+    }
     
     protected void mover() {
-        // Comportamiento básico de movimiento horizontal utilizando el método centralizado
-        if (velocidadX != 0) {
-            MetodoAyuda.moverHorizontal(hitbox, velocidadX, Juego.NIVEL_ACTUAL_DATA);
-            x = hitbox.x;
+        boolean movimientoExitoso = MetodoAyuda.moverHorizontal(
+            hitbox, 
+            velocidadX, 
+            Juego.NIVEL_ACTUAL_DATA
+        );
+        
+        x = hitbox.x;
+        
+        if (!movimientoExitoso) {
+            cambiarDireccion();
         }
     }
     
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         if (!activo) return;
         
-        // Dibujar enemigo (si tiene animaciones)
+        // Para animaciones
         if (animaciones != null) {
-            g.drawImage(animaciones.getImagenActual(),
-                (int) (hitbox.x - xDrawOffset) - xLvlOffset,
-                (int) (hitbox.y - yDrawOffset) - yLvlOffset,
-                w, h, null);
+            renderizarConAnimacion(g, xLvlOffset, yLvlOffset);
         } else {
-            // Dibujo temporal si no hay animaciones
-            g.setColor(Color.RED);
-            g.fillRect(
-                (int) (hitbox.x - xLvlOffset),
-                (int) (hitbox.y - yLvlOffset),
-                (int) hitbox.width,
-                (int) hitbox.height
-            );
+            renderizarBasico(g, xLvlOffset, yLvlOffset);
         }
         
         // Para debugging
-        // drawHitBox(g, xLvlOffset, yLvlOffset);
+        drawHitBox(g, xLvlOffset, yLvlOffset);
+    }
+    
+    protected void renderizarConAnimacion(Graphics g, int xLvlOffset, int yLvlOffset) {
+        int drawX = (int) (hitbox.x - xDrawOffset) - xLvlOffset;
+        int drawY = (int) (hitbox.y - yDrawOffset) - yLvlOffset;
+        
+        // Determinar si voltear el sprite basado en la dirección y configuración
+        boolean voltearHorizontal = invertirOrientacion ? !movimientoHaciaIzquierda : movimientoHaciaIzquierda;
+        
+        if (voltearHorizontal) {
+            g.drawImage(animaciones.getImagenActual(),
+                drawX + w, drawY,
+                -w, h, null);
+        } else {
+            g.drawImage(animaciones.getImagenActual(),
+                drawX, drawY,
+                w, h, null);
+        }
+    }
+    
+    protected void renderizarBasico(Graphics g, int xLvlOffset, int yLvlOffset) {
+        g.setColor(Color.RED);
+        g.fillRect(
+            (int) (hitbox.x - xLvlOffset),
+            (int) (hitbox.y - yLvlOffset),
+            (int) hitbox.width,
+            (int) hitbox.height
+        );
     }
     
     public void recibirDaño(int cantidad) {
@@ -117,9 +216,41 @@ public abstract class Enemigo extends Cascaron {
         );
     }
 
+    // Método para inicializar configuración común
+    protected void inicializarEnemigo(float xOffset, float yOffset, 
+                                    float hitboxWidth, float hitboxHeight,
+                                    boolean iniciarHaciaIzquierda,
+                                    boolean invertirOrientacionSprite) {
+        this.xDrawOffset = xOffset * Juego.SCALE;
+        this.yDrawOffset = yOffset * Juego.SCALE;
+        this.invertirOrientacion = invertirOrientacionSprite;
+        
+        initHitBox(x, y, hitboxWidth * Juego.SCALE, hitboxHeight * Juego.SCALE);
+        
+        this.movimientoHaciaIzquierda = iniciarHaciaIzquierda;
+        this.velocidadX = iniciarHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+    }
+    
+    // Métodos para configurar el comportamiento
+    public void setPatrullando(boolean patrullando) {
+        this.patrullando = patrullando;
+        if (!patrullando) {
+            velocidadX = 0;
+        } else if (velocidadX == 0) {
+            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+        }
+    }
+    
+    public void setVelocidadMovimiento(float velocidad) {
+        this.velocidadMovimiento = velocidad;
+        if (velocidadX != 0) {
+            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+        }
+    }
+
     protected abstract void cargarAnimaciones();
     protected abstract void determinarAnimacion();
-    protected void aplicarGravedad() {}
+    
     // GETTERS Y SETTERS
     public int getVida() {
         return vida;
