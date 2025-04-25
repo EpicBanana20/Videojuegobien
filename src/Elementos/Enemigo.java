@@ -34,7 +34,7 @@ public abstract class Enemigo extends Cascaron {
     protected float checkOffset = 15 * Juego.SCALE;
     protected boolean invertirOrientacion = false;
 
-    protected float gravedad = 0.04f * Juego.SCALE;
+    protected float gravedad = 0.03f * Juego.SCALE;
     
     public Enemigo(float x, float y, int width, int height, int vidaMaxima) {
         super(x, y, width, height);
@@ -61,27 +61,24 @@ public abstract class Enemigo extends Cascaron {
     protected void aplicarGravedad() {
         // Verificar primero si estamos en el suelo
         boolean enSuelo = MetodoAyuda.isEntityOnFloor(hitbox, Juego.NIVEL_ACTUAL_DATA);
-        boolean movimientoExitoso = MetodoAyuda.CanMoveHere(
-            hitbox.x, 
-            hitbox.y + velocidadAire, 
-            hitbox.width, 
-            hitbox.height, 
-            Juego.NIVEL_ACTUAL_DATA);
         
         if (enSuelo) {
             enAire = false;
             velocidadAire = 0;
         } else {
             enAire = true;
-        }
-        
-        // Aplicar gravedad SOLO si estamos en el aire
-        if (enAire) {
+            // Aplicar gravedad SOLO si estamos en el aire
             velocidadAire += gravedad;
             
             // Verificar si podemos movernos hacia abajo
-            if (movimientoExitoso) {
+            boolean movimientoExitoso = MetodoAyuda.CanMoveHere(
+                hitbox.x, 
+                hitbox.y + velocidadAire, 
+                hitbox.width, 
+                hitbox.height, 
+                Juego.NIVEL_ACTUAL_DATA);
                 
+            if (movimientoExitoso) {
                 hitbox.y += velocidadAire;
             } else {
                 // Si hay colisión, ajustar posición y resetear velocidad aire
