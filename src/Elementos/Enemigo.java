@@ -8,32 +8,26 @@ import Utilz.Animaciones;
 import Utilz.MetodoAyuda;
 
 public abstract class Enemigo extends Cascaron {
-    // Constantes para animaciones (cada tipo de enemigo puede definir sus propias)
+    protected Animaciones animaciones;
+    protected BufferedImage[][] spritesEnemigo;
+    protected int accionActual = 0; 
+    protected int vida;
+    protected int vidaMaxima;
+    protected boolean activo = true;
+    protected float xDrawOffset;
+    protected float yDrawOffset;
+    protected float velocidadX;
+    protected float velocidadY;
+    protected float velocidadAire = 0;
+    protected boolean enAire = false;
+
+    // Constantes para animaciones
     public static final int INACTIVO = 0;
     public static final int CORRER = 1;
     public static final int HERIDO = 2;
     public static final int DISPARO = 3;
-    
-    // Propiedades básicas del enemigo
-    protected int vida;
-    protected int vidaMaxima;
-    protected boolean activo = true;
-    
-    // Propiedades para movimiento
-    protected float velocidadX;
-    protected float velocidadY;
-    protected boolean enAire = false;
+   
     protected float gravedad = 0.04f * Juego.SCALE;
-    protected float velocidadAire = 0;
-    
-    // Propiedades para animación
-    protected Animaciones animaciones;
-    protected BufferedImage[][] spritesEnemigo;
-    protected int accionActual = 0; // Estado actual (por ejemplo: 0=inactivo, 1=correr, etc.)
-    
-    // Offset para dibujar correctamente el sprite
-    protected float xDrawOffset;
-    protected float yDrawOffset;
     
     public Enemigo(float x, float y, int width, int height, int vidaMaxima) {
         super(x, y, width, height);
@@ -43,8 +37,7 @@ public abstract class Enemigo extends Cascaron {
     
     public void update() {
         if (!activo) return;
-        
-        // Actualizar la física (gravedad, colisiones, etc.)
+
         aplicarGravedad();
         mover();
         
@@ -55,7 +48,7 @@ public abstract class Enemigo extends Cascaron {
         }
     }
     
-    protected void aplicarGravedad() {}
+   
     
     protected void mover() {
         // Comportamiento básico de movimiento horizontal utilizando el método centralizado
@@ -108,20 +101,11 @@ public abstract class Enemigo extends Cascaron {
     
     protected void morir() {
         activo = false;
-        System.out.println("Enemigo derrotado!");
-        // Podríamos usar la animación de herido como animación de muerte
-        // o crear una nueva animación específica si se añade al sprite sheet
         if (animaciones != null) {
             animaciones.setAccion(HERIDO);
             animaciones.resetearAnimacion();
         }
     }
-    
-    // Método abstracto para que cada tipo de enemigo implemente su propia lógica de animación
-    protected abstract void determinarAnimacion();
-    
-    // Método abstracto para que cada tipo de enemigo cargue sus propias animaciones
-    protected abstract void cargarAnimaciones();
     
     protected void drawHitBox(Graphics g, int xLvlOffset, int yLvlOffset) {
         g.setColor(Color.PINK);
@@ -132,7 +116,10 @@ public abstract class Enemigo extends Cascaron {
             (int) hitbox.height
         );
     }
-    
+
+    protected abstract void cargarAnimaciones();
+    protected abstract void determinarAnimacion();
+    protected void aplicarGravedad() {}
     // GETTERS Y SETTERS
     public int getVida() {
         return vida;
