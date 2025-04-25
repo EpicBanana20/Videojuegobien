@@ -111,4 +111,11 @@ public class EnemigoVerde extends Enemigo {
                 w, h, null);
         }
     }
+
+    @Override
+    protected void disparar(float angulo) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'disparar'");
+    }
+    
 }

@@ -1,9 +1,13 @@
 package Juegos;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
 
+import Elementos.Bala;
+import Elementos.Enemigo;
 import Elementos.Jugador;
 import Elementos.Administradores.AdministradorEnemigos;
+import Elementos.Administradores.AdministradorBalas;
 import Elementos.Administradores.AdministradorDecoraciones;
 import Niveles.LevelManager;
 
@@ -21,6 +25,7 @@ public class Juego {
     public static int NIVEL_ACTUAL_ANCHO;
     public static int NIVEL_ACTUAL_ALTO;
     public static int[][] NIVEL_ACTUAL_DATA;
+    public static Jugador jugadorActual;
 
     public final static int TILES_DEF_SIZE = 32;
     public final static float SCALE = 1.5f;
@@ -55,6 +60,7 @@ public class Juego {
         NIVEL_ACTUAL_ANCHO = levelMan.getCurrentLevel().getLvlData()[0].length * TILES_SIZE;
         NIVEL_ACTUAL_DATA = levelMan.getCurrentLevel().getLvlData();  
         player = new Jugador(200, 200, (int) (48 * SCALE), (int) (48 * SCALE));
+        jugadorActual = player;
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
         
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);
@@ -83,8 +89,11 @@ public class Juego {
 
         camera.checkCloseToBorder((int) player.getHitBox().getX(), (int) player.getHitBox().getY());
         
-        // Aquí se podría agregar lógica para detectar cuándo cambiar de nivel
-        // Por ejemplo, al tocar un portal o llegar al final del nivel
+        for (Enemigo enemigo : adminEnemigos.getEnemigos()) {
+        if (enemigo.getAdminBalas() != null) {
+            comprobarColisionesBalasEnemigasConJugador(enemigo.getAdminBalas());
+        }
+    }
     }
     
     // Método para iniciar un cambio de nivel
@@ -128,7 +137,21 @@ public class Juego {
         cambiandoNivel = false;
         nivelDestino = -1;
     }
-
+    
+    private void comprobarColisionesBalasEnemigasConJugador(AdministradorBalas adminBalas) {
+    if (adminBalas == null || player == null) return;
+    
+    ArrayList<Bala> balas = adminBalas.getBalas();
+    
+    for (Bala bala : balas) {
+        if (bala.estaActiva() && bala.getHitBox().intersects(player.getHitBox())) {
+            // La bala impactó en el jugador
+            // Aquí puedes implementar lógica de daño al jugador
+            System.out.println("¡Jugador recibió impacto de bala enemiga!");
+            bala.desactivar();
+        }
+    }
+}
     public void render(Graphics g) {
         background.draw(g, camera.getxLvlOffset());
         

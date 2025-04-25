@@ -3,6 +3,8 @@ package Elementos;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import Elementos.Administradores.AdministradorBalas;
 import Juegos.Juego;
 import Utilz.Animaciones;
 import Utilz.MetodoAyuda;
@@ -37,21 +39,31 @@ public abstract class Enemigo extends Cascaron {
 
     protected float gravedad = 0.03f * Juego.SCALE;
 
+    protected AdministradorBalas adminBalas;
+    protected boolean puedeDisparar = false;
+    protected int disparoCooldown = 0;
+    protected int disparoMaxCooldown = 120; // 2 segundos a 60 FPS
+    protected float rangoDeteccionJugador = 300 * Juego.SCALE;
+
     public Enemigo(float x, float y, int width, int height, int vidaMaxima) {
         super(x, y, width, height);
         this.vidaMaxima = vidaMaxima;
         this.vida = vidaMaxima;
+        this.adminBalas = new AdministradorBalas();
     }
 
     public void update() {
-        if (!activo)
-            return;
-
+        if (!activo) return;
+        
         aplicarGravedad();
         if (!enAire && patrullando) {
             patrullar();
         }
         mover();
+        
+        // Actualizar balas
+        updateBalas();
+        
         // Actualizar animaciones
         if (animaciones != null) {
             animaciones.actualizarAnimacion();
@@ -163,13 +175,18 @@ public abstract class Enemigo extends Cascaron {
     }
 
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (!activo)
-            return;
-
+        if (!activo) return;
+        
+        // Dibujar balas
+        if (adminBalas != null) {
+            adminBalas.render(g, xLvlOffset, yLvlOffset);
+        }
+        
         // Para animaciones
         if (animaciones != null) {
             renderizarConAnimacion(g, xLvlOffset, yLvlOffset);
         }
+        
         // Para debugging
         drawHitBox(g, xLvlOffset, yLvlOffset);
     }
@@ -223,6 +240,53 @@ public abstract class Enemigo extends Cascaron {
         this.movimientoHaciaIzquierda = iniciarHaciaIzquierda;
         this.velocidadX = iniciarHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
     }
+
+    protected void updateBalas() {
+        if (adminBalas != null) {
+            adminBalas.update();
+        }
+    }
+    
+    // Método para verificar si puede disparar al jugador
+    protected boolean puedeVerJugador(Jugador jugador) {
+        if (jugador == null) return false;
+        
+        // Verificar distancia
+        float distanciaX = Math.abs(jugador.getXCenter() - (hitbox.x + hitbox.width/2));
+        float distanciaY = Math.abs(jugador.getYCenter() - (hitbox.y + hitbox.height/2));
+        float distanciaTotal = (float) Math.sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
+        
+        return distanciaTotal <= rangoDeteccionJugador;
+    }
+    
+    // Método para calcular ángulo hacia el jugador
+    protected float calcularAnguloHaciaJugador(Jugador jugador) {
+        float dx = jugador.getXCenter() - (hitbox.x + hitbox.width/2);
+        float dy = jugador.getYCenter() - (hitbox.y + hitbox.height/2);
+        return (float) Math.atan2(dy, dx);
+    }
+    
+    // Método abstracto que implementarán las subclases
+    protected abstract void disparar(float angulo);
+    
+    // Método para manejar la lógica de disparo
+    protected void manejarDisparo(Jugador jugador) {
+        if (!puedeDisparar || !activo) return;
+        
+        // Reducir cooldown si está activo
+        if (disparoCooldown > 0) {
+            disparoCooldown--;
+            return;
+        }
+        
+        // Verificar si el jugador está en rango
+        if (puedeVerJugador(jugador)) {
+            float angulo = calcularAnguloHaciaJugador(jugador);
+            disparar(angulo);
+            disparoCooldown = disparoMaxCooldown;
+        }
+    }
+    
 
     // Métodos para configurar el comportamiento
     public void setPatrullando(boolean patrullando) {
@@ -283,5 +347,9 @@ public abstract class Enemigo extends Cascaron {
 
     public void setEnAire(boolean enAire) {
         this.enAire = enAire;
+    }
+
+    public AdministradorBalas getAdminBalas() {
+        return adminBalas;
     }
 }

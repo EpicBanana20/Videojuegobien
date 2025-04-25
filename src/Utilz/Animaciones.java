@@ -50,7 +50,12 @@ public class Animaciones {
             }
         }
     }
-    
+    public int getNumFramesPorAnimacion(int accion) {
+        if (accion >= 0 && accion < spritesPorAccion.length) {
+            return spritesPorAccion[accion];
+        }
+        return 1;
+    }
     // Método para actualizar la animación actual
     public void actualizarAnimacion() {
         animTick++;
