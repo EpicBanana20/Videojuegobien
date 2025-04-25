@@ -91,6 +91,9 @@ public class AdministradorDecoraciones {
                 crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/LIANAS1.png");
                 break;
 
+
+
+
                 
                 //MUNDO 2
             case 14: //CARTEL1
@@ -114,7 +117,13 @@ public class AdministradorDecoraciones {
             case 20: //ARBOLOP5
                 crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/ARBOLOP5.png");
                 break;
-            case 21: //TUBO1
+           
+           
+           
+           
+           
+           //MUNDO 3
+                case 21: //TUBO1
                 crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/TUBO1.png");
                 break;
             case 22: //TUBO2
@@ -162,6 +171,10 @@ public class AdministradorDecoraciones {
             case 36: //FONDOS12
                 crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/FONDOS12.png");
                 break;
+            case 37: //OSCURIDAD
+                crearDecoracionEstatica(x, y, ancho, alto, "decoraciones/OSCURIDAD.png");
+                break;
+
             
             
             
@@ -186,6 +199,9 @@ public class AdministradorDecoraciones {
                 break;
             case 56: //REACTOR1
                 crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/REACTOR1.png", 0, new int[]{4});
+                break;
+            case 57: //BANDERA
+                crearDecoracionAnimada(x, y, ancho, alto, "decoraciones/BANDERA.png", 0, new int[]{4});
                 break;
 
             
