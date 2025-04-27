@@ -7,6 +7,7 @@ import Elementos.Bala;
 import Elementos.Enemigo;
 import Elementos.Enemigos.EnemigoThor;
 import Elementos.Enemigos.EnemigoVerde;
+import Elementos.Enemigos.EnemigoYbirth;
 
 public class AdministradorEnemigos {
     // Lista para almacenar todos los enemigos activos
@@ -88,6 +89,12 @@ public class AdministradorEnemigos {
 
     public EnemigoThor crearEnemigoThor(float x, float y) {
         EnemigoThor nuevoEnemigo = new EnemigoThor(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoYbirth crearEnemigoYbirth(float x, float y) {
+        EnemigoYbirth nuevoEnemigo = new EnemigoYbirth(x, y);
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }
