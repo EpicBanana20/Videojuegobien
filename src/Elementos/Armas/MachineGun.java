@@ -4,6 +4,7 @@ import Elementos.Arma;
 import Elementos.Bala;
 import Elementos.Administradores.AdministradorBalas;
 import Juegos.Juego;
+import Utilz.LoadSave;
 import Elementos.AimController;
 
 public class MachineGun extends Arma {
@@ -49,7 +50,9 @@ public class MachineGun extends Arma {
             Bala nuevaBala = new Bala(
                 posicionDisparo[0], 
                 posicionDisparo[1], 
-                rotacion
+                rotacion, LoadSave.BULLET_MACHINEGUN,
+                5,
+                3.0f
             );
             
             // Añadir la bala al administrador

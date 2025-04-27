@@ -28,31 +28,29 @@ public class Bala extends Cascaron {
     
     // Tamaños para visualización
     private int anchoSprite, altoSprite;
+    private String tipoSprite = LoadSave.BULLET_MACHINEGUN; // Ruta por defecto del sprite de la bala
 
-    public Bala(float x, float y, float angulo) {
-        // Llamamos al constructor de Cascaron con un tamaño pequeño para la bala
+    public Bala(float x, float y, float angulo, String tipoSprite, int daño, float velocidad) {
         super(x, y, (int) (8 * Juego.SCALE), (int) (8 * Juego.SCALE));
-
-        // Calculamos las componentes X e Y de la velocidad según el ángulo
-        this.velocidadX = (float) Math.cos(angulo) * velocidad;
-        this.velocidadY = (float) Math.sin(angulo) * velocidad;
+        
+        this.tipoSprite = tipoSprite;
+        this.daño = daño;
+        this.velocidad = velocidad * Juego.SCALE;
+        
+        // Resto del código igual...
+        this.velocidadX = (float) Math.cos(angulo) * this.velocidad;
+        this.velocidadY = (float) Math.sin(angulo) * this.velocidad;
         this.angulo = angulo;
-
-        // Inicializamos el hitbox más pequeño que el sprite visual
+        
         initHitBox(x, y, 6 * Juego.SCALE, 6 * Juego.SCALE);
-        
-        // Inicializar la animación
-        cargarAnimaciones();
-        
-        // Definir el tamaño de visualización
         anchoSprite = (int)(16 * Juego.SCALE);
         altoSprite = (int)(16 * Juego.SCALE);
-        animacionBala.setAccion(ANIMACION_INICIO_BALA);
+        cargarAnimaciones();
     }
     
     private void cargarAnimaciones() {
         // Cargamos el atlas de sprites para las balas
-        BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.BULLET_SPRITE);
+        BufferedImage img = LoadSave.GetSpriteAtlas(tipoSprite);
         
         // Suponemos que la hoja tiene 2 animaciones (bala normal e impacto)
         // con 4 frames cada una

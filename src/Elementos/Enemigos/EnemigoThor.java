@@ -213,7 +213,14 @@ public class EnemigoThor extends Enemigo{
             }
             
             // Crear la bala real
-            Bala nuevaBala = new Bala(origenX, origenY, anguloDisparo);
+            Bala nuevaBala = new Bala(
+                origenX, 
+                origenY, 
+                anguloDisparo,
+                LoadSave.BULLET_ENEMY,
+                4, // Daño enemigo
+                1.8f // Velocidad
+            );
             adminBalas.agregarBala(nuevaBala);
             
             // Ya disparamos, no repetir hasta la próxima animación

@@ -4,6 +4,7 @@ import Elementos.Arma;
 import Elementos.Bala;
 import Elementos.Administradores.AdministradorBalas;
 import Juegos.Juego;
+import Utilz.LoadSave;
 import Elementos.AimController;
 
 public class ArmaMercurio extends Arma {
@@ -32,7 +33,6 @@ public class ArmaMercurio extends Arma {
     public void disparar() {
         // Verificar si podemos disparar (no en cooldown Y tenemos munición)
         if(contadorRecarga <= 0 && municionActual > 0 && !recargando) {
-            System.out.println("¡Disparando pistola de mercurio! Munición restante: " + (municionActual-1));
             
             // Calcular la posición exacta del origen de la bala
             float[] posicionDisparo = new float[2];
@@ -49,7 +49,9 @@ public class ArmaMercurio extends Arma {
             Bala nuevaBala = new Bala(
                 posicionDisparo[0], 
                 posicionDisparo[1], 
-                rotacion
+                rotacion, LoadSave.BULLET_MERCURIO,
+                8,
+                2.0f
             );
             
             // Añadir la bala al administrador
