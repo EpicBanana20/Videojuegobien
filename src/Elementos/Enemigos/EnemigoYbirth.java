@@ -12,7 +12,7 @@ import Utilz.Animaciones;
 
 public class EnemigoYbirth extends Enemigo{
      // Constantes específicas de este tipo de enemigo
-    private static final int ANCHO_DEFAULT = 96;
+    private static final int ANCHO_DEFAULT = 120;
     private static final int ALTO_DEFAULT = 90;
     private static final int VIDA_DEFAULT = 50;
     private int INACTIVO = 0;
@@ -25,7 +25,7 @@ public class EnemigoYbirth extends Enemigo{
     private float anguloDisparo = 0;
     
     // Ajuste específico para este enemigo
-    private int ajuste = -50;
+    private int ajuste = -75;
     
     public EnemigoYbirth(float x, float y) {
         super(x, y, 
@@ -34,7 +34,7 @@ public class EnemigoYbirth extends Enemigo{
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(0, 0, 36, 90, true, true);
+        inicializarEnemigo(0, 0, 50, 90, true, true);
         this.velocidadMovimiento = 0f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         this.checkOffset = 20 * Juego.SCALE; // Ajustar el offset de verificación para el salto

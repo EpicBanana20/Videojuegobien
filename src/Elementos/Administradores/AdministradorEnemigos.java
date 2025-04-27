@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import Elementos.Bala;
 import Elementos.Enemigo;
+import Elementos.Enemigos.EnemigoKoko;
 import Elementos.Enemigos.EnemigoThor;
 import Elementos.Enemigos.EnemigoVerde;
 import Elementos.Enemigos.EnemigoYbirth;
@@ -95,6 +96,12 @@ public class AdministradorEnemigos {
 
     public EnemigoYbirth crearEnemigoYbirth(float x, float y) {
         EnemigoYbirth nuevoEnemigo = new EnemigoYbirth(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public EnemigoKoko crearEnemigoKoko(float x, float y) {
+        EnemigoKoko nuevoEnemigo = new EnemigoKoko(x, y);
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }

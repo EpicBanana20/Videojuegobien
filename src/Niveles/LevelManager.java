@@ -116,6 +116,9 @@ public class LevelManager {
                     case 4:
                     game.getAdminEnemigos().crearEnemigoYbirth(x, y);
                         break;
+                    case 5:
+                    game.getAdminEnemigos().crearEnemigoKoko(x, y);
+                        break;
                     default:
                         break;
                 }

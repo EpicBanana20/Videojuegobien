@@ -73,7 +73,7 @@ public class EnemigoVerde extends Enemigo {
         
         // Extraer cada frame de la hoja de sprites
         for (int j = 0; j < spritesEnemigo.length; j++) {
-            int framesEnFila = (j == 2) ? 2 : 6; // La fila 3 solo tiene 2 frames
+            int framesEnFila = (j == 2) ? 3 : 6; // La fila 3 solo tiene 2 frames
             for (int i = 0; i < framesEnFila; i++) {
                 spritesEnemigo[j][i] = img.getSubimage(i * frameWidth, j * frameHeight, frameWidth, frameHeight);
             }
@@ -85,7 +85,7 @@ public class EnemigoVerde extends Enemigo {
         // Configurar el número correcto de frames para cada animación
         animaciones.setNumFramesPorAnimacion(INACTIVO, 6); // 6 frames para inactivo/idle
         animaciones.setNumFramesPorAnimacion(CORRER, 6);   // 6 frames para correr/moverse
-        animaciones.setNumFramesPorAnimacion(HERIDO, 2);   // 2 frames para herido
+        animaciones.setNumFramesPorAnimacion(HERIDO, 3);   // 2 frames para herido
         
         // Establecer animación inicial
         animaciones.setAccion(CORRER);  // Comenzamos en animación de correr ya que estará en movimiento

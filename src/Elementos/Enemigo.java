@@ -115,11 +115,7 @@ public abstract class Enemigo extends Cascaron {
 
     protected void patrullar() {
     if (!puedeMoverseEnAlgunaDireccion()) {
-        // No puede moverse, quedarse quieto
         velocidadX = 0;
-        if (animaciones != null) {
-            animaciones.setAccion(INACTIVO);
-        }
         return;
     }
     

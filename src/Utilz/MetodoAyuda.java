@@ -75,15 +75,57 @@ public class MetodoAyuda {
             return currentTile * Juego.TILES_SIZE;
     }
 
-    public static float GetEntityYPosUnderRoofOrAboveFloor(
-            Rectangle2D.Float hitbox, float airSpeed) {
-        int currentTile = (int) (hitbox.y / Juego.TILES_SIZE);
-        if(airSpeed>0){
-            int tileYPos = currentTile * Juego.TILES_SIZE;
-            int yOffset = (int) (Juego.TILES_SIZE - hitbox.height);
-            return tileYPos + yOffset - 1;
-        } else
-            return currentTile * Juego.TILES_SIZE;
+    public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitbox, float airSpeed) {
+        if (airSpeed > 0) {
+            // CAYENDO - Detectar suelo
+            float maxPosY = hitbox.y + hitbox.height + airSpeed;
+            int startTileY = (int)((hitbox.y + hitbox.height) / Juego.TILES_SIZE);
+            int endTileY = (int)(maxPosY / Juego.TILES_SIZE);
+            
+            // Si cruzamos algún tile nuevo
+            if (startTileY != endTileY) {
+                // Verificar cada tile en la trayectoria
+                for (int tileY = startTileY + 1; tileY <= endTileY; tileY++) {
+                    // Revisar múltiples puntos a lo ancho de la hitbox
+                    int puntos = Math.max(3, (int)(hitbox.width / Juego.TILES_SIZE) + 1);
+                    float incrementoX = hitbox.width / (puntos - 1);
+                    
+                    for (int i = 0; i < puntos; i++) {
+                        float xPos = hitbox.x + (i * incrementoX);
+                        if (isSolido(xPos, tileY * Juego.TILES_SIZE, Juego.NIVEL_ACTUAL_DATA)) {
+                            // Encontramos suelo - posicionar justo encima
+                            return tileY * Juego.TILES_SIZE - hitbox.height - 1;
+                        }
+                    }
+                }
+            }
+        } else {
+            // SALTANDO - Detectar techo
+            float minPosY = hitbox.y + airSpeed;
+            int startTileY = (int)(hitbox.y / Juego.TILES_SIZE);
+            int endTileY = (int)(minPosY / Juego.TILES_SIZE);
+            
+            // Si cruzamos algún tile nuevo
+            if (startTileY != endTileY) {
+                // Verificar cada tile en la trayectoria
+                for (int tileY = startTileY - 1; tileY >= endTileY; tileY--) {
+                    // Revisar múltiples puntos a lo ancho de la hitbox
+                    int puntos = Math.max(3, (int)(hitbox.width / Juego.TILES_SIZE) + 1);
+                    float incrementoX = hitbox.width / (puntos - 1);
+                    
+                    for (int i = 0; i < puntos; i++) {
+                        float xPos = hitbox.x + (i * incrementoX);
+                        if (isSolido(xPos, (tileY + 1) * Juego.TILES_SIZE - 1, Juego.NIVEL_ACTUAL_DATA)) {
+                            // Encontramos techo - posicionar justo debajo
+                            return (tileY + 1) * Juego.TILES_SIZE;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Si no hay colisiones, continuar el movimiento
+        return hitbox.y + airSpeed;
     }
     
     public static boolean moverHorizontal(
