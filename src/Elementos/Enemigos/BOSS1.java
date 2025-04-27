@@ -66,18 +66,25 @@ public class BOSS1 extends Enemigo {
         // A partir de la segunda fase, alejarse constantemente del jugador
         if (faseActual >= FASE_ENOJADO) {
             alejarseDelJugador();
+            if (disparoPendiente && disparoEnProceso && 
+            animaciones.getAccionActual() == DISPARO && 
+            animaciones.getAnimIndice() == frameDisparo && (velocidadX ==0)) {
+            dispararSegunFase();
+            disparoPendiente = false;
+        }
         } else {
             // En fase normal, usar patrones normales
             actualizarPatron();
-        }
-        
-        // Gestionar disparo
-        if (disparoPendiente && disparoEnProceso && 
+            if (disparoPendiente && disparoEnProceso && 
             animaciones.getAccionActual() == DISPARO && 
             animaciones.getAnimIndice() == frameDisparo) {
             dispararSegunFase();
             disparoPendiente = false;
         }
+        }
+        
+        // Gestionar disparo
+        
         
         // Intentar detectar al jugador para disparar (independientemente de la fase)
         if (!disparoEnProceso && Juego.jugadorActual != null) {
@@ -249,6 +256,8 @@ public class BOSS1 extends Enemigo {
         disparoPendiente = true;
         anguloDisparo = angulo;
         animaciones.setAccion(DISPARO);
+        animaciones.setAccion(DISPARO);
+        
         animaciones.resetearAnimacion();
     }
     

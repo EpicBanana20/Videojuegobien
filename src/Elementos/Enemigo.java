@@ -286,6 +286,7 @@ public abstract class Enemigo extends Cascaron {
             disparoCooldown--;
             return;
         }
+
         
         // Verificar si el jugador está en rango
         if (puedeVerJugador(jugador) ) {
