@@ -7,6 +7,7 @@ import Elementos.Bala;
 import Elementos.Enemigo;
 import Juegos.Juego;
 import Utilz.LoadSave;
+import Utilz.MetodoAyuda;
 import Utilz.Animaciones;
 
 public class BOSS1 extends Enemigo {
@@ -46,7 +47,7 @@ public class BOSS1 extends Enemigo {
         this.velocidadMovimiento = 0.7f * Juego.SCALE;
         this.puedeDisparar = true;
         this.disparoMaxCooldown = 45;
-        this.rangoDeteccionJugador = 500 * Juego.SCALE;
+        this.rangoDeteccionJugador = 700 * Juego.SCALE;
         
         // Cargar animaciones
         cargarAnimaciones();
@@ -62,8 +63,13 @@ public class BOSS1 extends Enemigo {
         // Verificar cambios de fase según salud restante
         actualizarFase();
         
-        // Actualizar patrón de ataque/movimiento
-        actualizarPatron();
+        // A partir de la segunda fase, alejarse constantemente del jugador
+        if (faseActual >= FASE_ENOJADO) {
+            alejarseDelJugador();
+        } else {
+            // En fase normal, usar patrones normales
+            actualizarPatron();
+        }
         
         // Gestionar disparo
         if (disparoPendiente && disparoEnProceso && 
@@ -73,9 +79,34 @@ public class BOSS1 extends Enemigo {
             disparoPendiente = false;
         }
         
-        // Intentar detectar al jugador
+        // Intentar detectar al jugador para disparar (independientemente de la fase)
         if (!disparoEnProceso && Juego.jugadorActual != null) {
             manejarDisparo(Juego.jugadorActual);
+        }
+    }
+    
+    private void alejarseDelJugador() {
+        if (Juego.jugadorActual == null) return;
+        
+        // Obtener posición del jugador y del jefe
+        float jugadorX = Juego.jugadorActual.getXCenter();
+        float jefeX = this.hitbox.x + this.hitbox.width/2;
+        
+        // Determinar dirección para alejarse (opuesta al jugador)
+        boolean alejarseDerecha = jugadorX < jefeX;
+        
+        // Verificar si hay pared o precipicio en la dirección que queremos ir
+        float distanciaCheck = alejarseDerecha ? checkOffset : -checkOffset;
+        boolean hayPared = MetodoAyuda.hayParedAdelante(hitbox, Juego.NIVEL_ACTUAL_DATA, distanciaCheck);
+        boolean haySuelo = MetodoAyuda.haySueloAdelante(hitbox, Juego.NIVEL_ACTUAL_DATA, distanciaCheck);
+        
+        if (hayPared || !haySuelo) {
+            // Si hay pared o no hay suelo, quedarse quieto
+            velocidadX = 0;
+        } else {
+            // Alejarse a velocidad según la fase
+            movimientoHaciaIzquierda = !alejarseDerecha;
+            velocidadX = alejarseDerecha ? velocidadMovimiento : -velocidadMovimiento;
         }
     }
     
@@ -100,19 +131,14 @@ public class BOSS1 extends Enemigo {
                 break;
             case FASE_ENOJADO:
                 this.velocidadMovimiento = 1.2f * Juego.SCALE;
-                this.disparoMaxCooldown = 30;
-                System.out.println("¡El jefe está enojado!");
+                this.disparoMaxCooldown = 45;
+                System.out.println("¡El jefe está enojado! Comienza a alejarse");
                 break;
             case FASE_FURIOSO:
                 this.velocidadMovimiento = 1.8f * Juego.SCALE;
-                this.disparoMaxCooldown = 15;
-                System.out.println("¡El jefe está FURIOSO!");
+                this.disparoMaxCooldown = 30;
+                System.out.println("¡El jefe está FURIOSO! Se aleja más rápido");
                 break;
-        }
-        
-        // Actualizar la velocidad actual
-        if (velocidadX != 0) {
-            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
         }
     }
     
