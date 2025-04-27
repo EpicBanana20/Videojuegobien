@@ -8,23 +8,23 @@ import Juegos.Juego;
 import Utilz.LoadSave;
 import Utilz.Animaciones;
 
-public class EnemigoKoko extends Enemigo {
+public class EnemigoOmmi extends Enemigo {
     // Constantes específicas de este tipo de enemigo
-    private static final int ANCHO_DEFAULT = 64;
-    private static final int ALTO_DEFAULT = 48;
-    private static final int VIDA_DEFAULT = 50;
+    private static final int ANCHO_DEFAULT = 128;
+    private static final int ALTO_DEFAULT = 96;
+    private static final int VIDA_DEFAULT = 400;
     
     // Ajuste específico para este enemigo
     private int ajuste = 16;
     
-    public EnemigoKoko(float x, float y) {
+    public EnemigoOmmi(float x, float y) {
         super(x, y, 
             (int)(ANCHO_DEFAULT * Juego.SCALE), 
             (int)(ALTO_DEFAULT * Juego.SCALE), 
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(0, 12, 52, 36, true, true);
+        inicializarEnemigo(0, 0, 112, 96, true, true);
         this.velocidadMovimiento = 0.5f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         
@@ -59,22 +59,22 @@ public class EnemigoKoko extends Enemigo {
     @Override
     protected void cargarAnimaciones() {
         // Cargar la hoja de sprites del enemigo verde
-        BufferedImage img = LoadSave.GetSpriteAtlas("enemigos/Koko 24x24.png");
+        BufferedImage img = LoadSave.GetSpriteAtlas("enemigos/Ommi 40x42.png");
         
         // Basado en la imagen, tiene 3 filas (acciones) con varios frames cada una
         // Fila 1 (índice 0): 6 frames - Inactivo/Idle
         // Fila 2 (índice 1): 6 frames - Correr/Moverse
         // Fila 3 (índice 2): 2 frames - Daño/Herido
-        spritesEnemigo = new BufferedImage[3][8]; // 3 acciones, máximo 6 frames
+        spritesEnemigo = new BufferedImage[3][6]; // 3 acciones, máximo 6 frames
         
         // Ancho y alto de cada frame del sprite 
-        int frameWidth = 24;
-        int frameHeight = 24;
+        int frameWidth = 40;
+        int frameHeight = 42;
         int framesEnFila = 0;
         // Extraer cada frame de la hoja de sprites
         for (int j = 0; j < spritesEnemigo.length; j++) {
             switch (j) {
-                case 0 -> framesEnFila = 8; // Inactivo/Idle
+                case 0 -> framesEnFila = 4; // Inactivo/Idle
                 case 1 -> framesEnFila = 6; // Correr/Moverse
                 case 2 -> framesEnFila = 3; // Daño/Herido
             }
@@ -87,7 +87,7 @@ public class EnemigoKoko extends Enemigo {
         animaciones = new Animaciones(spritesEnemigo);
         
         // Configurar el número correcto de frames para cada animación
-        animaciones.setNumFramesPorAnimacion(INACTIVO, 8); // 6 frames para inactivo/idle
+        animaciones.setNumFramesPorAnimacion(INACTIVO, 4); // 6 frames para inactivo/idle
         animaciones.setNumFramesPorAnimacion(CORRER, 6);   // 6 frames para correr/moverse
         animaciones.setNumFramesPorAnimacion(HERIDO, 3);   // 2 frames para herido
         
