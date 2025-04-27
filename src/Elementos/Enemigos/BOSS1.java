@@ -3,8 +3,11 @@ package Elementos.Enemigos;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import javax.xml.parsers.FactoryConfigurationError;
+
 import Elementos.Bala;
 import Elementos.Enemigo;
+import Elementos.Jugador;
 import Juegos.Juego;
 import Utilz.LoadSave;
 import Utilz.MetodoAyuda;
@@ -91,6 +94,31 @@ public class BOSS1 extends Enemigo {
             manejarDisparo(Juego.jugadorActual);
         }
     }
+
+
+    protected void manejarDisparo(Jugador jugador) {
+        if (!puedeDisparar || !activo) return;
+        
+        // Reducir cooldown si está activo
+        if (disparoCooldown > 0) {
+            disparoCooldown--;
+            return;
+        }
+        
+        // Solo disparar si está quieto (específico para el jefe)
+        if (velocidadX != 0 && faseActual>=FASE_ENOJADO) return;
+        
+        // Verificar si el jugador está en rango
+        if (puedeVerJugador(jugador)) {
+            // Orientar el enemigo hacia el jugador
+            orientarHaciaJugador(jugador);
+            
+            // Calcular ángulo y disparar
+            float angulo = calcularAnguloHaciaJugador(jugador);
+            disparar(angulo);
+            disparoCooldown = disparoMaxCooldown;
+        }
+    }
     
     private void alejarseDelJugador() {
         if (Juego.jugadorActual == null) return;
@@ -137,12 +165,12 @@ public class BOSS1 extends Enemigo {
                 this.disparoMaxCooldown = 45;
                 break;
             case FASE_ENOJADO:
-                this.velocidadMovimiento = 1.2f * Juego.SCALE;
+                this.velocidadMovimiento = 3f * Juego.SCALE;
                 this.disparoMaxCooldown = 45;
                 System.out.println("¡El jefe está enojado! Comienza a alejarse");
                 break;
             case FASE_FURIOSO:
-                this.velocidadMovimiento = 1.8f * Juego.SCALE;
+                this.velocidadMovimiento = 5f * Juego.SCALE;
                 this.disparoMaxCooldown = 30;
                 System.out.println("¡El jefe está FURIOSO! Se aleja más rápido");
                 break;
