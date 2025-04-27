@@ -24,7 +24,7 @@ public class Jugador extends Cascaron {
     private boolean moving = false;
     private boolean attacking = false;
     private boolean left, right, down, up, jump;
-    private float playerSpeed = 1.5f;
+    private float playerSpeed = 2f;
     private int[][] lvlData;
     private float xDrawOffset = 15 * Juego.SCALE;
     private float yDrawOffset = 20 * Juego.SCALE;
@@ -32,7 +32,7 @@ public class Jugador extends Cascaron {
     ///// graveda y salto
     private float airSpeed = -1f;
     private float gravity = 0.02f * Juego.SCALE; // Aumentamos ligeramente la gravedad
-    private float jumpSpeed = -1.8f * Juego.SCALE; // Hacemos el salto un poco más potente
+    private float jumpSpeed = -2.5f * Juego.SCALE; // Hacemos el salto un poco más potente
     private boolean inAir = false;
 
     // Apuntado

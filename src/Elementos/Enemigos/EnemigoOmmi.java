@@ -24,7 +24,7 @@ public class EnemigoOmmi extends Enemigo {
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(0, 0, 112, 96, true, true);
+        inicializarEnemigo(0, 12, 112, 80, true, true);
         this.velocidadMovimiento = 0.5f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         

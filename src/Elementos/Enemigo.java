@@ -29,6 +29,9 @@ public abstract class Enemigo extends Cascaron {
     public static final int CORRER = 1;
     public static final int HERIDO = 2;
     public static final int DISPARO = 3;
+    public static final int MUERTE = 4;
+
+    protected boolean animacionMuerteTerminada = false;
 
     // Nuevas propiedades para comportamiento común
     protected boolean movimientoHaciaIzquierda = true;
@@ -53,7 +56,17 @@ public abstract class Enemigo extends Cascaron {
     }
 
     public void update() {
-        if (!activo) return;
+        if (!activo) {
+            if (animaciones != null) {
+                animaciones.actualizarAnimacion();
+                
+                // Si terminó la animación de muerte, marcarla como completada
+                if (animaciones.getAccionActual() == MUERTE && animaciones.esUltimoFrame()) {
+                    animacionMuerteTerminada = true;
+                }
+            }
+        return;
+        }
         
         aplicarGravedad();
         if (!enAire && patrullando) {
@@ -171,7 +184,7 @@ public abstract class Enemigo extends Cascaron {
     }
 
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (!activo) return;
+        if (!activo && animacionMuerteTerminada) return;
         
         // Dibujar balas
         if (adminBalas != null) {
@@ -208,7 +221,7 @@ public abstract class Enemigo extends Cascaron {
     protected void morir() {
         activo = false;
         if (animaciones != null) {
-            animaciones.setAccion(HERIDO);
+            animaciones.setAccion(MUERTE);
             animaciones.resetearAnimacion();
         }
     }
@@ -265,7 +278,6 @@ public abstract class Enemigo extends Cascaron {
     // Método abstracto que implementarán las subclases
     protected abstract void disparar(float angulo);
     
-    // Método para manejar la lógica de disparo
     protected void manejarDisparo(Jugador jugador) {
         if (!puedeDisparar || !activo) return;
         
@@ -276,11 +288,24 @@ public abstract class Enemigo extends Cascaron {
         }
         
         // Verificar si el jugador está en rango
-        if (puedeVerJugador(jugador)) {
+        if (puedeVerJugador(jugador) ) {
+            // Orientar el enemigo hacia el jugador
+            orientarHaciaJugador(jugador);
+            
+            // Calcular ángulo y disparar
             float angulo = calcularAnguloHaciaJugador(jugador);
             disparar(angulo);
             disparoCooldown = disparoMaxCooldown;
         }
+    }
+    
+    // Nuevo método para orientar hacia el jugador
+    protected void orientarHaciaJugador(Jugador jugador) {
+        float jugadorX = jugador.getXCenter();
+        float enemigoX = hitbox.x + hitbox.width/2;
+        
+        // Actualizar orientación según posición relativa
+        movimientoHaciaIzquierda = jugadorX < enemigoX;
     }
     
 
@@ -290,13 +315,6 @@ public abstract class Enemigo extends Cascaron {
         if (!patrullando) {
             velocidadX = 0;
         } else if (velocidadX == 0) {
-            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
-        }
-    }
-
-    public void setVelocidadMovimiento(float velocidad) {
-        this.velocidadMovimiento = velocidad;
-        if (velocidadX != 0) {
             velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
         }
     }

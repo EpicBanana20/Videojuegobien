@@ -122,6 +122,9 @@ public class LevelManager {
                     case 6:
                     game.getAdminEnemigos().crearEnemigoOmmi(x, y);
                         break;
+                    case 7:
+                    game.getAdminEnemigos().crearBOSS1(x, y);
+                        break;
                     default:
                         break;
                 }

@@ -1,0 +1,318 @@
+package Elementos.Enemigos;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
+import Elementos.Bala;
+import Elementos.Enemigo;
+import Juegos.Juego;
+import Utilz.LoadSave;
+import Utilz.Animaciones;
+
+public class BOSS1 extends Enemigo {
+
+    // Constantes específicas
+    private static final int ANCHO_DEFAULT = 150;
+    private static final int ALTO_DEFAULT = 150;
+    private static final int VIDA_DEFAULT = 300;
+    
+    // Estados del jefe
+    private static final int FASE_NORMAL = 0;
+    private static final int FASE_ENOJADO = 1;
+    private static final int FASE_FURIOSO = 2;
+    
+    // Estado actual
+    private int faseActual = FASE_NORMAL;
+    
+    // Patrones de ataque
+    private int patronAtaqueActual = 0;
+    private int contadorPatron = 0;
+    private int duracionPatron = 180; // 3 segundos a 60 FPS
+    
+    // Para disparos
+    private boolean disparoEnProceso = false;
+    private boolean disparoPendiente = false;
+    private float anguloDisparo = 0;
+    private int frameDisparo = 1;
+
+    public BOSS1(float x, float y) {
+        super(x, y, 
+            (int)(ANCHO_DEFAULT * Juego.SCALE), 
+            (int)(ALTO_DEFAULT * Juego.SCALE), 
+            VIDA_DEFAULT);
+        
+        // Inicializar propiedades
+        inicializarEnemigo(25, 50, 100, 100, true, true);
+        this.velocidadMovimiento = 0.7f * Juego.SCALE;
+        this.puedeDisparar = true;
+        this.disparoMaxCooldown = 45;
+        this.rangoDeteccionJugador = 500 * Juego.SCALE;
+        
+        // Cargar animaciones
+        cargarAnimaciones();
+    }
+    
+    @Override
+    public void update() {
+        super.update();
+        
+        // Si está muerto, no hacer nada más
+        if (!activo) return;
+        
+        // Verificar cambios de fase según salud restante
+        actualizarFase();
+        
+        // Actualizar patrón de ataque/movimiento
+        actualizarPatron();
+        
+        // Gestionar disparo
+        if (disparoPendiente && disparoEnProceso && 
+            animaciones.getAccionActual() == DISPARO && 
+            animaciones.getAnimIndice() == frameDisparo) {
+            dispararSegunFase();
+            disparoPendiente = false;
+        }
+        
+        // Intentar detectar al jugador
+        if (!disparoEnProceso && Juego.jugadorActual != null) {
+            manejarDisparo(Juego.jugadorActual);
+        }
+    }
+    
+    private void actualizarFase() {
+        int porcentajeVida = (vida * 100) / vidaMaxima;
+        
+        if (porcentajeVida < 30 && faseActual != FASE_FURIOSO) {
+            cambiarFase(FASE_FURIOSO);
+        } else if (porcentajeVida < 60 && faseActual != FASE_ENOJADO && faseActual != FASE_FURIOSO) {
+            cambiarFase(FASE_ENOJADO);
+        }
+    }
+    
+    private void cambiarFase(int nuevaFase) {
+        this.faseActual = nuevaFase;
+        
+        // Cambiar propiedades según la fase
+        switch (faseActual) {
+            case FASE_NORMAL:
+                this.velocidadMovimiento = 0.7f * Juego.SCALE;
+                this.disparoMaxCooldown = 45;
+                break;
+            case FASE_ENOJADO:
+                this.velocidadMovimiento = 1.2f * Juego.SCALE;
+                this.disparoMaxCooldown = 30;
+                System.out.println("¡El jefe está enojado!");
+                break;
+            case FASE_FURIOSO:
+                this.velocidadMovimiento = 1.8f * Juego.SCALE;
+                this.disparoMaxCooldown = 15;
+                System.out.println("¡El jefe está FURIOSO!");
+                break;
+        }
+        
+        // Actualizar la velocidad actual
+        if (velocidadX != 0) {
+            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+        }
+    }
+    
+    private void actualizarPatron() {
+        contadorPatron++;
+        
+        if (contadorPatron >= duracionPatron) {
+            contadorPatron = 0;
+            cambiarPatron();
+        }
+    }
+    
+    private void cambiarPatron() {
+        // Diferentes patrones según la fase
+        int numPatrones = 2 + faseActual; // Más patrones en fases avanzadas
+        
+        int nuevoPatron = (patronAtaqueActual + 1) % numPatrones;
+        patronAtaqueActual = nuevoPatron;
+        
+        System.out.println("Jefe cambia a patrón: " + patronAtaqueActual);
+        
+        // Configurar comportamiento según el patrón
+        switch (patronAtaqueActual) {
+            case 0: // Patrón: Moverse de lado a lado
+                setPatrullando(true);
+                break;
+            case 1: // Patrón: Quedarse quieto y disparar
+                setPatrullando(false);
+                velocidadX = 0;
+                break;
+            case 2: // Patrón: Movimiento rápido (solo en fase ENOJADO+)
+                setPatrullando(true);
+                velocidadX = movimientoHaciaIzquierda ? 
+                    -velocidadMovimiento * 1.5f : velocidadMovimiento * 1.5f;
+                break;
+            case 3: // Patrón: Disparo múltiple (solo en fase FURIOSO)
+                setPatrullando(false);
+                velocidadX = 0;
+                break;
+        }
+    }
+    
+    private void dispararSegunFase() {
+        switch (faseActual) {
+            case FASE_NORMAL:
+                dispararBalaSimple();
+                break;
+            case FASE_ENOJADO:
+                dispararBalaDoble();
+                break;
+            case FASE_FURIOSO:
+                if (patronAtaqueActual == 3) {
+                    dispararBalaMultiple(); // 5 balas en abanico
+                } else {
+                    dispararBalaTriple(); // 3 balas
+                }
+                break;
+        }
+    }
+    
+    private void dispararBalaSimple() {
+        crearBala(anguloDisparo, 5, 2.0f);
+    }
+    
+    private void dispararBalaDoble() {
+        crearBala(anguloDisparo - 0.2f, 5, 2.0f);
+        crearBala(anguloDisparo + 0.2f, 5, 2.0f);
+    }
+    
+    private void dispararBalaTriple() {
+        crearBala(anguloDisparo, 7, 1.5f);
+        crearBala(anguloDisparo - 0.1f, 7, 1.5f);
+        crearBala(anguloDisparo + 0.1f, 7, 1.5f);
+    }
+    
+    private void dispararBalaMultiple() {
+        for (int i = -2; i <= 2; i++) {
+            crearBala(anguloDisparo + (i * 0.2f), 8, 1.5f);
+        }
+    }
+    
+    private void crearBala(float angulo, int daño, float velocidad) {
+        float origenX = hitbox.x + hitbox.width/2;
+        float origenY = hitbox.y + hitbox.height/2;
+        
+        // Ajustar origen según dirección
+        if (movimientoHaciaIzquierda) {
+            origenX -= 25 * Juego.SCALE;
+        } else {
+            origenX += 25 * Juego.SCALE;
+        }
+        
+        Bala nuevaBala = new Bala(
+            origenX, 
+            origenY, 
+            angulo, 
+            LoadSave.BULLET_ENEMY, // Puedes crear un sprite específico para el jefe
+            daño,
+            velocidad
+        );
+        
+        adminBalas.agregarBala(nuevaBala);
+    }
+    
+    @Override
+    protected void disparar(float angulo) {
+        disparoEnProceso = true;
+        disparoPendiente = true;
+        anguloDisparo = angulo;
+        animaciones.setAccion(DISPARO);
+        animaciones.resetearAnimacion();
+    }
+    
+    @Override
+    protected void cargarAnimaciones() {
+        // Este método debe implementarse para cargar las animaciones
+        // del sprite de tu jefe
+        BufferedImage img = LoadSave.GetSpriteAtlas("enemigos/BOSS1 64x64.png");
+        
+        // 5 acciones: INACTIVO, CORRER, HERIDO, DISPARO, MUERTE
+        spritesEnemigo = new BufferedImage[5][7];
+        
+        // Ancho y alto de cada frame
+        int frameWidth = 64; // Ajustar según tu sprite
+        int frameHeight = 64;
+        
+        // Configurar número de frames por acción según tu sprite
+        int[] framesEnFila = {4, 7, 2, 4, 2}; // Ajustar según tus animaciones
+        
+        // Extraer frames
+        for (int j = 0; j < spritesEnemigo.length; j++) {
+            for (int i = 0; i < framesEnFila[j]; i++) {
+                spritesEnemigo[j][i] = img.getSubimage(
+                    i * frameWidth, j * frameHeight, frameWidth, frameHeight
+                );
+            }
+        }
+        
+        // Crear animaciones
+        animaciones = new Animaciones(spritesEnemigo);
+        
+        // Número de frames por animación
+        animaciones.setNumFramesPorAnimacion(INACTIVO, framesEnFila[0]);     // INACTIVO
+        animaciones.setNumFramesPorAnimacion(CORRER, framesEnFila[1]);   // CORRER
+        animaciones.setNumFramesPorAnimacion(HERIDO, framesEnFila[2]);   // HERIDO
+        animaciones.setNumFramesPorAnimacion(DISPARO, framesEnFila[3]); // DISPARO
+        animaciones.setNumFramesPorAnimacion(MUERTE, framesEnFila[4]);    // MUERTE
+        
+        // Animación inicial
+        animaciones.setAccion(INACTIVO);
+    }
+    
+    @Override
+    protected void determinarAnimacion() {
+        // Prioridades de animación
+        
+        // Si está muriendo, mantener animación de muerte
+        if (animaciones.getAccionActual() == MUERTE) {
+            return;
+        }
+        
+        // Si estamos disparando o heridos, mantener esas animaciones
+        if (disparoEnProceso && !animaciones.esUltimoFrame()) {
+            return;
+        } else if (disparoEnProceso && animaciones.esUltimoFrame()) {
+            disparoEnProceso = false;
+        }
+        
+        if (animaciones.getAccionActual() == HERIDO && !animaciones.esUltimoFrame()) {
+            return;
+        }
+        
+        // En otro caso, determinar según movimiento
+        int nuevaAnimacion;
+        
+        if (velocidadX != 0) {
+            nuevaAnimacion = CORRER;
+        } else {
+            nuevaAnimacion = INACTIVO;
+        }
+        
+        animaciones.setAccion(nuevaAnimacion);
+    }
+    
+    @Override
+    protected void renderizarConAnimacion(Graphics g, int xLvlOffset, int yLvlOffset) {
+        if (!activo && animaciones.getAccionActual() != MUERTE) return;
+        
+        int drawX = (int) (hitbox.x - xDrawOffset) - xLvlOffset;
+        int drawY = (int) (hitbox.y - yDrawOffset) - yLvlOffset;
+        
+        // Dibujar según dirección
+        if (movimientoHaciaIzquierda) {
+            g.drawImage(animaciones.getImagenActual(),
+                drawX + w, drawY,
+                -w, h, null);
+        } else {
+            g.drawImage(animaciones.getImagenActual(),
+                drawX, drawY,
+                w, h, null);
+        }
+    }
+}
