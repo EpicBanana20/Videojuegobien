@@ -13,16 +13,19 @@ import Utilz.Animaciones;
 public class EnemigoYbirth extends Enemigo{
      // Constantes específicas de este tipo de enemigo
     private static final int ANCHO_DEFAULT = 96;
-    private static final int ALTO_DEFAULT = 72;
+    private static final int ALTO_DEFAULT = 90;
     private static final int VIDA_DEFAULT = 50;
+    private int INACTIVO = 0;
+    private int DISPARO = 1;
+    private int HERIDO = 2;
 
     private boolean disparoEnProceso = false;
-    private int frameDisparo = 2; // El disparo ocurrirá en el tercer frame (0,1,2,3)
+    private int frameDisparo = 5; // El disparo ocurrirá en el tercer frame (0,1,2,3)
     private boolean disparoPendiente = false;
     private float anguloDisparo = 0;
     
     // Ajuste específico para este enemigo
-    private int ajuste = 20;
+    private int ajuste = -50;
     
     public EnemigoYbirth(float x, float y) {
         super(x, y, 
@@ -31,13 +34,13 @@ public class EnemigoYbirth extends Enemigo{
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(12, 35, 72, 36, true, true);
+        inicializarEnemigo(0, 0, 36, 90, true, true);
         this.velocidadMovimiento = 0f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         this.checkOffset = 20 * Juego.SCALE; // Ajustar el offset de verificación para el salto
-
+        this.patrullando = false;
         this.puedeDisparar = true;
-        this.disparoMaxCooldown = 180; // Cada 3 segundos
+        this.disparoMaxCooldown = 30; // Cada 3 segundos
         this.rangoDeteccionJugador = 400 * Juego.SCALE; // Mayor rango
         
         // Cargar animaciones
@@ -88,14 +91,14 @@ public class EnemigoYbirth extends Enemigo{
         // Extraer cada frame de la hoja de sprites
         for (int j = 0; j < spritesEnemigo.length; j++) {
             switch (j) {
-                case 1:
+                case 0:
                     framesEnFila = 5;
                     break;
-                case 3:
-                    framesEnFila = 2;
+                case 1:
+                    framesEnFila = 7;
                     break;
                 default:
-                    framesEnFila = 7;
+                    framesEnFila = 2;
                     break;
             }
             for (int i = 0; i < framesEnFila; i++) {
@@ -107,13 +110,12 @@ public class EnemigoYbirth extends Enemigo{
         animaciones = new Animaciones(spritesEnemigo);
         
         // Configurar el número correcto de frames para cada animación
-        animaciones.setNumFramesPorAnimacion(INACTIVO, 5); // 6 frames para inactivo/idle
-        animaciones.setNumFramesPorAnimacion(CORRER, 0);   // 6 frames para correr/moverse
+        animaciones.setNumFramesPorAnimacion(INACTIVO, 5); // 6 frames para inactivo/idle   // 6 frames para correr/moverse
         animaciones.setNumFramesPorAnimacion(HERIDO, 2);   // 2 frames para herido
         animaciones.setNumFramesPorAnimacion(DISPARO, 7);   // 2 frames para disparo
         
         // Establecer animación inicial
-        animaciones.setAccion(CORRER);  // Comenzamos en animación de correr ya que estará en movimiento
+        animaciones.setAccion(INACTIVO);  // Comenzamos en animación de correr ya que estará en movimiento
     }
     
     // Sobrescribir renderizado para aplicar el ajuste específico
@@ -127,7 +129,7 @@ public class EnemigoYbirth extends Enemigo{
         if (movimientoHaciaIzquierda) {
             // Dibujar volteado horizontalmente con ajuste
             g.drawImage(animaciones.getImagenActual(),
-                drawX + w - ajuste, drawY,
+                drawX - ajuste, drawY,
                 -w, h, null);
         } else {
             // Dibujar normal
@@ -139,27 +141,17 @@ public class EnemigoYbirth extends Enemigo{
 
     @Override
     protected void disparar(float angulo) {
-        // En lugar de crear la bala inmediatamente, iniciamos la animación
+        // Iniciar animación
         disparoEnProceso = true;
         disparoPendiente = true;
         anguloDisparo = angulo;
         animaciones.setAccion(DISPARO);
         animaciones.resetearAnimacion();
         
-        // Detenemos temporalmente el movimiento durante el disparo
-        float velocidadOriginal = velocidadX;
+        // Asegurar que no se mueve
         velocidadX = 0;
         
-        // Programamos un timer para restaurar la velocidad cuando termine la animación
-        new java.util.Timer().schedule(
-            new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    velocidadX = velocidadOriginal;
-                }
-            },
-            animaciones.getNumFramesPorAnimacion(DISPARO) * (animaciones.getAnimVelocidad() * 16)
-        );
+        // Eliminar el timer
     }
 
     @Override
@@ -172,29 +164,19 @@ public class EnemigoYbirth extends Enemigo{
             return;
         }
         
-        // Verificar si el jugador está en rango, SIN importar si estamos quietos
+        // Verificar si el jugador está en rango
         if (puedeVerJugador(jugador)) {
-            // Detener movimiento temporalmente para disparar
-            float velocidadOriginal = velocidadX;
+            // Mantener patrullando en false y velocidad en 0
             patrullando = false;
             velocidadX = 0;
+            float jugadorX = jugador.getXCenter();
+            float enemigoX = hitbox.x + hitbox.width/2;
+            movimientoHaciaIzquierda = jugadorX < enemigoX;
             
             // Disparar
             float angulo = calcularAnguloHaciaJugador(jugador);
             disparar(angulo);
             disparoCooldown = disparoMaxCooldown;
-            
-            // Reanudar movimiento después de un tiempo
-            new java.util.Timer().schedule(
-                new java.util.TimerTask() {
-                    @Override
-                    public void run() {
-                        patrullando = true;
-                        velocidadX = velocidadOriginal;
-                    }
-                },
-                1000 // Reanudar después de 1 segundo
-            );
         }
     }
 

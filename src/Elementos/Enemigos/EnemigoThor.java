@@ -172,6 +172,9 @@ public class EnemigoThor extends Enemigo{
             float velocidadOriginal = velocidadX;
             patrullando = false;
             velocidadX = 0;
+            float jugadorX = jugador.getXCenter();
+            float enemigoX = hitbox.x + hitbox.width/2;
+            movimientoHaciaIzquierda = jugadorX < enemigoX;
             
             // Disparar
             float angulo = calcularAnguloHaciaJugador(jugador);
@@ -214,13 +217,13 @@ public class EnemigoThor extends Enemigo{
             
             // Crear la bala real
             Bala nuevaBala = new Bala(
-                origenX, 
-                origenY, 
-                anguloDisparo,
-                LoadSave.BULLET_ENEMY,
-                4, // Daño enemigo
-                1.8f // Velocidad
-            );
+            origenX, 
+            origenY, 
+            anguloDisparo,
+            LoadSave.BULLET_ENEMY,
+            4, // Daño enemigo
+            1.8f // Velocidad
+        );
             adminBalas.agregarBala(nuevaBala);
             
             // Ya disparamos, no repetir hasta la próxima animación

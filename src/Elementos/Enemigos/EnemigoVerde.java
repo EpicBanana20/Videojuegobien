@@ -15,7 +15,7 @@ public class EnemigoVerde extends Enemigo {
     private static final int VIDA_DEFAULT = 50;
     
     // Ajuste específico para este enemigo
-    private int ajuste = 20;
+    private int ajuste = 16;
     
     public EnemigoVerde(float x, float y) {
         super(x, y, 
