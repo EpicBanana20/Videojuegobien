@@ -50,7 +50,7 @@ public class BOSS1 extends Enemigo {
         this.velocidadMovimiento = 0.7f * Juego.SCALE;
         this.puedeDisparar = true;
         this.disparoMaxCooldown = 45;
-        this.rangoDeteccionJugador = 700 * Juego.SCALE;
+        this.rangoDeteccionJugador = 1000 * Juego.SCALE;
         
         // Cargar animaciones
         cargarAnimaciones();
@@ -330,25 +330,19 @@ public class BOSS1 extends Enemigo {
     
     @Override
     protected void determinarAnimacion() {
-        // Prioridades de animación
-        
         // Si está muriendo, mantener animación de muerte
         if (animaciones.getAccionActual() == MUERTE) {
             return;
         }
         
-        // Si estamos disparando o heridos, mantener esas animaciones
+        // Si estamos disparando y no ha terminado, mantener esa animación
         if (disparoEnProceso && !animaciones.esUltimoFrame()) {
             return;
         } else if (disparoEnProceso && animaciones.esUltimoFrame()) {
             disparoEnProceso = false;
         }
         
-        if (animaciones.getAccionActual() == HERIDO && !animaciones.esUltimoFrame()) {
-            return;
-        }
-        
-        // En otro caso, determinar según movimiento
+        // Determinar según movimiento (sin considerar HERIDO)
         int nuevaAnimacion;
         
         if (velocidadX != 0) {
@@ -376,6 +370,21 @@ public class BOSS1 extends Enemigo {
             g.drawImage(animaciones.getImagenActual(),
                 drawX, drawY,
                 w, h, null);
+        }
+    }
+
+    @Override
+    public void recibirDaño(int cantidad) {
+        if (!activo)
+            return;
+
+        vida -= cantidad;
+
+        // No cambiar a animación de herido
+        // Solo verificar si murió
+        if (vida <= 0) {
+            vida = 0;
+            morir();
         }
     }
 }
