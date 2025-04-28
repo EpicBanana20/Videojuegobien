@@ -7,11 +7,16 @@ import Elementos.Bala;
 import Elementos.Enemigo;
 import Elementos.Enemigos.BOSS1;
 import Elementos.Enemigos.EnemigoAranara;
+import Elementos.Enemigos.EnemigoDistut;
+import Elementos.Enemigos.EnemigoEldene;
 import Elementos.Enemigos.EnemigoEnergy;
 import Elementos.Enemigos.EnemigoHibit;
+import Elementos.Enemigos.EnemigoHielitos;
 import Elementos.Enemigos.EnemigoKoko;
+import Elementos.Enemigos.EnemigoMordeke;
 import Elementos.Enemigos.EnemigoOmmi;
 import Elementos.Enemigos.EnemigoPiedrora;
+import Elementos.Enemigos.EnemigoPliip;
 import Elementos.Enemigos.EnemigoSkeler;
 import Elementos.Enemigos.EnemigoThor;
 import Elementos.Enemigos.EnemigoVerde;
@@ -146,6 +151,31 @@ public class AdministradorEnemigos {
     }
     public EnemigoHibit crearEnemigoHibit(float x, float y) {
         EnemigoHibit nuevoEnemigo = new EnemigoHibit(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoHielitos crearEnemigoHielitos(float x, float y) {
+        EnemigoHielitos nuevoEnemigo = new EnemigoHielitos(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoDistut crearEnemigoDistut(float x, float y) {
+        EnemigoDistut nuevoEnemigo = new EnemigoDistut(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoEldene crearEnemigoEldene(float x, float y) {
+        EnemigoEldene nuevoEnemigo = new EnemigoEldene(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoMordeke crearEnemigoMordeke(float x, float y) {
+        EnemigoMordeke nuevoEnemigo = new EnemigoMordeke(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoPliip crearEnemigoPliip(float x, float y) {
+        EnemigoPliip nuevoEnemigo = new EnemigoPliip(x, y);
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }

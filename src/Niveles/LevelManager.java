@@ -140,6 +140,21 @@ public class LevelManager {
                     case 12:
                     game.getAdminEnemigos().crearEnemigoHibit(x, y);
                         break;
+                    case 13:
+                    game.getAdminEnemigos().crearEnemigoHielitos(x, y);
+                        break;
+                    case 14:
+                    game.getAdminEnemigos().crearEnemigoDistut(x, y);
+                        break;
+                    case 15:
+                    game.getAdminEnemigos().crearEnemigoEldene(x, y);
+                        break;
+                    case 16:
+                    game.getAdminEnemigos().crearEnemigoMordeke(x, y);
+                        break;
+                    case 17:
+                    game.getAdminEnemigos().crearEnemigoPliip(x, y);
+                        break;
                     default:
                         break;
                 }
