@@ -250,10 +250,17 @@ public class Jugador extends Cascaron {
             mirandoIzquierda = false;
         }
         
+        int tileY = (int)(hitbox.y / Juego.TILES_SIZE);
+        
         // Aplicar movimiento horizontal
         if (xSpeed != 0) {
             MetodoAyuda.moverHorizontal(hitbox, xSpeed, lvlData);
             moving = true;
+            // Verificar si estábamos sobre una plataforma y ahora no
+            if (sobreUnaPlataforma && !inAir) {
+                    hitbox.y = tileY * Juego.TILES_SIZE + 7;
+                    inAir = false;
+            }
         }
         
         // Aplicar gravedad SOLO si estamos en el aire
@@ -272,7 +279,7 @@ public class Jugador extends Cascaron {
             } else {
                 // Si hay colisión y queremos bajar, verificar si es una plataforma atravesable
                 if (quiereBajarPlataforma) {
-                    int tileY = (int)((hitbox.y + hitbox.height) / Juego.TILES_SIZE);
+                    tileY = (int)((hitbox.y + hitbox.height) / Juego.TILES_SIZE);
                     int xIndex1 = (int)(hitbox.x / Juego.TILES_SIZE);
                     int xIndex2 = (int)((hitbox.x + hitbox.width) / Juego.TILES_SIZE);
                     
