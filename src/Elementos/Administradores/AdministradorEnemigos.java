@@ -8,8 +8,10 @@ import Elementos.Enemigo;
 import Elementos.Enemigos.BOSS1;
 import Elementos.Enemigos.EnemigoAranara;
 import Elementos.Enemigos.EnemigoEnergy;
+import Elementos.Enemigos.EnemigoHibit;
 import Elementos.Enemigos.EnemigoKoko;
 import Elementos.Enemigos.EnemigoOmmi;
+import Elementos.Enemigos.EnemigoPiedrora;
 import Elementos.Enemigos.EnemigoSkeler;
 import Elementos.Enemigos.EnemigoThor;
 import Elementos.Enemigos.EnemigoVerde;
@@ -134,6 +136,16 @@ public class AdministradorEnemigos {
     }
     public EnemigoAranara crearEnemigoAranara(float x, float y) {
         EnemigoAranara nuevoEnemigo = new EnemigoAranara(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoPiedrora crearEnemigoPiedrora(float x, float y) {
+        EnemigoPiedrora nuevoEnemigo = new EnemigoPiedrora(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoHibit crearEnemigoHibit(float x, float y) {
+        EnemigoHibit nuevoEnemigo = new EnemigoHibit(x, y);
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }

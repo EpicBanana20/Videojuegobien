@@ -134,6 +134,12 @@ public class LevelManager {
                     case 10:
                     game.getAdminEnemigos().crearEnemigoAranara(x, y);
                         break;
+                    case 11:
+                    game.getAdminEnemigos().crearEnemigoPiedrora(x, y);
+                        break;
+                    case 12:
+                    game.getAdminEnemigos().crearEnemigoHibit(x, y);
+                        break;
                     default:
                         break;
                 }
