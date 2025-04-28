@@ -53,6 +53,12 @@ public class LoadSave {
         {49,50,51,52,53,54,55,56,57,58,59,60,61,62,63}, // Nivel 3
     };
     
+    public static final int[][] TILES_PLATAFORMAS = {
+        {6,7,8},     // Nivel 1: tiles 15, 16, 17 son plataformas atravesables
+        {}, // Nivel 2: tiles 36-39 son plataformas atravesables
+        {}      // Nivel 3: tiles 42-44 son plataformas atravesables
+    };
+
     // HashMap para almacenar las imágenes ya cargadas
     private static final Map<String, BufferedImage> imageCache = new HashMap<>();
     public static final String[] LEVEL_BACKGROUND_FILES = null;

@@ -14,7 +14,7 @@ public class MetodoAyuda {
     
     // Set de bloques sin hitbox (se irá actualizando según el nivel actual)
     private static Set<Integer> bloquesSinHitbox = new HashSet<>();
-    
+    private static Set<Integer> plataformasAtravesables = new HashSet<>();
     // Inicializar con el bloque de aire del nivel 1
     static {
         // Añadir el bloque de aire del nivel 1 por defecto
@@ -24,17 +24,20 @@ public class MetodoAyuda {
     // Método para actualizar los bloques sin hitbox según el nivel
     public static void actualizarBloquesSinHitbox(int nivelIndex) {
         bloquesSinHitbox.clear();
+        plataformasAtravesables.clear();
         
-        // Añadir el bloque de aire principal para este nivel
+        // Añadir bloque de aire
         bloquesSinHitbox.add(LoadSave.LEVEL_INFO[nivelIndex][1]);
         
-        // Añadir los tiles adicionales sin hitbox para este nivel
+        // Añadir tiles sin hitbox
         for (int tileId : LoadSave.TILES_SIN_HITBOX[nivelIndex]) {
             bloquesSinHitbox.add(tileId);
         }
         
-        System.out.println("Nivel " + (nivelIndex + 1) + ": Configurados " + 
-                           bloquesSinHitbox.size() + " tiles sin hitbox");
+        // Añadir plataformas atravesables
+        for (int tileId : LoadSave.TILES_PLATAFORMAS[nivelIndex]) {
+            plataformasAtravesables.add(tileId);
+        }
     }
     
     public static boolean CanMoveHere(float x, float y,
@@ -178,5 +181,9 @@ public class MetodoAyuda {
                 hitbox.x + distancia;
                 
         return isSolido(checkX, hitbox.y + hitbox.height / 2, lvlData);
+    }
+
+    public static boolean esPlataformaAtravesable(int tileValue) {
+        return plataformasAtravesables.contains(tileValue);
     }
 }
