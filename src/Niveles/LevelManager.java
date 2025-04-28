@@ -128,6 +128,12 @@ public class LevelManager {
                     case 8:
                     game.getAdminEnemigos().crearEnemigoSkeler(x, y);
                         break;
+                    case 9:
+                    game.getAdminEnemigos().crearEnemigoEnergy(x, y);
+                        break;
+                    case 10:
+                    game.getAdminEnemigos().crearEnemigoAranara(x, y);
+                        break;
                     default:
                         break;
                 }

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import Elementos.Bala;
 import Elementos.Enemigo;
 import Elementos.Enemigos.BOSS1;
+import Elementos.Enemigos.EnemigoAranara;
+import Elementos.Enemigos.EnemigoEnergy;
 import Elementos.Enemigos.EnemigoKoko;
 import Elementos.Enemigos.EnemigoOmmi;
 import Elementos.Enemigos.EnemigoSkeler;
@@ -122,6 +124,16 @@ public class AdministradorEnemigos {
     }
     public EnemigoSkeler crearEnemigoSkeler(float x, float y) {
         EnemigoSkeler nuevoEnemigo = new EnemigoSkeler(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoEnergy crearEnemigoEnergy(float x, float y) {
+        EnemigoEnergy nuevoEnemigo = new EnemigoEnergy(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoAranara crearEnemigoAranara(float x, float y) {
+        EnemigoAranara nuevoEnemigo = new EnemigoAranara(x, y);
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }
