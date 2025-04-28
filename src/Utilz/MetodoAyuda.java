@@ -38,19 +38,33 @@ public class MetodoAyuda {
         for (int tileId : LoadSave.TILES_PLATAFORMAS[nivelIndex]) {
             plataformasAtravesables.add(tileId);
         }
+        
+        // Imprimir para debug
+        System.out.println("Plataformas atravesables para nivel " + nivelIndex + ": " + plataformasAtravesables);
     }
     
     public static boolean CanMoveHere(float x, float y,
             float width, float height, int[][] lvlData) {
-        if (!isSolido(x, y, lvlData))
-            if (!isSolido(x + width, y + height, lvlData))
-                if (!isSolido(x + width, y, lvlData))
-                    if (!isSolido(x, y + height, lvlData))
+        return CanMoveHere(x, y, width, height, lvlData, false);
+    }
+    
+    public static boolean CanMoveHere(float x, float y,
+            float width, float height, int[][] lvlData, boolean quiereBajar) {
+        if (!isSolido(x, y, lvlData, false, quiereBajar))
+            if (!isSolido(x + width, y + height, lvlData, true, quiereBajar))
+                if (!isSolido(x + width, y, lvlData, false, quiereBajar))
+                    if (!isSolido(x, y + height, lvlData, true, quiereBajar))
                         return true;
         return false;
     }
 
+    // Versión modificada de isSolido que considera la dirección del movimiento
     public static boolean isSolido(float x, float y, int[][] lvlData) {
+        return isSolido(x, y, lvlData, false, false);
+    }
+    
+    // Versión extendida para manejar plataformas atravesables
+    public static boolean isSolido(float x, float y, int[][] lvlData, boolean movingDown, boolean quiereBajar) {
         int maxWidth = lvlData[0].length * Juego.TILES_SIZE;
         int maxHeight = lvlData.length * Juego.TILES_SIZE;
         if (x < 0 || x >= maxWidth)
@@ -60,12 +74,42 @@ public class MetodoAyuda {
         int xIndex = (int) (x / Juego.TILES_SIZE);
         int yIndex = (int) (y / Juego.TILES_SIZE);
         int value = lvlData[yIndex][xIndex];
+        
+        // Si es una plataforma atravesable
+        if (plataformasAtravesables.contains(value)) {
+            // Si queremos bajar a través de la plataforma, no es sólida
+            if (quiereBajar) {
+                return false;
+            }
+            
+            // Si estamos moviéndonos hacia abajo, es sólido (para pararse encima)
+            // Si estamos moviéndonos hacia arriba, no es sólido (para atravesar desde abajo)
+            return movingDown;
+        }
+        
         return !bloquesSinHitbox.contains(value);
     }
 
     public static boolean isEntityOnFloor(Rectangle2D.Float hitbox, int[][] lvlData) {
-        return isSolido(hitbox.x, hitbox.y + hitbox.height + 1, lvlData) || 
-               isSolido(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 1, lvlData);
+        return isEntityOnFloor(hitbox, lvlData, false);
+    }
+    
+    public static boolean isEntityOnFloor(Rectangle2D.Float hitbox, int[][] lvlData, boolean quiereBajar) {
+        // Posiciones a verificar para la colisión con el suelo
+        float y = hitbox.y + hitbox.height + 1;
+        
+        // Varios puntos a lo ancho de la hitbox para mejorar detección
+        int puntos = 3;
+        float incrementoX = hitbox.width / (puntos - 1);
+        
+        for (int i = 0; i < puntos; i++) {
+            float x = hitbox.x + (i * incrementoX);
+            if (isSolido(x, y, lvlData, true, quiereBajar)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public static float GetEntityXPosNexttoWall(Rectangle2D.Float hitbox, float xSpeed) {
@@ -79,6 +123,10 @@ public class MetodoAyuda {
     }
 
     public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitbox, float airSpeed) {
+        return GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed, false);
+    }
+    
+    public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitbox, float airSpeed, boolean quiereBajar) {
         if (airSpeed > 0) {
             // CAYENDO - Detectar suelo
             float maxPosY = hitbox.y + hitbox.height + airSpeed;
@@ -95,7 +143,22 @@ public class MetodoAyuda {
                     
                     for (int i = 0; i < puntos; i++) {
                         float xPos = hitbox.x + (i * incrementoX);
-                        if (isSolido(xPos, tileY * Juego.TILES_SIZE, Juego.NIVEL_ACTUAL_DATA)) {
+                        
+                        // Verificar si este punto es una plataforma atravesable
+                        int xIndex = (int) (xPos / Juego.TILES_SIZE);
+                        if (xIndex < 0 || xIndex >= Juego.NIVEL_ACTUAL_DATA[0].length || 
+                            tileY < 0 || tileY >= Juego.NIVEL_ACTUAL_DATA.length) {
+                            continue;
+                        }
+                        
+                        int tileValue = Juego.NIVEL_ACTUAL_DATA[tileY][xIndex];
+                        
+                        // Si es una plataforma atravesable y queremos bajar, ignorarla
+                        if (plataformasAtravesables.contains(tileValue) && quiereBajar) {
+                            continue;
+                        }
+                        
+                        if (isSolido(xPos, tileY * Juego.TILES_SIZE, Juego.NIVEL_ACTUAL_DATA, true, quiereBajar)) {
                             // Encontramos suelo - posicionar justo encima
                             return tileY * Juego.TILES_SIZE - hitbox.height - 1;
                         }
@@ -118,7 +181,7 @@ public class MetodoAyuda {
                     
                     for (int i = 0; i < puntos; i++) {
                         float xPos = hitbox.x + (i * incrementoX);
-                        if (isSolido(xPos, (tileY + 1) * Juego.TILES_SIZE - 1, Juego.NIVEL_ACTUAL_DATA)) {
+                        if (isSolido(xPos, (tileY + 1) * Juego.TILES_SIZE - 1, Juego.NIVEL_ACTUAL_DATA, false, false)) {
                             // Encontramos techo - posicionar justo debajo
                             return (tileY + 1) * Juego.TILES_SIZE;
                         }
@@ -185,5 +248,34 @@ public class MetodoAyuda {
 
     public static boolean esPlataformaAtravesable(int tileValue) {
         return plataformasAtravesables.contains(tileValue);
+    }
+    
+    /**
+     * Comprueba si la entidad está sobre una plataforma atravesable
+     */
+    public static boolean isEntityOnPlatform(Rectangle2D.Float hitbox, int[][] lvlData) {
+        // Verificar el tile inmediatamente debajo de la hitbox
+        float y = hitbox.y + hitbox.height + 1;
+        
+        // Varios puntos a lo ancho de la hitbox para mejorar detección
+        int puntos = 3;
+        float incrementoX = hitbox.width / (puntos - 1);
+        
+        for (int i = 0; i < puntos; i++) {
+            float x = hitbox.x + (i * incrementoX);
+            int xIndex = (int) (x / Juego.TILES_SIZE);
+            int yIndex = (int) (y / Juego.TILES_SIZE);
+            
+            if (yIndex >= lvlData.length || xIndex < 0 || xIndex >= lvlData[0].length) {
+                continue;
+            }
+            
+            int value = lvlData[yIndex][xIndex];
+            if (plataformasAtravesables.contains(value)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

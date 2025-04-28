@@ -34,6 +34,15 @@ public class Jugador extends Cascaron {
     private float gravity = 0.02f * Juego.SCALE; // Aumentamos ligeramente la gravedad
     private float jumpSpeed = -2.5f * Juego.SCALE; // Hacemos el salto un poco más potente
     private boolean inAir = false;
+    
+    // Variable para controlar si el jugador quiere bajar a través de plataformas
+    private boolean quiereBajarPlataforma = false;
+    // Cooldown para evitar volver a subir a la plataforma inmediatamente
+    private int bajarPlataformaCooldown = 0;
+    private static final int MAX_BAJAR_COOLDOWN = 20;
+    
+    // Para debug
+    private boolean sobreUnaPlataforma = false;
 
     // Apuntado
     private AimController aimController;
@@ -72,9 +81,40 @@ public class Jugador extends Cascaron {
         g.setColor(Color.RED);
         g.fillOval((int)aimX - cursorSize/2, (int)aimY - cursorSize/2, cursorSize, cursorSize);
         
+        // Debug info
+        if (sobreUnaPlataforma) {
+            g.setColor(Color.GREEN);
+            g.drawString("¡Sobre plataforma!", (int)aimX, (int)aimY - 20);
+        }
+        
+        if (quiereBajarPlataforma) {
+            g.setColor(Color.YELLOW);
+            g.drawString("¡Bajando!", (int)aimX, (int)aimY - 40);
+        }
     }
 
     public void update(int xlvlOffset, int yLvlOffset) {
+        // Verificar si estamos sobre una plataforma atravesable
+        sobreUnaPlataforma = isEntityOnPlatform(hitbox, lvlData);
+        
+        // Actualizar cooldown para bajar plataformas
+        if (bajarPlataformaCooldown > 0) {
+            bajarPlataformaCooldown--;
+        }
+        
+        // Si presiona S estando sobre una plataforma, iniciar caída
+        if (down && !inAir && sobreUnaPlataforma && bajarPlataformaCooldown == 0) {
+            // Activar caída a través de la plataforma
+            inAir = true;
+            quiereBajarPlataforma = true;
+            bajarPlataformaCooldown = MAX_BAJAR_COOLDOWN;
+            // Forzar una velocidad inicial significativa para atravesar la plataforma
+            airSpeed = 2.0f;
+            // Mover ligeramente hacia abajo para salir de la colisión
+            hitbox.y += 1;
+            System.out.println("Iniciando caída a través de plataforma");
+        }
+        
         actuPosicion();
         
         // Actualizamos las animaciones usando nuestra nueva clase
@@ -170,12 +210,23 @@ public class Jugador extends Cascaron {
     private void actuPosicion() {
         moving = false;
         
-        // Verificar primero si estamos en el suelo
-        boolean enSuelo = isEntityOnFloor(hitbox, lvlData);
-        if (enSuelo) {
-            inAir = false;
-            airSpeed = 0;  // Asegurarnos de resetear la velocidad de aire cuando toca el suelo
+        // Verificar primero si estamos en el suelo (pero no usando isEntityOnFloor)
+        // Para plataformas atravesables, tenemos una lógica diferente
+        boolean enSuelo = false;
+        
+        if (quiereBajarPlataforma) {
+            // Si queremos bajar, no consideramos plataformas atravesables como suelo
+            enSuelo = isEntityOnFloor(hitbox, lvlData, true);
         } else {
+            // Caso normal, considerar tanto suelo normal como plataformas
+            enSuelo = isEntityOnFloor(hitbox, lvlData, false) || isEntityOnPlatform(hitbox, lvlData);
+        }
+        
+        if (enSuelo && !inAir) {
+            // Estamos en suelo firme
+            airSpeed = 0;
+        } else {
+            // Estamos en el aire o queremos estarlo
             inAir = true;
         }
         
@@ -219,20 +270,55 @@ public class Jugador extends Cascaron {
                 
                 hitbox.y += airSpeed;
             } else {
-                // Si hay colisión, ajustar posición y resetear velocidad aire
-                hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
-                
-                // Resetear valores
-                if (airSpeed > 0) {
-                    // Tocando el suelo
-                    airSpeed = 0;
-                    inAir = false;
+                // Si hay colisión y queremos bajar, verificar si es una plataforma atravesable
+                if (quiereBajarPlataforma) {
+                    int tileY = (int)((hitbox.y + hitbox.height) / Juego.TILES_SIZE);
+                    int xIndex1 = (int)(hitbox.x / Juego.TILES_SIZE);
+                    int xIndex2 = (int)((hitbox.x + hitbox.width) / Juego.TILES_SIZE);
+                    
+                    boolean sobrePlataforma = false;
+                    
+                    // Verificar si estamos colisionando con una plataforma atravesable
+                    if (tileY < lvlData.length) {
+                        if (xIndex1 < lvlData[0].length) {
+                            sobrePlataforma = sobrePlataforma || esPlataformaAtravesable(lvlData[tileY][xIndex1]);
+                        }
+                        if (xIndex2 < lvlData[0].length) {
+                            sobrePlataforma = sobrePlataforma || esPlataformaAtravesable(lvlData[tileY][xIndex2]);
+                        }
+                    }
+                    
+                    if (sobrePlataforma) {
+                        // Si estamos colisionando con una plataforma atravesable y queremos bajar,
+                        // movemos el jugador un poco más hacia abajo para salir de la colisión
+                        hitbox.y += Math.max(1, airSpeed);
+                        System.out.println("Atravesando plataforma...");
+                    } else {
+                        // Si no es una plataforma atravesable, nos detenemos como normalmente
+                        hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed, true);
+                        airSpeed = 0;
+                        inAir = false;
+                        quiereBajarPlataforma = false;
+                    }
                 } else {
-                    // Chocando con el techo
-                    airSpeed = 0.1f;
+                    // Comportamiento normal para colisiones cuando no queremos bajar
+                    hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed, false);
+                    
+                    if (airSpeed > 0) {
+                        // Tocando el suelo
+                        airSpeed = 0;
+                        inAir = false;
+                    } else {
+                        // Chocando con el techo
+                        airSpeed = 0.1f;
+                    }
                 }
             }
         }
+        
+        // Actualizar la posición principal después de todos los cálculos
+        x = hitbox.x;
+        y = hitbox.y;
     }
     
     private void jump() {
