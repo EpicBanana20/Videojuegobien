@@ -10,6 +10,7 @@ import Elementos.Administradores.AdministradorEnemigos;
 import Elementos.Administradores.AdministradorBalas;
 import Elementos.Administradores.AdministradorDecoraciones;
 import Niveles.LevelManager;
+import Utilz.MetodoAyuda;
 
 
 public class Juego {
@@ -59,6 +60,7 @@ public class Juego {
         NIVEL_ACTUAL_ALTO = levelMan.getCurrentLevel().getLvlData().length * TILES_SIZE;
         NIVEL_ACTUAL_ANCHO = levelMan.getCurrentLevel().getLvlData()[0].length * TILES_SIZE;
         NIVEL_ACTUAL_DATA = levelMan.getCurrentLevel().getLvlData();  
+        MetodoAyuda.actualizarBloquesSinHitbox(levelMan.getCurrentLevelIndex());
         player = new Jugador(200, 200, (int) (48 * SCALE), (int) (48 * SCALE));
         jugadorActual = player;
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());

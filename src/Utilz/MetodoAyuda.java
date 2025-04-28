@@ -75,16 +75,22 @@ public class MetodoAyuda {
         int yIndex = (int) (y / Juego.TILES_SIZE);
         int value = lvlData[yIndex][xIndex];
         
-        // Si es una plataforma atravesable
+        // If it's a platform
         if (plataformasAtravesables.contains(value)) {
-            // Si queremos bajar a través de la plataforma, no es sólida
+            // If we want to drop through, not solid
             if (quiereBajar) {
                 return false;
             }
             
-            // Si estamos moviéndonos hacia abajo, es sólido (para pararse encima)
-            // Si estamos moviéndonos hacia arriba, no es sólido (para atravesar desde abajo)
-            return movingDown;
+            // Calculate position within the tile
+            float tileTopY = yIndex * Juego.TILES_SIZE;
+            float distanceFromTop = y - tileTopY;
+            
+            // Only make the top 5 pixels of the platform solid
+            boolean isTopArea = distanceFromTop < 5;
+            
+            // Only solid if we're in the top area AND moving down
+            return isTopArea && movingDown;
         }
         
         return !bloquesSinHitbox.contains(value);
