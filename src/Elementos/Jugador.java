@@ -24,7 +24,7 @@ public class Jugador extends Cascaron {
     private boolean moving = false;
     private boolean attacking = false;
     private boolean left, right, down, up, jump;
-    private float playerSpeed = 2f;
+    private float playerSpeed = 20f;
     private int[][] lvlData;
     private float xDrawOffset = 15 * Juego.SCALE;
     private float yDrawOffset = 20 * Juego.SCALE;

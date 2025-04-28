@@ -77,13 +77,13 @@ public class EnemigoAranara extends Enemigo{
     @Override
     protected void cargarAnimaciones() {
         // Cargar la hoja de sprites del enemigo verde
-        BufferedImage img = LoadSave.GetSpriteAtlas("enemigos/ARANARA80x80.png");
+        BufferedImage img = LoadSave.GetSpriteAtlas("enemigos/ARANARA 80x80.png");
         
         // Basado en la imagen, tiene 3 filas (acciones) con varios frames cada una
         // Fila 1 (índice 0): 6 frames - Inactivo/Idle
         // Fila 2 (índice 1): 6 frames - Correr/Moverse
         // Fila 3 (índice 2): 2 frames - Daño/Herido
-        spritesEnemigo = new BufferedImage[3][16]; // 3 acciones, máximo 6 frames
+        spritesEnemigo = new BufferedImage[4][16]; // 3 acciones, máximo 6 frames
         
         // Ancho y alto de cada frame del sprite 
         int frameWidth = 80;
