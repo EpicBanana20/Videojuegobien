@@ -8,6 +8,7 @@ import Elementos.Enemigo;
 import Elementos.Enemigos.BOSS1;
 import Elementos.Enemigos.EnemigoKoko;
 import Elementos.Enemigos.EnemigoOmmi;
+import Elementos.Enemigos.EnemigoSkeler;
 import Elementos.Enemigos.EnemigoThor;
 import Elementos.Enemigos.EnemigoVerde;
 import Elementos.Enemigos.EnemigoYbirth;
@@ -116,6 +117,11 @@ public class AdministradorEnemigos {
 
     public BOSS1 crearBOSS1(float x, float y) {
         BOSS1 nuevoEnemigo = new BOSS1(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+    public EnemigoSkeler crearEnemigoSkeler(float x, float y) {
+        EnemigoSkeler nuevoEnemigo = new EnemigoSkeler(x, y);
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }
