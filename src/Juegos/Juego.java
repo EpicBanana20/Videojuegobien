@@ -25,6 +25,7 @@ public class Juego {
     private Camera camera;
     private Background background;
     private GameLoop gameLoop;
+    private HUDQuimico hudQuimico;
     private AdministradorDecoraciones adminDecoraciones;
 
     public static int NIVEL_ACTUAL_ANCHO;
@@ -69,6 +70,7 @@ public class Juego {
         MetodoAyuda.actualizarBloquesSinHitbox(levelMan.getCurrentLevelIndex());
         player = new Jugador(200, 200, (int) (48 * SCALE), (int) (48 * SCALE));
         jugadorActual = player;
+        hudQuimico = new HUDQuimico(player.getSistemaQuimico());
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
         
         camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);
@@ -175,6 +177,10 @@ public class Juego {
 
         if (estacionQuimicaActiva != null && estacionQuimicaActiva.isEstacionAbierta()) {
             estacionQuimicaActiva.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+        }
+
+        if (!cambiandoNivel) {
+            hudQuimico.render(g);
         }
         
         // Aquí se podría agregar un efecto de transición entre niveles

@@ -70,6 +70,7 @@ public class SistemaQuimico {
             return false;
         }
         
+        
         // Consumir los elementos
         receta.consumirElementos(inventarioElementos);
         

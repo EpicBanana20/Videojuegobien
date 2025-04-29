@@ -264,6 +264,7 @@ public class LevelManager {
         }
     }
     
+    
     public int getCurrentLevelIndex() {
         return currentLevelIndex;
     }

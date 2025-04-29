@@ -2,11 +2,13 @@ package Elementos.Decoraciones;
 
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import Juegos.Juego;
 import Elementos.Quimica.SistemaQuimico;
 import Elementos.Quimica.RecetaCompuesto;
 import java.util.List;
+import java.util.Map;
 
 public class EstacionQuimica extends Decoracion {
     private BufferedImage[] sprites; // Array para los dos estados (inactivo/activo)
@@ -68,55 +70,94 @@ public class EstacionQuimica extends Decoracion {
     }
     
     private void renderizarInterfazCrafteo(Graphics g, int xLvlOffset, int yLvlOffset) {
-        // Fondo semitransparente
-        int panelX = (int)(x - 100) - xLvlOffset;
-        int panelY = (int)(y - 150) - yLvlOffset;
-        int panelAncho = 300;
-        int panelAlto = 400;
+        // Centrar el panel en la pantalla en lugar de en la estación
+        int panelX = Juego.GAME_WIDTH / 2 - 200;
+        int panelY = Juego.GAME_HEIGHT / 2 - 250;
+        int panelAncho = 400;
+        int panelAlto = 500;
         
-        g.setColor(new Color(0, 0, 0, 180));
+        // Fondo semitransparente
+        g.setColor(new Color(0, 0, 0, 200));
         g.fillRect(panelX, panelY, panelAncho, panelAlto);
         
-        g.setColor(Color.WHITE);
+        // Borde y título
+        g.setColor(new Color(0, 150, 200));
         g.drawRect(panelX, panelY, panelAncho, panelAlto);
         
         // Título
+        g.setFont(new Font("Arial", Font.BOLD, 20));
         String titulo = "Estación Química";
-        g.drawString(titulo, panelX + panelAncho/2 - g.getFontMetrics().stringWidth(titulo)/2, panelY + 20);
+        g.drawString(titulo, panelX + panelAncho/2 - g.getFontMetrics().stringWidth(titulo)/2, panelY + 30);
         
         // Mostrar inventario de elementos
-        g.drawString("Elementos:", panelX + 10, panelY + 50);
-        int elementoY = panelY + 70;
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString("Elementos Disponibles:", panelX + 20, panelY + 70);
+        
+        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        int elementoY = panelY + 100;
+        int columna = 0;
+        
         for (String simbolo : sistemaQuimico.getInventarioElementos().getElementos().keySet()) {
             int cantidad = sistemaQuimico.getInventarioElementos().getElemento(simbolo).getCantidad();
-            g.drawString(simbolo + ": " + cantidad, panelX + 20, elementoY);
-            elementoY += 20;
-            
-            // Solo mostrar los primeros 10 elementos para que no sea demasiado largo
-            if (elementoY > panelY + 270) {
-                g.drawString("...", panelX + 20, elementoY);
-                break;
+            if (cantidad > 0) { // Solo mostrar elementos que tenemos
+                int xPos = panelX + 30 + (columna * 100);
+                g.drawString(simbolo + ": " + cantidad, xPos, elementoY);
+                columna++;
+                if (columna > 2) {
+                    columna = 0;
+                    elementoY += 25;
+                }
             }
         }
         
-        // Mostrar recetas disponibles
-        g.drawString("Recetas:", panelX + 150, panelY + 50);
-        int recetaY = panelY + 70;
+        // Separador
+        g.setColor(new Color(100, 100, 100));
+        g.drawLine(panelX + 20, panelY + 180, panelX + panelAncho - 20, panelY + 180);
+        
+        // Recetas disponibles
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString("Compuestos que puedes crear:", panelX + 20, panelY + 210);
+        
+        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        int recetaY = panelY + 240;
         List<RecetaCompuesto> recetas = sistemaQuimico.getRecetasDisponibles();
+        int recetaNum = 1;
+        
         for (RecetaCompuesto receta : recetas) {
-            g.drawString(receta.getFormula(), panelX + 160, recetaY);
-            recetaY += 20;
+            boolean puedeCrear = receta.puedeCrearCon(sistemaQuimico.getInventarioElementos());
             
-            // Solo mostrar las primeras 5 recetas
-            if (recetaY > panelY + 170) {
-                g.drawString("...", panelX + 160, recetaY);
-                break;
+            // Color verde si puede crear, gris si no
+            if (puedeCrear) g.setColor(new Color(100, 255, 100));
+            else g.setColor(new Color(150, 150, 150));
+            
+            g.drawString(recetaNum + ". " + receta.getNombre() + " (" + receta.getFormula() + ")", 
+                panelX + 30, recetaY);
+            
+            // Mostrar ingredientes
+            String ingredientes = "   Requiere: ";
+            for (Map.Entry<String, Integer> elem : receta.getElementos().entrySet()) {
+                ingredientes += elem.getKey() + ":" + elem.getValue() + " ";
             }
+            g.drawString(ingredientes, panelX + 40, recetaY + 20);
+            
+            recetaY += 50;
+            recetaNum++;
+            
+            // Limitar número de recetas mostradas
+            if (recetaNum > 5) break;
         }
         
         // Instrucciones
-        g.drawString("Presiona números (1-5) para craftear", panelX + 20, panelY + 300);
-        g.drawString("ESC para cerrar", panelX + 20, panelY + 320);
+        g.setColor(new Color(255, 255, 150));
+        g.drawString("Presiona 1-5 para crear el compuesto correspondiente", panelX + 30, panelY + 420);
+        g.drawString("ESC para cerrar", panelX + 30, panelY + 450);
+        
+        // Mostrar últimos compuestos creados
+        g.setColor(new Color(150, 255, 255));
+        g.drawString("Compuestos en inventario:", panelX + 30, panelY + 480);
+        
+        // Aquí podrías mostrar algunos de los compuestos que ya tienes
     }
     
     public void interactuar() {

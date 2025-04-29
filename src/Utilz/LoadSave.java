@@ -109,8 +109,6 @@ public class LoadSave {
             for (int i = 0; i < img.getWidth(); i++) {
                 Color color = new Color(img.getRGB(i, j));
                 int valor = color.getRed();
-                
-                // Si el valor es mayor que el máximo de tiles, lo reemplazamos con el valor de aire
                 if (valor >= maxTileIndex)
                     valor = airTileIndex;
                     

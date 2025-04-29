@@ -7,7 +7,9 @@ import java.util.HashMap;
 
 import Elementos.Decoraciones.Decoracion;
 import Elementos.Decoraciones.DecoracionAnimada;
+import Elementos.Decoraciones.ElementoRecolectable;
 import Elementos.Decoraciones.EstacionQuimica;
+import Juegos.Juego;
 import Utilz.LoadSave;
 
 public class AdministradorDecoraciones {
@@ -223,7 +225,39 @@ public class AdministradorDecoraciones {
             case 100: // Estación Química
                 crearEstacionQuimica(x, y, ancho, alto, "Estacion/EstacionQuimica.png");
             break;
-            // Añadir más tipos según sea necesario
+            case 200: // Hidrógeno
+                crearElementoQuimico(x, y, "H");
+                break;
+            case 201: // Oxígeno
+                crearElementoQuimico(x, y, "O");
+                break;
+            case 202: // Carbono
+                crearElementoQuimico(x, y, "C");
+            break;
+            case 203: // Nitrógeno
+                crearElementoQuimico(x, y, "N");
+                break;
+            case 204: // Sodio
+                crearElementoQuimico(x, y, "Na");
+                break;
+            case 205: // Cloro
+                crearElementoQuimico(x, y, "Cl");
+                break;
+            case 206: // Azufre
+                crearElementoQuimico(x, y, "S");
+                break;
+            case 207: // Fósforo
+                crearElementoQuimico(x, y, "P");
+                break;
+            case 208: // Cobre
+                crearElementoQuimico(x, y, "Cu");
+                break;
+            case 209: // Plata
+                crearElementoQuimico(x, y, "Ag");
+                break;
+            case 210: // Platino
+                crearElementoQuimico(x, y, "Pt");
+                break;
         }
     }
     
@@ -275,25 +309,38 @@ public class AdministradorDecoraciones {
         }
     }
     
-    // Añadir a AdministradorDecoraciones.java
-        public void crearEstacionQuimica(float x, float y, int ancho, int alto, String spritePath) {
-            BufferedImage spriteSheet = LoadSave.GetSpriteAtlas(spritePath);
-            if (spriteSheet != null) {
-                // Dividir el spritesheet en los dos estados
-                BufferedImage[] sprites = new BufferedImage[2];
-                
-                int frameWidth = 50; // Ancho correcto de cada sprite
-                int frameHeight = 50; // Alto de cada sprite
-                
-                // Extraer los dos sprites
-                sprites[0] = spriteSheet.getSubimage(0, 0, frameWidth, frameHeight); // Inactivo
-                sprites[1] = spriteSheet.getSubimage(frameWidth, 0, frameWidth, frameHeight); // Activo
-                
-                // Crear la estación química
-                EstacionQuimica nuevaEstacion = new EstacionQuimica(x, y, ancho, alto, sprites);
-                agregarDecoracion(nuevaEstacion);
-            }
+    public void crearEstacionQuimica(float x, float y, int ancho, int alto, String spritePath) {
+        BufferedImage spriteSheet = LoadSave.GetSpriteAtlas(spritePath);
+        if (spriteSheet != null) {
+            // Dividir el spritesheet en los dos estados
+            BufferedImage[] sprites = new BufferedImage[2];
+            
+            int frameWidth = 50; // Ancho correcto de cada sprite
+            int frameHeight = 50; // Alto de cada sprite
+            
+            // Extraer los dos sprites
+            sprites[0] = spriteSheet.getSubimage(0, 0, frameWidth, frameHeight); // Inactivo
+            sprites[1] = spriteSheet.getSubimage(frameWidth, 0, frameWidth, frameHeight); // Activo
+            
+            // Crear la estación química
+            EstacionQuimica nuevaEstacion = new EstacionQuimica(x, y, ancho, alto, sprites);
+            agregarDecoracion(nuevaEstacion);
         }
+    }
+
+    public void crearElementoQuimico(float x, float y, String simbolo) {
+    BufferedImage sprite = LoadSave.GetSpriteAtlas("elementos/" + simbolo + ".png");
+    if (sprite != null) {
+        ElementoRecolectable elemento = new ElementoRecolectable(
+            x, y, 
+            (int)(24 * Juego.SCALE), 
+            (int)(24 * Juego.SCALE), 
+            sprite, 
+            simbolo
+        );
+        agregarDecoracion(elemento);
+    }
+}
     // Método para limpiar todas las decoraciones
     public void limpiarDecoraciones() {
         decoraciones.clear();
