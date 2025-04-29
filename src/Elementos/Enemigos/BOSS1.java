@@ -3,8 +3,6 @@ package Elementos.Enemigos;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import javax.xml.parsers.FactoryConfigurationError;
-
 import Elementos.Bala;
 import Elementos.Enemigo;
 import Elementos.Jugador;
