@@ -38,6 +38,9 @@ public class EventoTeclado implements KeyListener {
             case KeyEvent.VK_Q:
                 pan.getGame().getPlayer().cambiarArma();
                 break;
+            case KeyEvent.VK_E:
+                    pan.getGame().interactuarConEstacionQuimica();
+                break;
         }
     }
 
@@ -56,9 +59,13 @@ public class EventoTeclado implements KeyListener {
             case KeyEvent.VK_D:
                 pan.getGame().getPlayer().setRight(false);
                 break;
-                case KeyEvent.VK_SPACE:
+            case KeyEvent.VK_SPACE:
                 pan.getGame().getPlayer().setJump(false);;
-                break;
+            break;
+        }
+        if (e.getKeyCode() >= KeyEvent.VK_1 && e.getKeyCode() <= KeyEvent.VK_5 || 
+            e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            pan.getGame().procesarTeclaEstacionQuimica(e.getKeyCode());
         }
     }
 

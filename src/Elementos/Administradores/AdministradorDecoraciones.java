@@ -298,4 +298,8 @@ public class AdministradorDecoraciones {
     public void limpiarDecoraciones() {
         decoraciones.clear();
     }
+
+    public ArrayList<Decoracion> getDecoraciones() {
+        return decoraciones;
+    }
 }

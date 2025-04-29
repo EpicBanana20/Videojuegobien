@@ -1,16 +1,20 @@
 package Juegos;
 
 import java.awt.Graphics;
+import java.awt.event.KeyEvent; 
 import java.util.ArrayList;
 
 import Elementos.Bala;
 import Elementos.Enemigo;
 import Elementos.Jugador;
 import Elementos.Administradores.AdministradorEnemigos;
+import Elementos.Decoraciones.Decoracion;
+import Elementos.Decoraciones.EstacionQuimica;
 import Elementos.Administradores.AdministradorBalas;
 import Elementos.Administradores.AdministradorDecoraciones;
 import Niveles.LevelManager;
 import Utilz.MetodoAyuda;
+
 
 
 public class Juego {
@@ -41,6 +45,8 @@ public class Juego {
     // Para control de niveles
     private boolean cambiandoNivel = false;
     private int nivelDestino = -1;
+
+    private EstacionQuimica estacionQuimicaActiva = null;
 
     public Juego() {
         inicializar();
@@ -166,10 +172,37 @@ public class Juego {
         }
         adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
         player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+
+        if (estacionQuimicaActiva != null && estacionQuimicaActiva.isEstacionAbierta()) {
+            estacionQuimicaActiva.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+        }
         
         // Aquí se podría agregar un efecto de transición entre niveles
         if (cambiandoNivel) {
             // Por ejemplo, dibujar una pantalla de carga o un efecto de fade
+        }
+    }
+
+    public void interactuarConEstacionQuimica() {
+    // Buscar estaciones químicas en las decoraciones
+        for (Decoracion decoracion : adminDecoraciones.getDecoraciones()) {
+            if (decoracion instanceof EstacionQuimica) {
+                EstacionQuimica estacion = (EstacionQuimica) decoracion;
+                if (estacion.isJugadorCerca()) {
+                    estacion.interactuar();
+                    estacionQuimicaActiva = estacion;
+                    return;
+                }
+            }
+        }
+    }
+
+    public void procesarTeclaEstacionQuimica(int keyCode) {
+        if (estacionQuimicaActiva != null && estacionQuimicaActiva.isEstacionAbierta()) {
+            boolean procesado = estacionQuimicaActiva.procesarTecla(keyCode);
+            if (procesado && keyCode == KeyEvent.VK_ESCAPE) {
+                estacionQuimicaActiva = null;
+            }
         }
     }
     

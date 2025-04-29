@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import Elementos.Administradores.AdministradorBalas;
+import Elementos.Quimica.SistemaQuimico;
 import Juegos.Juego;
 import Utilz.LoadSave;
 import Utilz.Animaciones;
@@ -56,6 +57,8 @@ public class Jugador extends Cascaron {
     //Balas
     private AdministradorBalas adminBalasCentral;
 
+    private SistemaQuimico sistemaQuimico;
+
     public Jugador(float x, float y, int w, int h) {
         super(x, y, w, h);
         loadAnimation();  // Cargamos las animaciones
@@ -63,6 +66,7 @@ public class Jugador extends Cascaron {
         aimController = new AimController(200* Juego.SCALE);
         adminBalasCentral = new AdministradorBalas();
         inicializarArmas();
+        sistemaQuimico = new SistemaQuimico();
     }
 
     // FUNCIONES DE MOUSE
@@ -417,5 +421,9 @@ public class Jugador extends Cascaron {
 
     public Arma getArmaActual() {
         return armaActual;
+    }
+
+    public SistemaQuimico getSistemaQuimico() {
+        return sistemaQuimico;
     }
 }
