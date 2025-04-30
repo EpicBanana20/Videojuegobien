@@ -275,6 +275,28 @@ public abstract class Enemigo extends Cascaron {
         return (float) Math.atan2(dy, dx);
     }
     
+    protected boolean esSeguroMoverse() {
+        // Verificar dirección según orientación
+        boolean haciaIzquierda = movimientoHaciaIzquierda;
+        
+        // Verificar si hay pared adelante
+        boolean hayPared = MetodoAyuda.hayParedAdelante(
+            hitbox, 
+            Juego.NIVEL_ACTUAL_DATA, 
+            haciaIzquierda ? -checkOffset : checkOffset
+        );
+        
+        // Verificar si hay suelo adelante
+        boolean haySuelo = MetodoAyuda.haySueloAdelante(
+            hitbox, 
+            Juego.NIVEL_ACTUAL_DATA, 
+            haciaIzquierda ? -checkOffset : checkOffset
+        );
+        
+        // Es seguro moverse si no hay pared y hay suelo
+        return !hayPared && haySuelo;
+    }
+
     // Método abstracto que implementarán las subclases
     protected abstract void disparar(float angulo);
     

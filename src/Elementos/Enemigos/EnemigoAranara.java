@@ -171,12 +171,14 @@ public class EnemigoAranara extends Enemigo{
             return;
         }
         
-        // Verificar si el jugador está en rango, SIN importar si estamos quietos
+        // Verificar si el jugador está en rango
         if (puedeVerJugador(jugador)) {
             // Detener movimiento temporalmente para disparar
             float velocidadOriginal = velocidadX;
             patrullando = false;
             velocidadX = 0;
+            
+            // Orientar hacia el jugador
             float jugadorX = jugador.getXCenter();
             float enemigoX = hitbox.x + hitbox.width/2;
             movimientoHaciaIzquierda = jugadorX < enemigoX;
@@ -186,19 +188,27 @@ public class EnemigoAranara extends Enemigo{
             disparar(angulo);
             disparoCooldown = disparoMaxCooldown;
             
-            // Reanudar movimiento después de un tiempo
+            // Reanudar movimiento después de un tiempo, pero verificando si es seguro
             new java.util.Timer().schedule(
                 new java.util.TimerTask() {
                     @Override
                     public void run() {
+                        // Solo reanudar patrulla y movimiento si es seguro
                         patrullando = true;
-                        velocidadX = velocidadOriginal;
+                        
+                        if (esSeguroMoverse()) {
+                            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+                        } else {
+                            // No es seguro moverse, mantener quieto pero seguir orientado al jugador
+                            velocidadX = 0;
+                        }
                     }
                 },
                 1000 // Reanudar después de 1 segundo
             );
         }
     }
+    
 
     @Override
     public void update() {
