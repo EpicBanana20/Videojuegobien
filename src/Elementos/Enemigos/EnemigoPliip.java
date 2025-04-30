@@ -22,7 +22,7 @@ public class EnemigoPliip extends Enemigo{
     private float anguloDisparo = 0;
     
     // Ajuste específico para este enemigo
-    private int ajuste = 20;
+    private int ajuste = -30;
     
     public EnemigoPliip(float x, float y) {
         super(x, y, 
@@ -31,7 +31,7 @@ public class EnemigoPliip extends Enemigo{
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(12, 35, 72, 36, true, true);
+        inicializarEnemigo(28, 20, 48, 50, true, true);
         this.velocidadMovimiento = 0.5f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         this.checkOffset = 20 * Juego.SCALE; // Ajustar el offset de verificación para el salto
@@ -225,7 +225,7 @@ public class EnemigoPliip extends Enemigo{
             origenX, 
             origenY, 
             anguloDisparo,
-            LoadSave.BULLET_ENEMY,
+            LoadSave.BULLET_PIILIP,
             4, // Daño enemigo
             1.8f // Velocidad
         );

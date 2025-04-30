@@ -33,7 +33,7 @@ public class Jugador extends Cascaron {
     ///// graveda y salto
     private float airSpeed = -1f;
     private float gravity = 0.02f * Juego.SCALE; // Aumentamos ligeramente la gravedad
-    private float jumpSpeed = -2.5f * Juego.SCALE; // Hacemos el salto un poco más potente
+    private float jumpSpeed = -2.2f * Juego.SCALE; // Hacemos el salto un poco más potente
     private boolean inAir = false;
     
     // Variable para controlar si el jugador quiere bajar a través de plataformas

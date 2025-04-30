@@ -22,7 +22,7 @@ public class EnemigoDistut extends Enemigo{
     private float anguloDisparo = 0;
     
     // Ajuste específico para este enemigo
-    private int ajuste = 20;
+    private int ajuste = -40;
     
     public EnemigoDistut(float x, float y) {
         super(x, y, 
@@ -31,7 +31,7 @@ public class EnemigoDistut extends Enemigo{
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(12, 35, 72, 36, true, true);
+        inicializarEnemigo(24, 20, 72, 50, true, true);
         this.velocidadMovimiento = 0.5f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         this.checkOffset = 20 * Juego.SCALE; // Ajustar el offset de verificación para el salto
