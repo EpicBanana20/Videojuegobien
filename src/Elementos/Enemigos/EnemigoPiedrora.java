@@ -10,12 +10,12 @@ import Utilz.Animaciones;
 
 public class EnemigoPiedrora extends Enemigo {
     // Constantes específicas de este tipo de enemigo
-    private static final int ANCHO_DEFAULT = 64;
-    private static final int ALTO_DEFAULT = 48;
+    private static final int ANCHO_DEFAULT = 120;
+    private static final int ALTO_DEFAULT = 80;
     private static final int VIDA_DEFAULT = 50;
     
     // Ajuste específico para este enemigo
-    private int ajuste = 16;
+    private int ajuste = 30; //-5
     
     public EnemigoPiedrora(float x, float y) {
         super(x, y, 
@@ -24,7 +24,7 @@ public class EnemigoPiedrora extends Enemigo {
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(0, 12, 52, 36, true, true);
+        inicializarEnemigo(2, 12, 118, 66, true, true);
         this.velocidadMovimiento = 0.5f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         

@@ -22,7 +22,7 @@ public class EnemigoHibit extends Enemigo{
     private float anguloDisparo = 0;
     
     // Ajuste específico para este enemigo
-    private int ajuste = 20;
+    private int ajuste = -50;  //
     
     public EnemigoHibit(float x, float y) {
         super(x, y, 
@@ -31,13 +31,13 @@ public class EnemigoHibit extends Enemigo{
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(12, 35, 72, 36, true, true);
+        inicializarEnemigo(32, 20, 60, 50, true, true);//32,6,65,65
         this.velocidadMovimiento = 0.5f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         this.checkOffset = 20 * Juego.SCALE; // Ajustar el offset de verificación para el salto
 
         this.puedeDisparar = true;
-        this.disparoMaxCooldown = 180; // Cada 3 segundos
+        this.disparoMaxCooldown = 60; // Cada 3 segundos
         this.rangoDeteccionJugador = 400 * Juego.SCALE; // Mayor rango
         
         // Cargar animaciones
@@ -157,7 +157,7 @@ public class EnemigoHibit extends Enemigo{
                     velocidadX = velocidadOriginal;
                 }
             },
-            animaciones.getNumFramesPorAnimacion(DISPARO) * (animaciones.getAnimVelocidad() * 16)
+            animaciones.getNumFramesPorAnimacion(DISPARO) * (animaciones.getAnimVelocidad() * 30)
         );
     }
 
@@ -225,9 +225,9 @@ public class EnemigoHibit extends Enemigo{
             origenX, 
             origenY, 
             anguloDisparo,
-            LoadSave.BULLET_ENEMY,
+            LoadSave.BULLET_HIBIT,
             4, // Daño enemigo
-            1.8f // Velocidad
+            1.4f // Velocidad
         );
             adminBalas.agregarBala(nuevaBala);
             

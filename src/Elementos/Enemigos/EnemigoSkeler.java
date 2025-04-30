@@ -15,7 +15,7 @@ public class EnemigoSkeler extends Enemigo {
     private static final int VIDA_DEFAULT = 50;
     
     // Ajuste específico para este enemigo
-    private int ajuste = 16;
+    private int ajuste = -30;
     
     public EnemigoSkeler(float x, float y) {
         super(x, y, 
@@ -24,7 +24,7 @@ public class EnemigoSkeler extends Enemigo {
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(0, 12, 52, 36, true, true);
+        inicializarEnemigo(16, 6, 46, 42, true, true);
         this.velocidadMovimiento = 0.5f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         
