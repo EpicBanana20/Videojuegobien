@@ -15,7 +15,7 @@ public class EnemigoPiedrora extends Enemigo {
     private static final int VIDA_DEFAULT = 50;
     
     // Ajuste específico para este enemigo
-    private int ajuste = 30; //-5
+    private int ajuste = -5; //-5
     
     public EnemigoPiedrora(float x, float y) {
         super(x, y, 
