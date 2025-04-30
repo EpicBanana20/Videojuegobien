@@ -48,6 +48,11 @@ public abstract class Enemigo extends Cascaron {
     protected int disparoMaxCooldown = 120; // 2 segundos a 60 FPS
     protected float rangoDeteccionJugador = 300 * Juego.SCALE;
 
+    protected boolean sobrePlataforma = false;
+    protected boolean quiereAtravesarPlataforma = false;
+    protected int atravesarPlataformaCooldown = 0;
+    protected static final int MAX_ATRAVESAR_COOLDOWN = 20;
+
     public Enemigo(float x, float y, int width, int height, int vidaMaxima) {
         super(x, y, width, height);
         this.vidaMaxima = vidaMaxima;
@@ -85,9 +90,29 @@ public abstract class Enemigo extends Cascaron {
     }
 
     protected void aplicarGravedad() {
+        // Verificar si estamos sobre una plataforma atravesable
+        sobrePlataforma = MetodoAyuda.isEntityOnPlatform(hitbox, Juego.NIVEL_ACTUAL_DATA);
+        
+        // Actualizar cooldown para atravesar plataformas
+        if (atravesarPlataformaCooldown > 0) {
+            atravesarPlataformaCooldown--;
+        }
+        
+        // Decidir si queremos atravesar la plataforma (puedes personalizar esta lógica)
+        if (sobrePlataforma && !enAire && atravesarPlataformaCooldown == 0) {
+                iniciarAtravesarPlataforma();
+        }
+        
         // Verificar primero si estamos en el suelo
-        boolean enSuelo = MetodoAyuda.isEntityOnFloor(hitbox, Juego.NIVEL_ACTUAL_DATA);
-
+        boolean enSuelo;
+        if (quiereAtravesarPlataforma) {
+            // Si queremos atravesar, no considerar plataformas como suelo
+            enSuelo = MetodoAyuda.isEntityOnFloor(hitbox, Juego.NIVEL_ACTUAL_DATA, true);
+        } else {
+            // Caso normal, considerar tanto suelo normal como plataformas
+            enSuelo = MetodoAyuda.isEntityOnFloor(hitbox, Juego.NIVEL_ACTUAL_DATA, false) || sobrePlataforma;
+        }
+    
         if (enSuelo) {
             enAire = false;
             velocidadAire = 0;
@@ -95,7 +120,7 @@ public abstract class Enemigo extends Cascaron {
             enAire = true;
             // Aplicar gravedad SOLO si estamos en el aire
             velocidadAire += gravedad;
-
+    
             // Verificar si podemos movernos hacia abajo
             boolean movimientoExitoso = MetodoAyuda.CanMoveHere(
                     hitbox.x,
@@ -103,27 +128,69 @@ public abstract class Enemigo extends Cascaron {
                     hitbox.width,
                     hitbox.height,
                     Juego.NIVEL_ACTUAL_DATA);
-
+    
             if (movimientoExitoso) {
                 hitbox.y += velocidadAire;
             } else {
-                // Si hay colisión, ajustar posición y resetear velocidad aire
-                hitbox.y = MetodoAyuda.GetEntityYPosUnderRoofOrAboveFloor(hitbox, velocidadAire);
+                if (quiereAtravesarPlataforma) {
+                    int tileY = (int)((hitbox.y + hitbox.height) / Juego.TILES_SIZE);
+                    int xIndex1 = (int)(hitbox.x / Juego.TILES_SIZE);
+                    int xIndex2 = (int)((hitbox.x + hitbox.width) / Juego.TILES_SIZE);
+                    
+                    boolean colisionConPlataforma = false;
 
-                // Resetear valores
-                if (velocidadAire > 0) {
-                    // Tocando el suelo
-                    velocidadAire = 0;
-                    enAire = false;
+                    if (tileY < Juego.NIVEL_ACTUAL_DATA.length) {
+                        if (xIndex1 < Juego.NIVEL_ACTUAL_DATA[0].length) {
+                            colisionConPlataforma = colisionConPlataforma || 
+                                MetodoAyuda.esPlataformaAtravesable(Juego.NIVEL_ACTUAL_DATA[tileY][xIndex1]);
+                        }
+                        if (xIndex2 < Juego.NIVEL_ACTUAL_DATA[0].length) {
+                            colisionConPlataforma = colisionConPlataforma || 
+                                MetodoAyuda.esPlataformaAtravesable(Juego.NIVEL_ACTUAL_DATA[tileY][xIndex2]);
+                        }
+                    }
+                    
+                    if (colisionConPlataforma) {
+                        // Empujar hacia abajo para atravesar la plataforma
+                        hitbox.y += Math.max(1, velocidadAire);
+                    } else {
+                        // Si no es plataforma, comportamiento normal
+                        hitbox.y = MetodoAyuda.GetEntityYPosUnderRoofOrAboveFloor(hitbox, velocidadAire);
+                        if (velocidadAire > 0) {
+                            velocidadAire = 0;
+                            enAire = false;
+                            quiereAtravesarPlataforma = false;
+                        } else {
+                            velocidadAire = 0.1f;
+                        }
+                    }
                 } else {
-                    // Chocando con el techo
-                    velocidadAire = 0.1f;
+                    // Comportamiento normal para colisiones
+                    hitbox.y = MetodoAyuda.GetEntityYPosUnderRoofOrAboveFloor(hitbox, velocidadAire);
+                    
+                    if (velocidadAire > 0) {
+                        velocidadAire = 0;
+                        enAire = false;
+                    } else {
+                        velocidadAire = 0.1f;
+                    }
                 }
             }
         }
-
+    
         // Actualizar la coordenada y
         y = hitbox.y;
+    }
+    
+    // Método para iniciar el atravesado de plataforma
+    protected void iniciarAtravesarPlataforma() {
+        enAire = true;
+        quiereAtravesarPlataforma = true;
+        atravesarPlataformaCooldown = MAX_ATRAVESAR_COOLDOWN;
+        // Dar velocidad inicial hacia abajo para salir rápido de la colisión
+        velocidadAire = 2.0f * Juego.SCALE;
+        // Mover ligeramente hacia abajo para comenzar a salir
+        hitbox.y += 1;
     }
 
     protected void patrullar() {
