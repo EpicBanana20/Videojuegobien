@@ -155,6 +155,9 @@ public class LevelManager {
                     case 17:
                     game.getAdminEnemigos().crearEnemigoPliip(x, y);
                         break;
+                    case 18:
+                    game.getAdminEnemigos().crearBOSS2(x, y);
+                        break;
                     default:
                         break;
                 }

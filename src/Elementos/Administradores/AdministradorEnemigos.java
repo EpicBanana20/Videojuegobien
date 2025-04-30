@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import Elementos.Bala;
 import Elementos.Enemigo;
 import Elementos.Enemigos.BOSS1;
+import Elementos.Enemigos.BOSS2;
 import Elementos.Enemigos.EnemigoAranara;
 import Elementos.Enemigos.EnemigoDistut;
 import Elementos.Enemigos.EnemigoEldene;
@@ -179,6 +180,12 @@ public class AdministradorEnemigos {
     }
     public EnemigoPliip crearEnemigoPliip(float x, float y) {
         EnemigoPliip nuevoEnemigo = new EnemigoPliip(x, y);
+        agregarEnemigo(nuevoEnemigo);
+        return nuevoEnemigo;
+    }
+
+    public BOSS2 crearBOSS2(float x, float y) {
+        BOSS2 nuevoEnemigo = new BOSS2(x, y, this);
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }
