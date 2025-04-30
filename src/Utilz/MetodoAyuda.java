@@ -38,9 +38,6 @@ public class MetodoAyuda {
         for (int tileId : LoadSave.TILES_PLATAFORMAS[nivelIndex]) {
             plataformasAtravesables.add(tileId);
         }
-        
-        // Imprimir para debug
-        System.out.println("Plataformas atravesables para nivel " + nivelIndex + ": " + plataformasAtravesables);
     }
     
     public static boolean CanMoveHere(float x, float y,

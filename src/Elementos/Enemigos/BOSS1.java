@@ -63,29 +63,25 @@ public class BOSS1 extends Enemigo {
         
         // Verificar cambios de fase según salud restante
         actualizarFase();
+        actualizarPatron();
         
-        // A partir de la segunda fase, alejarse constantemente del jugador
         if (faseActual >= FASE_ENOJADO) {
-            alejarseDelJugador();
-            if (disparoPendiente && disparoEnProceso && 
-            animaciones.getAccionActual() == DISPARO && 
-            animaciones.getAnimIndice() == frameDisparo && (velocidadX ==0)) {
-            dispararSegunFase();
-            disparoPendiente = false;
+            // En fases avanzadas, alternar entre patrones y alejarse
+            if (patronAtaqueActual != 3) {
+                alejarseDelJugador();
+            } else {
+                // Patrón de disparo múltiple - quedarse quieto
+                velocidadX = 0;
+            }
         }
-        } else {
-            // En fase normal, usar patrones normales
-            actualizarPatron();
-            if (disparoPendiente && disparoEnProceso && 
-            animaciones.getAccionActual() == DISPARO && 
-            animaciones.getAnimIndice() == frameDisparo) {
-            dispararSegunFase();
-            disparoPendiente = false;
+
+        // A partir de la segunda fase, alejarse constantemente del jugador
+        if (disparoPendiente && disparoEnProceso && 
+        animaciones.getAccionActual() == DISPARO && 
+        animaciones.getAnimIndice() == frameDisparo && (velocidadX ==0)) {
+        dispararSegunFase();
+        disparoPendiente = false;
         }
-        }
-        
-        // Gestionar disparo
-        
         
         // Intentar detectar al jugador para disparar (independientemente de la fase)
         if (!disparoEnProceso && Juego.jugadorActual != null) {
