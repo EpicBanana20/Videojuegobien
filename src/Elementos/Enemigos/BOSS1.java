@@ -233,19 +233,19 @@ public class BOSS1 extends Enemigo {
     }
     
     private void dispararBalaDoble() {
-        crearBala(anguloDisparo - 0.2f, 5, 2.0f);
-        crearBala(anguloDisparo + 0.2f, 5, 2.0f);
+        crearBala(anguloDisparo - 0.1f, 5, 2.0f);
+        crearBala(anguloDisparo + 0.1f, 5, 2.0f);
     }
     
     private void dispararBalaTriple() {
-        crearBala(anguloDisparo, 7, 1.5f);
-        crearBala(anguloDisparo - 0.1f, 7, 1.5f);
-        crearBala(anguloDisparo + 0.1f, 7, 1.5f);
+        crearBala(anguloDisparo, 7, 1.0f);
+        crearBala(anguloDisparo - 0.1f, 7, 1.0f);
+        crearBala(anguloDisparo + 0.1f, 7, 1.0f);
     }
     
     private void dispararBalaMultiple() {
         for (int i = -2; i <= 2; i++) {
-            crearBala(anguloDisparo + (i * 0.2f), 8, 1.5f);
+            crearBala(anguloDisparo + (i * 0.2f), 8, 1.0f);
         }
     }
     
@@ -264,7 +264,7 @@ public class BOSS1 extends Enemigo {
             origenX, 
             origenY, 
             angulo, 
-            LoadSave.BULLET_ENEMY, // Puedes crear un sprite específico para el jefe
+            LoadSave.BULLET_BOSS1, // Puedes crear un sprite específico para el jefe
             daño,
             velocidad
         );
