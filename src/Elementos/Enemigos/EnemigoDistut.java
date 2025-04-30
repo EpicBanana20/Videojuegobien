@@ -20,29 +20,33 @@ public class EnemigoDistut extends Enemigo{
     private int frameDisparo = 1; // El disparo ocurrirá en el tercer frame (0,1,2,3)
     private boolean disparoPendiente = false;
     private float anguloDisparo = 0;
+
+    private Elementos.Administradores.AdministradorEnemigos adminEnemigos;
+    private int numEnemigosGenerar = 2; // Número de enemigos a generar por disparo
     
     // Ajuste específico para este enemigo
     private int ajuste = -40;
     
-    public EnemigoDistut(float x, float y) {
+    public EnemigoDistut(float x, float y, Elementos.Administradores.AdministradorEnemigos adminEnemigos) {
         super(x, y, 
             (int)(ANCHO_DEFAULT * Juego.SCALE), 
             (int)(ALTO_DEFAULT * Juego.SCALE), 
             VIDA_DEFAULT);
         
-        // Configurar propiedades específicas
+        this.adminEnemigos = adminEnemigos;
+        
+        // El resto del constructor igual...
         inicializarEnemigo(24, 20, 72, 50, true, true);
         this.velocidadMovimiento = 0.5f * Juego.SCALE;
-        this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
-        this.checkOffset = 20 * Juego.SCALE; // Ajustar el offset de verificación para el salto
-
+        this.velocidadX = -velocidadMovimiento;
+        this.checkOffset = 20 * Juego.SCALE;
         this.puedeDisparar = true;
-        this.disparoMaxCooldown = 180; // Cada 3 segundos
-        this.rangoDeteccionJugador = 400 * Juego.SCALE; // Mayor rango
+        this.disparoMaxCooldown = 60;
+        this.rangoDeteccionJugador = 400 * Juego.SCALE;
         
-        // Cargar animaciones
         cargarAnimaciones();
     }
+    
     
     @Override
     protected void determinarAnimacion() {
@@ -174,7 +178,6 @@ protected void manejarDisparo(Jugador jugador) {
     // Verificar si el jugador está en rango
     if (puedeVerJugador(jugador)) {
         // Detener movimiento temporalmente para disparar
-        float velocidadOriginal = velocidadX;
         patrullando = false;
         velocidadX = 0;
         
@@ -209,44 +212,50 @@ protected void manejarDisparo(Jugador jugador) {
     }
 }
 
-    @Override
-    public void update() {
-        super.update();
+@Override
+public void update() {
+    super.update();
+    
+    // Verificar si es momento de crear la bala durante la animación
+    if (disparoPendiente && disparoEnProceso && 
+        animaciones.getAccionActual() == DISPARO && 
+        animaciones.getAnimIndice() == frameDisparo) {
         
-        // Verificar si es momento de crear la bala durante la animación
-        if (disparoPendiente && disparoEnProceso && 
-            animaciones.getAccionActual() == DISPARO && 
-            animaciones.getAnimIndice() == frameDisparo) {
-            
-            // Calcular posición de origen de la bala
-            float origenX = hitbox.x + hitbox.width/2;
-            float origenY = hitbox.y + hitbox.height/2;
-            
-            // Ajustar el origen según la dirección
-            if (movimientoHaciaIzquierda) {
-                origenX -= 20 * Juego.SCALE;
-            } else {
-                origenX += 20 * Juego.SCALE;
-            }
-            
-            // Crear la bala real
-            Bala nuevaBala = new Bala(
-            origenX, 
-            origenY, 
-            anguloDisparo,
-            LoadSave.BULLET_ENEMY,
-            4, // Daño enemigo
-            1.8f // Velocidad
-        );
-            adminBalas.agregarBala(nuevaBala);
-            
-            // Ya disparamos, no repetir hasta la próxima animación
-            disparoPendiente = false;
+        // Calcular posición de origen de la bala
+        float origenX = hitbox.x + hitbox.width/2;
+        float origenY = hitbox.y + hitbox.height/2;
+        
+        // Ajustar el origen según la dirección
+        if (movimientoHaciaIzquierda) {
+            origenX -= 20 * Juego.SCALE;
+        } else {
+            origenX += 20 * Juego.SCALE;
         }
         
-        // Intentar detectar al jugador y disparar
-        if (!disparoEnProceso && Juego.jugadorActual != null) {
-            manejarDisparo(Juego.jugadorActual);
+        
+        // NUEVO: Generar enemigos
+        generarEnemigos(origenX, origenY);
+        
+        // Ya disparamos, no repetir hasta la próxima animación
+        disparoPendiente = false;
+    }
+    
+    // Intentar detectar al jugador y disparar
+    if (!disparoEnProceso && Juego.jugadorActual != null) {
+        manejarDisparo(Juego.jugadorActual);
+    }
+}
+    private void generarEnemigos(float origenX, float origenY) {
+        if (adminEnemigos == null) return;
+        
+        // Generar enemigos pequeños
+        for (int i = 0; i < numEnemigosGenerar; i++) {
+            // Calcular posición aleatoria cercana
+            float offsetX = (float) ((Math.random() * 100 - 50) * Juego.SCALE);
+            float offsetY = (float) ((Math.random() * 20 - 40) * Juego.SCALE); // Aparecer encima
+            
+            // Crear un enemigo pequeño (usamos Skeler que es más pequeño)
+            adminEnemigos.crearEnemigoSkeler(origenX + offsetX, origenY + offsetY);
         }
     }
 }

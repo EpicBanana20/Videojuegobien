@@ -36,8 +36,11 @@ public class AdministradorEnemigos {
         // Crear una lista temporal para los enemigos a eliminar
         ArrayList<Enemigo> enemigosAEliminar = new ArrayList<>();
         
-        // Primero actualizar todos los enemigos y marcar los que hay que eliminar
-        for (Enemigo enemigo : enemigos) {
+        // Usar una copia segura para la iteración
+        ArrayList<Enemigo> enemigosSeguro = new ArrayList<>(enemigos);
+        
+        // Actualizar usando la copia
+        for (Enemigo enemigo : enemigosSeguro) {
             enemigo.update();
             
             // Si el enemigo ya no está activo, lo marcamos para eliminar
@@ -160,7 +163,7 @@ public class AdministradorEnemigos {
         return nuevoEnemigo;
     }
     public EnemigoDistut crearEnemigoDistut(float x, float y) {
-        EnemigoDistut nuevoEnemigo = new EnemigoDistut(x, y);
+        EnemigoDistut nuevoEnemigo = new EnemigoDistut(x, y, this);
         agregarEnemigo(nuevoEnemigo);
         return nuevoEnemigo;
     }
