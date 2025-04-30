@@ -205,9 +205,9 @@ public class EnemigoYbirth extends Enemigo{
                 origenX, 
                 origenY, 
                 anguloDisparo,
-                LoadSave.BULLET_ENEMY,
+                LoadSave.BULLET_YIBIRTH,
                 4, // Daño enemigo
-                1.8f // Velocidad
+                1.2f // Velocidad
             );
             adminBalas.agregarBala(nuevaBala);
             

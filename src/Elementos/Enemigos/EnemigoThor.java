@@ -13,7 +13,7 @@ import Utilz.Animaciones;
 public class EnemigoThor extends Enemigo{
      // Constantes específicas de este tipo de enemigo
     private static final int ANCHO_DEFAULT = 96;
-    private static final int ALTO_DEFAULT = 72;
+    private static final int ALTO_DEFAULT = 80;
     private static final int VIDA_DEFAULT = 50;
 
     private boolean disparoEnProceso = false;
@@ -31,7 +31,7 @@ public class EnemigoThor extends Enemigo{
             VIDA_DEFAULT);
         
         // Configurar propiedades específicas
-        inicializarEnemigo(12, 35, 72, 36, true, true);
+        inicializarEnemigo(12, 38, 72, 40, true, true);
         this.velocidadMovimiento = 0.5f * Juego.SCALE;
         this.velocidadX = -velocidadMovimiento; // Iniciar moviéndose a la izquierda
         this.checkOffset = 20 * Juego.SCALE; // Ajustar el offset de verificación para el salto
@@ -220,9 +220,9 @@ public class EnemigoThor extends Enemigo{
             origenX, 
             origenY, 
             anguloDisparo,
-            LoadSave.BULLET_ENEMY,
+            LoadSave.BULLET_THOR,
             4, // Daño enemigo
-            1.8f // Velocidad
+            1.2f // Velocidad
         );
             adminBalas.agregarBala(nuevaBala);
             

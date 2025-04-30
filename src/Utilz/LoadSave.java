@@ -43,6 +43,8 @@ public class LoadSave {
     public static final String BULLET_MORDEK = "balas/Bala_Mordek.png";
     public static final String BULLET_PIILIP = "balas/Bala_Piilip.png";
     public static final String BULLET_BOSS1 = "balas/Bala_Boss1.png";
+    public static final String BULLET_YIBIRTH = "balas/Bala_Yibirth.png";
+    public static final String BULLET_THOR = "balas/Bala_Thor.png";
     
     // Información de niveles: maxTileIndex, y lista de tiles sin hitbox
     public static final int[][] LEVEL_INFO = {
