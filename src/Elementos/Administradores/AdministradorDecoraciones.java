@@ -3,7 +3,6 @@ package Elementos.Administradores;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import Elementos.Decoraciones.Decoracion;
 import Elementos.Decoraciones.DecoracionAnimada;
@@ -15,10 +14,7 @@ import Utilz.LoadSave;
 public class AdministradorDecoraciones {
     // Lista para almacenar todas las decoraciones
     private ArrayList<Decoracion> decoraciones = new ArrayList<>();
-    
-    // Cache para almacenar sprites de decoraciones
-    private HashMap<Integer, BufferedImage> spriteCache = new HashMap<>();
-    private HashMap<Integer, BufferedImage[][]> animationCache = new HashMap<>();
+   
     
     public AdministradorDecoraciones() {
         // Inicializar el administrador

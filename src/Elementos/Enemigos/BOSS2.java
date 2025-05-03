@@ -6,7 +6,6 @@ import java.util.Random;
 
 import Elementos.Bala;
 import Elementos.Enemigo;
-import Elementos.Jugador;
 import Juegos.Juego;
 import Utilz.LoadSave;
 import Utilz.MetodoAyuda;
@@ -65,7 +64,6 @@ public class BOSS2 extends Enemigo {
     private int invocacionMaxCooldown = 600; // 10 segundos a 60 FPS
     private int numEnemigosAInvocar = 2;
     private boolean invocando = false;
-    private int frameInvocacion = 2;
     
     // Referencia al administrador de enemigos para invocar Skelers
     private AdministradorEnemigos adminEnemigos;

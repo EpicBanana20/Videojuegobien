@@ -117,9 +117,6 @@ public class EnemigoPiedrora extends Enemigo {
     }
 
     @Override
-    protected void disparar(float angulo) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'disparar'");
-    }
+    protected void disparar(float angulo) {}
     
 }

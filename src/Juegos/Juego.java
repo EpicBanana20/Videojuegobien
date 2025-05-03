@@ -14,6 +14,7 @@ import Elementos.Administradores.AdministradorBalas;
 import Elementos.Administradores.AdministradorDecoraciones;
 import Niveles.LevelManager;
 import Utilz.MetodoAyuda;
+import Menus.Menu;
 
 
 
@@ -49,6 +50,9 @@ public class Juego {
 
     private EstacionQuimica estacionQuimicaActiva = null;
 
+    private EstadoJuego estadoJuego = EstadoJuego.MENU;
+    private Menu menu;
+
     public Juego() {
         inicializar();
         pan = new PanelJuego(this);
@@ -78,32 +82,78 @@ public class Juego {
         
         levelMan.cargarDecoraciones();
         levelMan.cargarEntidades(this);
+        menu = new Menu(this);
     }
 
     public void updates() {
-        // Verificar si estamos en proceso de cambio de nivel
-        if (cambiandoNivel) {
-            completarCambioNivel();
-            return;
-        }
-        
-        player.update(camera.getxLvlOffset(), camera.getyLvlOffset());
-        levelMan.update();
-        pan.updateGame();
-        adminEnemigos.update();
-        adminDecoraciones.update();
-
-        if (player.getArmaActual() != null) {
-            adminEnemigos.comprobarColisionesBalas(player.getArmaActual().getAdminBalas());
-        }
-
-        camera.checkCloseToBorder((int) player.getHitBox().getX(), (int) player.getHitBox().getY());
-        
-        for (Enemigo enemigo : adminEnemigos.getEnemigos()) {
-        if (enemigo.getAdminBalas() != null) {
-            comprobarColisionesBalasEnemigasConJugador(enemigo.getAdminBalas());
+        switch (estadoJuego) {
+            case MENU:
+                menu.update();
+                break;
+            case PLAYING:
+                // Todo el código existente de updates va aquí
+                if (cambiandoNivel) {
+                    completarCambioNivel();
+                    return;
+                }
+                
+                player.update(camera.getxLvlOffset(), camera.getyLvlOffset());
+                levelMan.update();
+                pan.updateGame();
+                adminEnemigos.update();
+                adminDecoraciones.update();
+    
+                if (player.getArmaActual() != null) {
+                    adminEnemigos.comprobarColisionesBalas(player.getArmaActual().getAdminBalas());
+                }
+    
+                camera.checkCloseToBorder((int) player.getHitBox().getX(), (int) player.getHitBox().getY());
+                
+                for (Enemigo enemigo : adminEnemigos.getEnemigos()) {
+                    if (enemigo.getAdminBalas() != null) {
+                        comprobarColisionesBalasEnemigasConJugador(enemigo.getAdminBalas());
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
+
+    public void render(Graphics g) {
+        switch (estadoJuego) {
+            case MENU:
+                menu.draw(g);
+                break;
+            case PLAYING:
+                // Todo el código existente de render va aquí
+                background.draw(g, camera.getxLvlOffset());
+                
+                if(levelMan.getCurrentLevelIndex() != 2){
+                    adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                    levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                } else {
+                    levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                    adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                }
+                adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+    
+                if (estacionQuimicaActiva != null && estacionQuimicaActiva.isEstacionAbierta()) {
+                    estacionQuimicaActiva.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                }
+    
+                if (!cambiandoNivel) {
+                    hudQuimico.render(g);
+                }
+                
+                if (cambiandoNivel) {
+                    // Por ejemplo, dibujar una pantalla de carga o un efecto de fade
+                }
+                break;
+            default:
+                break;
+        }
     }
     
     // Método para iniciar un cambio de nivel
@@ -162,32 +212,7 @@ public class Juego {
         }
     }
 }
-    public void render(Graphics g) {
-        background.draw(g, camera.getxLvlOffset());
-        
-        if(levelMan.getCurrentLevelIndex() != 2){
-            adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
-            levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
-        } else {
-            levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
-            adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
-        }
-        adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
-        player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
-
-        if (estacionQuimicaActiva != null && estacionQuimicaActiva.isEstacionAbierta()) {
-            estacionQuimicaActiva.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
-        }
-
-        if (!cambiandoNivel) {
-            hudQuimico.render(g);
-        }
-        
-        // Aquí se podría agregar un efecto de transición entre niveles
-        if (cambiandoNivel) {
-            // Por ejemplo, dibujar una pantalla de carga o un efecto de fade
-        }
-    }
+    
 
     public void interactuarConEstacionQuimica() {
     // Buscar estaciones químicas en las decoraciones
@@ -236,16 +261,20 @@ public class Juego {
     public LevelManager getLevelManager() {
         return levelMan;
     }
-    
-    // Método para detectar eventos específicos (puede usarse para cambiar niveles)
-    public void procesarEvento(String tipoEvento, Object... args) {
-        if ("cambiar_nivel".equals(tipoEvento) && args.length > 0) {
-            int nivelDestino = (int)args[0];
-            cambiarNivel(nivelDestino);
-        }
-    }
 
     public AdministradorDecoraciones getAdminDecoraciones() {
         return adminDecoraciones;
+    }
+
+    public EstadoJuego getEstadoJuego() {
+        return estadoJuego;
+    }
+    
+    public void setEstadoJuego(EstadoJuego estadoJuego) {
+        this.estadoJuego = estadoJuego;
+    }
+    
+    public Menu getMenu() {
+        return menu;
     }
 }

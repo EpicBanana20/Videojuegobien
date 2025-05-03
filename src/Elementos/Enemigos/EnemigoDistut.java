@@ -2,8 +2,6 @@ package Elementos.Enemigos;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
-import Elementos.Bala;
 import Elementos.Enemigo;
 import Elementos.Jugador;
 import Juegos.Juego;
@@ -19,8 +17,6 @@ public class EnemigoDistut extends Enemigo{
     private boolean disparoEnProceso = false;
     private int frameDisparo = 1; // El disparo ocurrirá en el tercer frame (0,1,2,3)
     private boolean disparoPendiente = false;
-    private float anguloDisparo = 0;
-
     private Elementos.Administradores.AdministradorEnemigos adminEnemigos;
     private int numEnemigosGenerar = 2; // Número de enemigos a generar por disparo
     
@@ -145,7 +141,6 @@ public class EnemigoDistut extends Enemigo{
         // En lugar de crear la bala inmediatamente, iniciamos la animación
         disparoEnProceso = true;
         disparoPendiente = true;
-        anguloDisparo = angulo;
         animaciones.setAccion(DISPARO);
         animaciones.resetearAnimacion();
         

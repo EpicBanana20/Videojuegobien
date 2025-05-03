@@ -173,8 +173,6 @@ protected void manejarDisparo(Jugador jugador) {
     
     // Verificar si el jugador está en rango
     if (puedeVerJugador(jugador)) {
-        // Detener movimiento temporalmente para disparar
-        float velocidadOriginal = velocidadX;
         patrullando = false;
         velocidadX = 0;
         

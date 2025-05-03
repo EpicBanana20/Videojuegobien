@@ -6,6 +6,8 @@ import Utilz.Animaciones;
 
 public class DecoracionAnimada extends Decoracion {
     private Animaciones animaciones;
+    //NO ELIMINAR: Se mantiene para compatibilidad con el constructor
+    @SuppressWarnings("unused")
     private BufferedImage[][] animationFrames;
     private int tipoAnimacion;
     
