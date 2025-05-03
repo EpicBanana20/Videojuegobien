@@ -89,7 +89,7 @@ public class Menu {
                     // Acciones según el botón presionado
                     switch (i) {
                         case BOTON_JUGAR:
-                            juego.setEstadoJuego(EstadoJuego.PLAYING);
+                            juego.setEstadoJuego(EstadoJuego.SELECCION_PERSONAJE);
                             break;
                         case BOTON_OPCIONES:
                             // TODO: Implementar menú de opciones

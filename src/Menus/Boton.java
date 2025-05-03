@@ -20,7 +20,7 @@ public class Boton {
     
     public static final int B_WIDTH_DEFAULT = 140;
     public static final int B_HEIGHT_DEFAULT = 25;
-    public static final int B_WIDTH = (int) (B_WIDTH_DEFAULT * 3.5f);
+    public static final int B_WIDTH = (int) (B_WIDTH_DEFAULT * 4f);
     public static final int B_HEIGHT = (int) (B_HEIGHT_DEFAULT * 5f);
 
     public Boton(int x, int y, int rowIndex, BufferedImage[] imgs) {

@@ -20,6 +20,9 @@ public class EventoMouse extends MouseAdapter{
             case MENU:
                 pan.getGame().getMenu().mousePressed(e);
                 break;
+            case SELECCION_PERSONAJE:
+                // Por ahora solo usa teclado
+                break;
             case PLAYING:
                 if(e.getButton()==MouseEvent.BUTTON1)
                     pan.getGame().getPlayer().setAttacking(true);
@@ -41,6 +44,9 @@ public class EventoMouse extends MouseAdapter{
     switch (pan.getGame().getEstadoJuego()) {
         case MENU:
             pan.getGame().getMenu().mouseReleased(e);
+            break;
+        case SELECCION_PERSONAJE:
+            // Por ahora solo usa teclado
             break;
         case PLAYING:
             if(e.getButton()==MouseEvent.BUTTON1)

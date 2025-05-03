@@ -1,7 +1,7 @@
 package Juegos;
 
 import java.awt.Graphics;
-import java.awt.event.KeyEvent; 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import Elementos.Bala;
@@ -15,6 +15,8 @@ import Elementos.Administradores.AdministradorDecoraciones;
 import Niveles.LevelManager;
 import Utilz.MetodoAyuda;
 import Menus.Menu;
+import Menus.SelectorPersonajes;
+
 
 
 
@@ -52,6 +54,7 @@ public class Juego {
 
     private EstadoJuego estadoJuego = EstadoJuego.MENU;
     private Menu menu;
+    private SelectorPersonajes selectorPersonajes;
 
     public Juego() {
         inicializar();
@@ -83,12 +86,16 @@ public class Juego {
         levelMan.cargarDecoraciones();
         levelMan.cargarEntidades(this);
         menu = new Menu(this);
+        selectorPersonajes = new SelectorPersonajes(this);
     }
 
     public void updates() {
         switch (estadoJuego) {
             case MENU:
                 menu.update();
+                break;
+            case SELECCION_PERSONAJE:
+                selectorPersonajes.update();
                 break;
             case PLAYING:
                 // Todo el código existente de updates va aquí
@@ -124,6 +131,9 @@ public class Juego {
         switch (estadoJuego) {
             case MENU:
                 menu.draw(g);
+                break;
+            case SELECCION_PERSONAJE:
+                selectorPersonajes.draw(g);
                 break;
             case PLAYING:
                 // Todo el código existente de render va aquí
@@ -277,4 +287,9 @@ public class Juego {
     public Menu getMenu() {
         return menu;
     }
+
+    public SelectorPersonajes getSelectorPersonajes() {
+        return selectorPersonajes;
+    }
+    
 }
