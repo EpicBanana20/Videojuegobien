@@ -301,7 +301,6 @@ public class BOSS2 extends Enemigo {
                 this.frecuenciaOscilacion = 0.07f;
                 this.teletransporteMaxCooldown = 240;
                 this.numEnemigosAInvocar = 3;
-                System.out.println("¡Zefir ha entrado en fase avanzada! Comienza a invocar enemigos");
                 break;
                 
             case FASE_FINAL:
@@ -311,7 +310,6 @@ public class BOSS2 extends Enemigo {
                 this.frecuenciaOscilacion = 0.1f;
                 this.teletransporteMaxCooldown = 180;
                 this.numEnemigosAInvocar = 5;
-                System.out.println("¡Zefir ha entrado en fase final! Sus poderes alcanzan el máximo");
                 break;
         }
     }
