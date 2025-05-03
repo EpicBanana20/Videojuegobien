@@ -16,9 +16,8 @@ import Niveles.LevelManager;
 import Utilz.MetodoAyuda;
 import Menus.Menu;
 import Menus.SelectorPersonajes;
-
-
-
+import Audio.SistemaAudio;
+import Audio.ConstantesAudio;
 
 public class Juego {
     private VtaJuego vta;
@@ -30,6 +29,7 @@ public class Juego {
     private GameLoop gameLoop;
     private HUDQuimico hudQuimico;
     private AdministradorDecoraciones adminDecoraciones;
+    private SistemaAudio sistemaAudio;
 
     public static int NIVEL_ACTUAL_ANCHO;
     public static int NIVEL_ACTUAL_ALTO;
@@ -75,7 +75,12 @@ public class Juego {
         NIVEL_ACTUAL_ANCHO = levelMan.getCurrentLevel().getLvlData()[0].length * TILES_SIZE;
         NIVEL_ACTUAL_DATA = levelMan.getCurrentLevel().getLvlData();  
         MetodoAyuda.actualizarBloquesSinHitbox(levelMan.getCurrentLevelIndex());
-        player = new Jugador(200, 200, (int) (48 * SCALE), (int) (48 * SCALE));
+        
+        // Inicializar sistema de audio
+        sistemaAudio = new SistemaAudio();
+        cargarSonidos();
+        
+        player = new Jugador(200, 200, (int) (48 * SCALE), (int) (48 * SCALE), this);
         jugadorActual = player;
         hudQuimico = new HUDQuimico(player.getSistemaQuimico());
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
@@ -87,6 +92,18 @@ public class Juego {
         levelMan.cargarEntidades(this);
         menu = new Menu(this);
         selectorPersonajes = new SelectorPersonajes(this);
+    }
+    
+    private void cargarSonidos() {
+        // Cargar música
+        sistemaAudio.cargarSonido(ConstantesAudio.MUSICA_MUNDO_1, ConstantesAudio.RUTA_MUSICA_MUNDO_1);
+        sistemaAudio.cargarSonido(ConstantesAudio.MUSICA_MUNDO_2, ConstantesAudio.RUTA_MUSICA_MUNDO_2);
+        sistemaAudio.cargarSonido(ConstantesAudio.MUSICA_MUNDO_3, ConstantesAudio.RUTA_MUSICA_MUNDO_3);
+        sistemaAudio.cargarSonido(ConstantesAudio.MUSICA_MENU, ConstantesAudio.RUTA_MUSICA_MENU);
+        
+        // Cargar efectos de sonido
+        sistemaAudio.cargarSonido(ConstantesAudio.DISPARO_MACHINEGUN, ConstantesAudio.RUTA_DISPARO_MACHINEGUN);
+        sistemaAudio.cargarSonido(ConstantesAudio.DISPARO_MERCURIO, ConstantesAudio.RUTA_DISPARO_MERCURIO);
     }
 
     public void updates() {
@@ -202,6 +219,19 @@ public class Juego {
         player.loadLvlData(NIVEL_ACTUAL_DATA);
         
         levelMan.cargarEntidades(this);
+        
+        // Cambiar música según el nivel
+        switch (nivelDestino) {
+            case 0:
+                sistemaAudio.reproducirMusica(ConstantesAudio.MUSICA_MUNDO_1, true);
+                break;
+            case 1:
+                sistemaAudio.reproducirMusica(ConstantesAudio.MUSICA_MUNDO_2, true);
+                break;
+            case 2:
+                sistemaAudio.reproducirMusica(ConstantesAudio.MUSICA_MUNDO_3, true);
+                break;
+        }
 
         // Completar la transición
         cambiandoNivel = false;
@@ -209,23 +239,22 @@ public class Juego {
     }
     
     private void comprobarColisionesBalasEnemigasConJugador(AdministradorBalas adminBalas) {
-    if (adminBalas == null || player == null) return;
-    
-    ArrayList<Bala> balas = adminBalas.getBalas();
-    
-    for (Bala bala : balas) {
-        if (bala.estaActiva() && bala.getHitBox().intersects(player.getHitBox())) {
-            // La bala impactó en el jugador
-            // Aquí puedes implementar lógica de daño al jugador
-            System.out.println("¡Jugador recibió impacto de bala enemiga!");
-            bala.desactivar();
+        if (adminBalas == null || player == null) return;
+        
+        ArrayList<Bala> balas = adminBalas.getBalas();
+        
+        for (Bala bala : balas) {
+            if (bala.estaActiva() && bala.getHitBox().intersects(player.getHitBox())) {
+                // La bala impactó en el jugador
+                // Aquí puedes implementar lógica de daño al jugador
+                System.out.println("¡Jugador recibió impacto de bala enemiga!");
+                bala.desactivar();
+            }
         }
     }
-}
     
-
     public void interactuarConEstacionQuimica() {
-    // Buscar estaciones químicas en las decoraciones
+        // Buscar estaciones químicas en las decoraciones
         for (Decoracion decoracion : adminDecoraciones.getDecoraciones()) {
             if (decoracion instanceof EstacionQuimica) {
                 EstacionQuimica estacion = (EstacionQuimica) decoracion;
@@ -282,6 +311,23 @@ public class Juego {
     
     public void setEstadoJuego(EstadoJuego estadoJuego) {
         this.estadoJuego = estadoJuego;
+        
+        if (estadoJuego == EstadoJuego.MENU) {
+            sistemaAudio.reproducirMusica(ConstantesAudio.MUSICA_MENU, true);
+        } else if (estadoJuego == EstadoJuego.PLAYING) {
+            // Reproducir música del nivel actual
+            switch (levelMan.getCurrentLevelIndex()) {
+                case 0:
+                    sistemaAudio.reproducirMusica(ConstantesAudio.MUSICA_MUNDO_1, true);
+                    break;
+                case 1:
+                    sistemaAudio.reproducirMusica(ConstantesAudio.MUSICA_MUNDO_2, true);
+                    break;
+                case 2:
+                    sistemaAudio.reproducirMusica(ConstantesAudio.MUSICA_MUNDO_3, true);
+                    break;
+            }
+        }
     }
     
     public Menu getMenu() {
@@ -292,4 +338,7 @@ public class Juego {
         return selectorPersonajes;
     }
     
+    public SistemaAudio getSistemaAudio() {
+        return sistemaAudio;
+    }
 }
