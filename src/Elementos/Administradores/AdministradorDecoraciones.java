@@ -325,7 +325,7 @@ public class AdministradorDecoraciones {
     }
 
     public void crearElementoQuimico(float x, float y, String simbolo) {
-    BufferedImage sprite = LoadSave.GetSpriteAtlas("elementos/" + simbolo + ".png");
+    BufferedImage sprite = LoadSave.GetSpriteAtlas("Elementos/" + simbolo + ".png");
     if (sprite != null) {
         ElementoRecolectable elemento = new ElementoRecolectable(
             x, y, 
