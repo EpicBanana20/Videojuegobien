@@ -1,6 +1,8 @@
 package Menus;
 
 import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
@@ -21,12 +23,12 @@ public class SelectorPersonajes {
     private float posicionActualY = 0;
     private float posicionObjetivoY = 0;
     private boolean enTransicion = false;
-    private float velocidadTransicion = 12f;
+    private float velocidadTransicion = 6f;
     
     // Constantes de dimensiones
     private static final int MARCO_WIDTH = 601;
     private static final int MARCO_HEIGHT = 972;
-    private static final int MARGEN_VERTICAL = 50;
+    private static final int MARGEN_VERTICAL = 100;
     
     public SelectorPersonajes(Juego juego) {
         this.juego = juego;
@@ -34,16 +36,13 @@ public class SelectorPersonajes {
     }
     
     private void cargarImagenes() {
-        // Cargar fondo del selector (puedes reutilizar el del menú o crear uno nuevo)
-        backgroundImg = LoadSave.GetSpriteAtlas("FONDOMENU.png");
+        backgroundImg = LoadSave.GetSpriteAtlas("FONDOSELECCION.jpg");
         
         // Cargar marcos de personajes
         personajeMarcos = new BufferedImage[TOTAL_PERSONAJES];
-        
-        // TODO: Actualizar con las rutas correctas de las imágenes
         personajeMarcos[0] = LoadSave.GetSpriteAtlas("marcos/EclipsaMarco.png");
-        personajeMarcos[1] = LoadSave.GetSpriteAtlas("marcos/HalanMarco.png");
-        personajeMarcos[2] = LoadSave.GetSpriteAtlas("marcos/ValthorMarco.png");
+        personajeMarcos[1] = LoadSave.GetSpriteAtlas("marcos/ValthorMarco.png");
+        personajeMarcos[2] = LoadSave.GetSpriteAtlas("marcos/HalanMarco.png");
     }
     
     public void update() {
@@ -54,6 +53,16 @@ public class SelectorPersonajes {
             if (Math.abs(diferencia) < 0.5f) {
                 posicionActualY = posicionObjetivoY;
                 enTransicion = false;
+                
+                // Reiniciar posición cuando se complete un ciclo completo
+                int alturaTotal = MARCO_HEIGHT + MARGEN_VERTICAL;
+                if (posicionActualY <= -alturaTotal * TOTAL_PERSONAJES) {
+                    posicionActualY = 0;
+                    posicionObjetivoY = 0;
+                } else if (posicionActualY >= alturaTotal * TOTAL_PERSONAJES) {
+                    posicionActualY = 0;
+                    posicionObjetivoY = 0;
+                }
             } else {
                 posicionActualY += diferencia * velocidadTransicion / 100f;
             }
@@ -68,18 +77,24 @@ public class SelectorPersonajes {
         int centerX = Juego.GAME_WIDTH / 2 - MARCO_WIDTH / 2;
         int centerY = Juego.GAME_HEIGHT / 2 - MARCO_HEIGHT / 2;
         
-        // Dibujar los personajes con efecto de ciclo
-        for (int i = -1; i <= TOTAL_PERSONAJES; i++) {
+        for (int i = -3; i <=3; i++) {
             int indicePersonaje = (personajeSeleccionado + i + TOTAL_PERSONAJES) % TOTAL_PERSONAJES;
-            
-            // Calcular posición Y con offset de animación
+
             int posY = centerY + i * (MARCO_HEIGHT + MARGEN_VERTICAL) + (int)posicionActualY;
             
-            if (posY + MARCO_HEIGHT > -100 && posY < Juego.GAME_HEIGHT + 100) {
+            // Dibujar solo si está visible en pantalla
+            if (posY + MARCO_HEIGHT > -MARCO_HEIGHT && posY < Juego.GAME_HEIGHT + MARCO_HEIGHT) {
                 g.drawImage(personajeMarcos[indicePersonaje], centerX, posY, 
                           MARCO_WIDTH, MARCO_HEIGHT, null);
             }
         }
+        
+        // Mostrar información del personaje seleccionado
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        String nombrePersonaje = getNombrePersonaje(personajeSeleccionado);
+        g.drawString("Personaje: " + nombrePersonaje, centerX, 100);
+        g.drawString("Indice: "+personajeSeleccionado, centerX, 150);
     }
     
     public void keyPressed(KeyEvent e) {
@@ -87,15 +102,12 @@ public class SelectorPersonajes {
         
         switch(e.getKeyCode()) {
             case KeyEvent.VK_W:
-            case KeyEvent.VK_UP:
                 seleccionarAnterior();
                 break;
                 
             case KeyEvent.VK_S:
-            case KeyEvent.VK_DOWN:
                 seleccionarSiguiente();
                 break;
-                
             case KeyEvent.VK_ENTER:
             case KeyEvent.VK_SPACE:
                 iniciarJuegoConPersonaje();
@@ -111,6 +123,7 @@ public class SelectorPersonajes {
         personajeSeleccionado = (personajeSeleccionado + 1) % TOTAL_PERSONAJES;
         posicionObjetivoY -= (MARCO_HEIGHT + MARGEN_VERTICAL);
         enTransicion = true;
+
     }
     
     private void seleccionarAnterior() {
@@ -120,9 +133,23 @@ public class SelectorPersonajes {
     }
     
     private void iniciarJuegoConPersonaje() {
+        System.out.println("Iniciando juego con: " + getNombrePersonaje(personajeSeleccionado));
         // TODO: Configurar el jugador según el personaje seleccionado
-        // Por ahora solo cambiamos al estado PLAYING
+
         juego.setEstadoJuego(EstadoJuego.PLAYING);
+    }
+    
+    private String getNombrePersonaje(int indice) {
+        switch (indice) {
+            case 0:
+                return "Eclipsa (Mujer Loba)";
+            case 1:
+                return "Dr. Halan (Científico)";
+            case 2:
+                return "Valthor (Caballero)";
+            default:
+                return "Desconocido";
+        }
     }
     
     // Para eventos del mouse (si quieres soporte de mouse)
