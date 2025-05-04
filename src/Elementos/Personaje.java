@@ -85,7 +85,7 @@ public class Personaje {
         }
         return false;
     }
-    
+
     public String getSpriteAtlas() { 
         // Si es Eclipsa y la habilidad está activa, usar sprite enojado
         if (tipo == TipoPersonaje.ECLIPSA && habilidadActiva) {
@@ -100,5 +100,8 @@ public class Personaje {
     
     public float getModificadorCadencia() {
         return (habilidadActiva && tipo == TipoPersonaje.ECLIPSA) ? 2.0f : 1.0f;
+    }
+    public TipoPersonaje getTipo() {
+        return tipo;
     }
 }

@@ -50,6 +50,7 @@ public class Juego {
     // Para control de niveles
     private boolean cambiandoNivel = false;
     private int nivelDestino = -1;
+    private boolean necesitaReinicio = false;
 
     private EstacionQuimica estacionQuimicaActiva = null;
 
@@ -99,7 +100,11 @@ public class Juego {
                 selectorPersonajes.update();
                 break;
             case PLAYING:
-                // Todo el código existente de updates va aquí
+                if(necesitaReinicio) {
+                    reiniciarJuego();
+                    return;
+                }
+                
                 if (cambiandoNivel) {
                     completarCambioNivel();
                     return;
@@ -272,10 +277,44 @@ public class Juego {
         player.getArmaActual().getAdminBalas().limpiarBalas();
         adminEnemigos.limpiarEnemigos();
         adminDecoraciones.limpiarDecoraciones();
-        
+        necesitaReinicio = true;
         // Cambiar al menú
         estadoJuego = EstadoJuego.MENU;
         
+    }
+
+    public void reiniciarJuego() {
+        // Limpiar recursos
+        if (player.getArmaActual() != null) {
+            player.getArmaActual().getAdminBalas().limpiarBalas();
+        }
+        adminEnemigos.limpiarEnemigos();
+        adminDecoraciones.limpiarDecoraciones();
+        
+        // Reiniciar al nivel 0
+        levelMan.changeLevel(0);
+        
+        // Actualizar variables globales
+        NIVEL_ACTUAL_DATA = levelMan.getCurrentLevel().getLvlData();
+        NIVEL_ACTUAL_ALTO = NIVEL_ACTUAL_DATA.length * TILES_SIZE;
+        NIVEL_ACTUAL_ANCHO = NIVEL_ACTUAL_DATA[0].length * TILES_SIZE;
+        
+        // Reiniciar background y cámara
+        background = new Background(0);
+        camera = new Camera(GAME_WIDTH, GAME_HEIGHT, NIVEL_ACTUAL_ANCHO, NIVEL_ACTUAL_ALTO);
+        
+        // Recrear jugador con el mismo personaje
+        Personaje.TipoPersonaje tipoPersonaje = player.getPersonaje().getTipo();
+        player = new Jugador(200, 200, (int) (48 * SCALE), (int) (48 * SCALE), tipoPersonaje);
+        jugadorActual = player;
+        hudQuimico = new HUDQuimico(player.getSistemaQuimico());
+        player.loadLvlData(NIVEL_ACTUAL_DATA);
+        
+        // Cargar entidades y decoraciones del nivel 0
+        levelMan.cargarEntidades(this);
+        levelMan.cargarDecoraciones();
+        
+        necesitaReinicio = false;
     }
 
 
@@ -345,6 +384,10 @@ public class Juego {
 
     public SelectorPersonajes getSelectorPersonajes() {
         return selectorPersonajes;
+    }
+
+    public boolean necesitaReinicio() {
+        return necesitaReinicio;
     }
     
 }

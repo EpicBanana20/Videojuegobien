@@ -475,4 +475,11 @@ public class Jugador extends Cascaron {
     public float getVidaMaxima() { return vidaMaxima; }
     public boolean estaMuerto() { return muerto; }
 
+    public Personaje getPersonaje() {
+        return personaje;
+    }
+    
+
 }
+
+
