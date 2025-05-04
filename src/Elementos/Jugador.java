@@ -131,9 +131,17 @@ public class Jugador extends Cascaron {
         aimController.update(getXCenter() - xlvlOffset, getYCenter() - yLvlOffset, currentMouseX, currentMouseY);
         armaActual.update(getXCenter(), getYCenter(), aimController);
         adminBalasCentral.update();
-        
-        if(attacking)
+
+        if(armaActual instanceof Elementos.Armas.ArmaLaser) {
+            Elementos.Armas.ArmaLaser laser = (Elementos.Armas.ArmaLaser) armaActual;
+            if(attacking) {
+                laser.disparar();
+            } else {
+                laser.detenerDisparo();
+            }
+        } else if(attacking) {
             armaActual.disparar();
+        }
     }
 
 
@@ -198,19 +206,21 @@ public class Jugador extends Cascaron {
     }
 
     public void inicializarArmas() {
-        // Vaciar el inventario por si acaso
         inventarioArmas.clear();
         
-        // Añadir las armas disponibles
+        // Añadir todas las armas disponibles
         inventarioArmas.add(new Elementos.Armas.ArmaMercurio(adminBalasCentral));
         inventarioArmas.add(new Elementos.Armas.MachineGun(adminBalasCentral));
+        inventarioArmas.add(new Elementos.Armas.ArmaEscopeta(adminBalasCentral));
+        inventarioArmas.add(new Elementos.Armas.ArmaLaser(adminBalasCentral));
+        inventarioArmas.add(new Elementos.Armas.ArmaFrancotirador(adminBalasCentral));
         
-        // Establecer la primera arma como actual
         if (!inventarioArmas.isEmpty()) {
             indiceArmaActual = 0;
             armaActual = inventarioArmas.get(0);
         }
     }
+
     private void actuPosicion() {
         moving = false;
         

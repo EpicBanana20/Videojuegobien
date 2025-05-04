@@ -267,11 +267,14 @@ public abstract class Enemigo extends Cascaron {
         drawHitBox(g, xLvlOffset, yLvlOffset);
     }
 
-    public void recibirDaño(int cantidad) {
+    public void recibirDaño(int cantidad, String tipoDaño) {
         if (!activo)
             return;
 
-        vida -= cantidad;
+        float multiplicador = obtenerMultiplicadorDaño(tipoDaño);
+        int dañoFinal = (int)(cantidad * multiplicador);
+
+        vida -= dañoFinal;
 
         // Cambiar a animación de herido temporalmente
         if (animaciones != null && vida > 0) {
@@ -407,6 +410,10 @@ public abstract class Enemigo extends Cascaron {
         } else if (velocidadX == 0) {
             velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
         }
+    }
+
+    protected float obtenerMultiplicadorDaño(String tipoDaño) {
+        return 1.0f;
     }
 
     protected void renderizarConAnimacion(Graphics g, int xLvlOffset, int yLvlOffset) {

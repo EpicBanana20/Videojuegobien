@@ -17,6 +17,7 @@ public class Bala extends Cascaron {
     private boolean activa = true; // Indica si la bala está activa o debe eliminarse
     private int daño = 6; // Daño que causa la bala
     private float angulo; // Ángulo de disparo
+    private String tipoDaño;
     
     // Propiedades para la animación
     private Animaciones animacionBala;
@@ -30,14 +31,33 @@ public class Bala extends Cascaron {
     private int anchoSprite, altoSprite;
     private String tipoSprite = LoadSave.BULLET_MACHINEGUN; // Ruta por defecto del sprite de la bala
 
+    //Constructor bala enemigos
     public Bala(float x, float y, float angulo, String tipoSprite, int daño, float velocidad) {
         super(x, y, (int) (8 * Juego.SCALE), (int) (8 * Juego.SCALE));
         
         this.tipoSprite = tipoSprite;
         this.daño = daño;
         this.velocidad = velocidad * Juego.SCALE;
+
+        this.velocidadX = (float) Math.cos(angulo) * this.velocidad;
+        this.velocidadY = (float) Math.sin(angulo) * this.velocidad;
+        this.angulo = angulo;
         
-        // Resto del código igual...
+        initHitBox(x, y, 6 * Juego.SCALE, 6 * Juego.SCALE);
+        anchoSprite = (int)(16 * Juego.SCALE);
+        altoSprite = (int)(16 * Juego.SCALE);
+        cargarAnimaciones();
+    }
+
+    // Constructor para el jugador (con offset)
+    public Bala(float x, float y, float angulo, String tipoSprite, int daño, float velocidad, String tipoDaño) {
+        super(x, y, (int) (8 * Juego.SCALE), (int) (8 * Juego.SCALE));
+        
+        this.tipoSprite = tipoSprite;
+        this.daño = daño;
+        this.tipoDaño = tipoDaño;
+        this.velocidad = velocidad * Juego.SCALE;
+        
         this.velocidadX = (float) Math.cos(angulo) * this.velocidad;
         this.velocidadY = (float) Math.sin(angulo) * this.velocidad;
         this.angulo = angulo;
@@ -189,5 +209,9 @@ public class Bala extends Cascaron {
 
     public int getDaño() {
         return daño;
+    }
+
+    public String getTipoDaño() {
+        return tipoDaño;
     }
 }

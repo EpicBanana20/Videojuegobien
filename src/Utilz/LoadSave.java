@@ -51,6 +51,9 @@ public class LoadSave {
     public static final String BULLET_YIBIRTH = "balas/Bala_Yibirth.png";
     public static final String BULLET_THOR = "balas/Bala_Thor.png";
     
+    public static final String ARMA_ESCOPETA = "armas/ESCOPETA.png";
+    public static final String ARMA_LASER = "armas/LASER.png";
+    public static final String ARMA_FRANCOTIRADOR = "armas/FRANCOTIRADOR.png";
     // Información de niveles: maxTileIndex, y lista de tiles sin hitbox
     public static final int[][] LEVEL_INFO = {
         {60, 58, 6, 10}, // Nivel 1: max=60, air=58

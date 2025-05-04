@@ -368,14 +368,35 @@ public class BOSS1 extends Enemigo {
     }
 
     @Override
-    public void recibirDaño(int cantidad) {
+    protected float obtenerMultiplicadorDaño(String tipoDaño) {
+        if (tipoDaño == null) return 1.0f;
+        
+        switch (tipoDaño) {
+            case "fuego":
+                return 1.5f; // Débil al fuego
+            case "hielo":
+                return 0.5f; // Resistente al hielo
+            default:
+                return 1.0f;
+        }
+    }
+
+    @Override
+    public void recibirDaño(int cantidad, String tipoDaño) {
         if (!activo)
             return;
 
-        vida -= cantidad;
+        float multiplicador = obtenerMultiplicadorDaño(tipoDaño);
+        int dañoFinal = (int)(cantidad * multiplicador);
 
-        // No cambiar a animación de herido
-        // Solo verificar si murió
+        vida -= dañoFinal;
+
+        // Cambiar a animación de herido temporalmente
+        if (animaciones != null && vida > 0) {
+            animaciones.setAccion(HERIDO);
+            animaciones.resetearAnimacion();
+        }
+
         if (vida <= 0) {
             vida = 0;
             morir();

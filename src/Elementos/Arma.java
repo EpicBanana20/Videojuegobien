@@ -17,6 +17,7 @@ public abstract class Arma {
     protected String nombre;
     protected float escala = 1.0f;
     protected boolean apuntadoIzquierda = false;
+    protected String tipoDaño;
     protected AdministradorBalas adminBalas;
 
     private float[] positionResult = new float[2];
@@ -90,5 +91,9 @@ public abstract class Arma {
     
     public AdministradorBalas getAdminBalas() {
         return adminBalas;
+    }
+
+    public String getTipoDaño() {
+        return tipoDaño;
     }
 }

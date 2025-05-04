@@ -76,7 +76,7 @@ public class AdministradorEnemigos {
                 for (Enemigo enemigo : enemigos) {
                     if (enemigo.estaActivo() && bala.getHitBox().intersects(enemigo.getHitBox())) {
                         // La bala impactó en el enemigo
-                        enemigo.recibirDaño(bala.getDaño());
+                        enemigo.recibirDaño(bala.getDaño(), bala.getTipoDaño());
                         bala.desactivar();
                         break; // Una bala solo puede impactar a un enemigo
                     }
