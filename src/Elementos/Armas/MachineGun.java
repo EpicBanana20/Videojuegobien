@@ -6,7 +6,6 @@ import Elementos.Administradores.AdministradorBalas;
 import Juegos.Juego;
 import Utilz.LoadSave;
 import Elementos.AimController;
-import Audio.ConstantesAudio;
 
 public class MachineGun extends Arma {
     // Cadencia en disparos por segundo
@@ -58,11 +57,6 @@ public class MachineGun extends Arma {
             
             // Añadir la bala al administrador
             adminBalas.agregarBala(nuevaBala);
-            
-            // Reproducir sonido de disparo
-            if (Juego.jugadorActual != null) {
-                Juego.jugadorActual.getGame().getSistemaAudio().reproducirEfecto(ConstantesAudio.DISPARO_MACHINEGUN);
-            }
             
             // Consumir munición
             municionActual--;

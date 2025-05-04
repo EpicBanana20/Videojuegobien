@@ -57,13 +57,9 @@ public class Jugador extends Cascaron {
     private AdministradorBalas adminBalasCentral;
 
     private SistemaQuimico sistemaQuimico;
-    
-    // Referencia al juego
-    private Juego game;
 
-    public Jugador(float x, float y, int w, int h, Juego game) {
+    public Jugador(float x, float y, int w, int h) {
         super(x, y, w, h);
-        this.game = game;
         loadAnimation();  // Cargamos las animaciones
         initHitBox(x, y, 20 * Juego.SCALE, 27 * Juego.SCALE);
         aimController = new AimController(200* Juego.SCALE);
@@ -152,16 +148,16 @@ public class Jugador extends Cascaron {
         else if (moving) {
             nuevaAnimacion = CORRER;
         }
-       
+        
         // Configuramos la nueva acción en el objeto de animaciones
         animaciones.setAccion(nuevaAnimacion);
     }
- 
+
     public void loadLvlData(int[][] lvlData) {
         this.lvlData = lvlData;
         inAir = !isEntityOnFloor(hitbox, lvlData);
     }
- 
+
     public void render(Graphics g, int xlvlOffset, int yLvlOffset) {
         BufferedImage currentImage = animaciones.getImagenActual();
         if (mirandoIzquierda) {
@@ -199,7 +195,7 @@ public class Jugador extends Cascaron {
         armaActual = inventarioArmas.get(indiceArmaActual);
         System.out.println("Cambiado a: " + armaActual.getNombre());
     }
- 
+
     public void inicializarArmas() {
         // Vaciar el inventario por si acaso
         inventarioArmas.clear();
@@ -341,7 +337,7 @@ public class Jugador extends Cascaron {
         inAir = true;
         airSpeed = jumpSpeed;
     }
- 
+
     private void loadAnimation() {
         // Cargamos los sprites como antes
         BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
@@ -349,7 +345,7 @@ public class Jugador extends Cascaron {
         for (int i = 0; i < spritesJugador.length; i++)
             for (int j = 0; j < spritesJugador[i].length; j++)
                 spritesJugador[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
- 
+
         // Creamos la instancia de Animaciones con los sprites cargados
         animaciones = new Animaciones(spritesJugador);
         
@@ -360,48 +356,48 @@ public class Jugador extends Cascaron {
         animaciones.setNumFramesPorAnimacion(SALTAR, GetNoSprite(SALTAR));
         animaciones.setNumFramesPorAnimacion(CAYENDO, GetNoSprite(CAYENDO));
     }
- 
+
     //GETTERS Y SETTERS
     public void setMoving(boolean moving) {
         this.moving = moving;
     }
- 
+
     public void resetDirBooleans() {
         left = right = up = down = false;
     }
- 
+
     public boolean isLeft() {
         return left;
     }
- 
+
     public void setLeft(boolean left) {
         this.left = left;
     }
- 
+
     public boolean isRight() {
         return right;
     }
- 
+
     public void setRight(boolean right) {
         this.right = right;
     }
- 
+
     public boolean isDown() {
         return down;
     }
- 
+
     public void setDown(boolean down) {
         this.down = down;
     }
- 
+
     public boolean isUp() {
         return up;
     }
- 
+
     public void setUp(boolean up) {
         this.up = up;
     }
- 
+
     public void setAttacking(boolean attacking) {
         this.attacking = attacking;
     }
@@ -409,28 +405,24 @@ public class Jugador extends Cascaron {
     public boolean isAttacking() {
         return attacking;
     }
- 
+
     public float getXCenter() {
         return hitbox.x + hitbox.width / 2f;
     }
- 
+
     public float getYCenter() {
         return hitbox.y + hitbox.height / 2f;
     }
- 
+
     public void setJump(boolean jump) {
         this.jump = jump;
     }
- 
+
     public Arma getArmaActual() {
         return armaActual;
     }
- 
+
     public SistemaQuimico getSistemaQuimico() {
         return sistemaQuimico;
     }
-    
-    public Juego getGame() {
-        return game;
-    }
- }
+}
