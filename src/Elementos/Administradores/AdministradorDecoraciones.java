@@ -221,37 +221,37 @@ public class AdministradorDecoraciones {
             case 100: // Estación Química
                 crearEstacionQuimica(x, y, ancho, alto, "Estacion/EstacionQuimica.png");
             break;
-            case 200: // Hidrógeno
+            case 200:
                 crearElementoQuimico(x, y, "Ag");
                 break;
-            case 201: // Oxígeno
+            case 201:
                 crearElementoQuimico(x, y, "As");
                 break;
-            case 202: // Carbono
+            case 202:
                 crearElementoQuimico(x, y, "B");
             break;
-            case 203: // Nitrógeno
+            case 203:
                 crearElementoQuimico(x, y, "Br");
                 break;
-            case 204: // Sodio
+            case 204: 
                 crearElementoQuimico(x, y, "C");
                 break;
-            case 205: // Cloro
+            case 205: 
                 crearElementoQuimico(x, y, "Cl");
                 break;
-            case 206: // Azufre
+            case 206: 
                 crearElementoQuimico(x, y, "Cs");
                 break;
-            case 207: // Fósforo
+            case 207: 
                 crearElementoQuimico(x, y, "Cu");
                 break;
-            case 208: // Cobre
+            case 208: 
                 crearElementoQuimico(x, y, "I");
                 break;
-            case 209: // Plata
+            case 209: 
                 crearElementoQuimico(x, y, "Na");
                 break;
-            case 210: // Platino
+            case 210: 
                 crearElementoQuimico(x, y, "O");
                 break;
             case 211:

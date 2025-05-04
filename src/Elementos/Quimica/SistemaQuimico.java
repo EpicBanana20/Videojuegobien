@@ -26,19 +26,53 @@ public class SistemaQuimico {
     }
     
     private void inicializarRecetasCompuestos() {
-        // Crear algunas recetas de ejemplo
-        RecetaCompuesto sulfatoCobre = new RecetaCompuesto("Sulfato de Cobre", "CuSO4");
-        sulfatoCobre.agregarElemento("Cu", 1);
-        sulfatoCobre.agregarElemento("S", 1);
-        sulfatoCobre.agregarElemento("O", 4);
-        recetasCompuestos.add(sulfatoCobre);
+        RecetaCompuesto decaoxidoTetrafosforo = new RecetaCompuesto("Decaoxido de tetrafósforo", "P4O10");
+        decaoxidoTetrafosforo.agregarElemento("P", 4);
+        decaoxidoTetrafosforo.agregarElemento("O", 10);
+        recetasCompuestos.add(decaoxidoTetrafosforo);
         
-        RecetaCompuesto cloruroSodio = new RecetaCompuesto("Cloruro de Sodio", "NaCl");
-        cloruroSodio.agregarElemento("Na", 1);
-        cloruroSodio.agregarElemento("Cl", 1);
-        recetasCompuestos.add(cloruroSodio);
-        
-        // Añadir más recetas según sea necesario
+
+        RecetaCompuesto trioxidoAzufre = new RecetaCompuesto("Trióxido de azufre", "SO3");
+        trioxidoAzufre.agregarElemento("S", 1);
+        trioxidoAzufre.agregarElemento("O", 3);
+        recetasCompuestos.add(trioxidoAzufre);
+
+        RecetaCompuesto tribromuroBoro = new RecetaCompuesto("Tribromuro de boro", "BBr3");
+        tribromuroBoro.agregarElemento("B", 1);
+        tribromuroBoro.agregarElemento("Br", 3);
+        recetasCompuestos.add(tribromuroBoro);
+
+        RecetaCompuesto yoduroPlata = new RecetaCompuesto("Yoduro de plata", "AgI");
+        yoduroPlata.agregarElemento("Ag", 1);
+        yoduroPlata.agregarElemento("I", 1);
+        recetasCompuestos.add(yoduroPlata);
+
+        RecetaCompuesto sulfatoCobreIII = new RecetaCompuesto("Sulfato de cobre(III)", "CuSO4");
+        sulfatoCobreIII.agregarElemento("Cu", 1);
+        sulfatoCobreIII.agregarElemento("S", 1);
+        sulfatoCobreIII.agregarElemento("O", 4);
+        recetasCompuestos.add(sulfatoCobreIII);
+
+        RecetaCompuesto cloruroCesio = new RecetaCompuesto("Cloruro de cesio", "CsCl");
+        cloruroCesio.agregarElemento("Cs", 1);
+        cloruroCesio.agregarElemento("Cl", 1);
+        recetasCompuestos.add(cloruroCesio);
+
+        RecetaCompuesto arsenitoSodio = new RecetaCompuesto("Arsenito de sodio", "Na3AsO3");
+        arsenitoSodio.agregarElemento("Na", 1);
+        arsenitoSodio.agregarElemento("As", 1);
+        arsenitoSodio.agregarElemento("O", 2);
+        recetasCompuestos.add(arsenitoSodio);
+
+        RecetaCompuesto cloruroPlatinoII = new RecetaCompuesto("Cloruro de platino(II)", "PtCl2");
+        cloruroPlatinoII.agregarElemento("Pt", 1);
+        cloruroPlatinoII.agregarElemento("Cl", 2);
+        recetasCompuestos.add(cloruroPlatinoII);
+
+        RecetaCompuesto tetacloruroCarbono = new RecetaCompuesto("Tetacloruro de carbono", "CCl4");
+        tetacloruroCarbono.agregarElemento("C", 1);
+        tetacloruroCarbono.agregarElemento("Cl", 4);
+        recetasCompuestos.add(tetacloruroCarbono);
     }
     
     private void inicializarRecetasArmas() {
