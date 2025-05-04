@@ -1,6 +1,7 @@
 package Elementos.Armas;
 
 import Elementos.Arma;
+import Elementos.Enemigo;
 import Elementos.Administradores.AdministradorBalas;
 import Juegos.Juego;
 import Elementos.AimController;
@@ -21,6 +22,9 @@ public class ArmaLaser extends Arma {
     private float longitudMaxima = 500f * Juego.SCALE;
     private int dañoPorTick = 2; // Daño por frame
     private float[] puntoImpacto = new float[2];
+    private float alcanceReal = 0f; // Distancia hasta el punto de impacto
+    private Enemigo enemigoImpactado = null; // Enemigo que está siendo impactado
+    private boolean intentandoDisparar = false; // Si el usuario mantiene presionado
     
     public ArmaLaser(AdministradorBalas adminBalas) {
         super("armas/laser.png", 30 * Juego.SCALE, 3.0f, adminBalas);
@@ -30,6 +34,7 @@ public class ArmaLaser extends Arma {
     
     @Override
     public void disparar() {
+        intentandoDisparar = true;
         if (energiaActual > 0) {
             disparando = true;
         }
@@ -37,6 +42,7 @@ public class ArmaLaser extends Arma {
     
     // Método para detener el disparo
     public void detenerDisparo() {
+        intentandoDisparar = false;
         disparando = false;
     }
     
@@ -59,12 +65,17 @@ public class ArmaLaser extends Arma {
             aplicarDañoLaser();
         } else {
             // Recargar energía cuando no está disparando
-            if (energiaActual < energiaMaxima) {
+            if (energiaActual < energiaMaxima && !intentandoDisparar) {
                 energiaActual += recargaEnergia;
                 if (energiaActual > energiaMaxima) {
                     energiaActual = energiaMaxima;
                 }
             }
+        }
+        
+        // Si el usuario sigue intentando disparar pero no tiene energía, evitar reactivación
+        if (intentandoDisparar && energiaActual <= 0) {
+            disparando = false;
         }
     }
     
@@ -92,20 +103,61 @@ public class ArmaLaser extends Arma {
             posicionDisparo
         );
         
-        // Calcular punto de impacto (simplified for now)
-        float distancia = longitudMaxima;
+        // Buscar colisión con bloques o enemigos
+        float paso = 10 * Juego.SCALE; // Resolución de búsqueda
+        float distanciaActual = 0;
+        enemigoImpactado = null;
+        
+        while (distanciaActual < longitudMaxima) {
+            // Calcular posición actual del rayo
+            float[] posActual = new float[2];
+            AimController.getPositionAtDistance(
+                posicionDisparo[0], 
+                posicionDisparo[1],
+                distanciaActual,
+                rotacion,
+                posActual
+            );
+            
+            // Verificar colisión con bloques
+            if (Utilz.MetodoAyuda.isSolido(posActual[0], posActual[1], Juego.NIVEL_ACTUAL_DATA)) {
+                puntoImpacto[0] = posActual[0];
+                puntoImpacto[1] = posActual[1];
+                alcanceReal = distanciaActual;
+                return;
+            }
+            
+            // Verificar colisión con enemigos
+            if (Juego.ADMIN_ENEMIGOS != null) {
+                for (Enemigo enemigo : Juego.ADMIN_ENEMIGOS.getEnemigos()) {
+                    if (enemigo.estaActivo() && enemigo.getHitBox().contains(posActual[0], posActual[1])) {
+                        puntoImpacto[0] = posActual[0];
+                        puntoImpacto[1] = posActual[1];
+                        alcanceReal = distanciaActual;
+                        enemigoImpactado = enemigo;
+                        return;
+                    }
+                }
+            }
+            
+            distanciaActual += paso;
+        }
+        
+        // Si no hay colisión, usar distancia máxima
         AimController.getPositionAtDistance(
             posicionDisparo[0], 
             posicionDisparo[1],
-            distancia,
+            longitudMaxima,
             rotacion,
             puntoImpacto
         );
+        alcanceReal = longitudMaxima;
     }
     
     private void aplicarDañoLaser() {
-        // TODO: Implementar detección de colisión con el rayo láser
-        // Por ahora, simplificado para testing
+        if (enemigoImpactado != null && enemigoImpactado.estaActivo()) {
+            enemigoImpactado.recibirDaño(dañoPorTick, tipoDaño);
+        }
     }
     
     private void renderizarLaser(Graphics g, int xLvlOffset, int yLvlOffset) {
@@ -140,6 +192,12 @@ public class ArmaLaser extends Arma {
         g2d.setColor(new Color(255, 100, 100, 200)); // Centro más brillante
         g2d.drawLine(startX, startY, endX, endY);
         
+        // Efecto de impacto
+        if (enemigoImpactado != null) {
+            g2d.setColor(new Color(255, 150, 150, 200));
+            g2d.fillOval(endX - 5, endY - 5, 10, 10);
+        }
+        
         // Restaurar configuración
         g2d.setColor(originalColor);
         g2d.setStroke(originalStroke);
@@ -169,4 +227,4 @@ public class ArmaLaser extends Arma {
     public boolean estaDisparando() {
         return disparando;
     }
-}   
+}

@@ -36,6 +36,7 @@ public class Juego {
     public static int NIVEL_ACTUAL_ALTO;
     public static int[][] NIVEL_ACTUAL_DATA;
     public static Jugador jugadorActual;
+    public static Elementos.Administradores.AdministradorEnemigos ADMIN_ENEMIGOS;
 
     public final static int TILES_DEF_SIZE = 32;
     public final static float SCALE = 1.5f;
@@ -71,6 +72,7 @@ public class Juego {
     private void inicializar() {
         levelMan = new LevelManager(this);
         adminEnemigos = new AdministradorEnemigos();
+        ADMIN_ENEMIGOS = adminEnemigos;
         adminDecoraciones = new AdministradorDecoraciones();
 
         NIVEL_ACTUAL_ALTO = levelMan.getCurrentLevel().getLvlData().length * TILES_SIZE;
