@@ -25,7 +25,7 @@ public class ArmaLaser extends Arma {
     public ArmaLaser(AdministradorBalas adminBalas) {
         super("armas/laser.png", 30 * Juego.SCALE, 3.0f, adminBalas);
         this.nombre = "Laser";
-        this.tipoDaño = "electrico"; // Hace más daño al BOSS2
+        this.tipoDaño = "Luz"; // Hace más daño al BOSS2
     }
     
     @Override

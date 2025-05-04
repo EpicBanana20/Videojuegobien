@@ -11,15 +11,12 @@ public class ArmaMercurio extends Arma {
     // Cadencia en disparos por segundo
     private float cadenciaDisparo = 5.0f; // 5 disparos por segundo
     private int contadorRecarga = 0;
-    
-    // Sistema de munición
     private int municionActual = 50;
     private int capacidadCargador = 50;
     private boolean recargando = false;
     private int tiempoRecargaCompleta = 60; // 2 segundos a 60 FPS
     private int contadorRecargaCompleta = 0;
-    
-    // Convertimos la cadencia en tiempo entre disparos (en frames)
+
     private int armaCooldown;
     private static final int FRAMES_POR_SEGUNDO = 60;
 
@@ -71,6 +68,9 @@ public class ArmaMercurio extends Arma {
     @Override
     public void update(float playerX, float playerY, AimController aimController) {
         super.update(playerX, playerY, aimController);
+        
+        int cooldownBase = Math.round(FRAMES_POR_SEGUNDO / cadenciaDisparo);
+        this.armaCooldown = Math.round(cooldownBase / modificadorCadencia);
         
         // Actualizar contador de cooldown
         if(contadorRecarga > 0) {

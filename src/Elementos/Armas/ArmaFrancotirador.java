@@ -11,15 +11,17 @@ public class ArmaFrancotirador extends Arma {
     private int municionActual = 5;
     private int capacidadCargador = 5;
     private boolean recargando = false;
-    private int tiempoRecargaCompleta = 240; // 4 segundos
+    private int tiempoRecargaCompleta = 240;
     private int contadorRecargaCompleta = 0;
-    private int armaCooldown = 90; // 1.5 segundos entre disparos
+    private int armaCooldown;
+    private static final int FRAMES_POR_SEGUNDO = 60;
     private int contadorRecarga = 0;
+    private float cadenciaDisparo = 0.3f;
     
     public ArmaFrancotirador(AdministradorBalas adminBalas) {
         super("armas/francotirador.png", 35 * Juego.SCALE, 3.5f, adminBalas);
         this.nombre = "Francotirador";
-        this.tipoDaño = "penetrante"; // Alto daño a todos los enemigos
+        this.tipoDaño = ""; //TODO: agregar daño
     }
     
     @Override
@@ -42,8 +44,8 @@ public class ArmaFrancotirador extends Arma {
                 posicionDisparo[1], 
                 rotacion,
                 LoadSave.BULLET_MACHINEGUN, // Usar sprite temporal
-                20, // Alto daño
-                6.0f // Alta velocidad
+                50, // Alto daño
+                10.0f // Alta velocidad
             );
             
             adminBalas.agregarBala(balaFrancotirador);
@@ -62,6 +64,9 @@ public class ArmaFrancotirador extends Arma {
     public void update(float playerX, float playerY, AimController aimController) {
         super.update(playerX, playerY, aimController);
         
+        int cooldownBase = Math.round(FRAMES_POR_SEGUNDO / cadenciaDisparo);
+        this.armaCooldown = Math.round(cooldownBase / modificadorCadencia);
+
         if (contadorRecarga > 0) {
             contadorRecarga--;
         }

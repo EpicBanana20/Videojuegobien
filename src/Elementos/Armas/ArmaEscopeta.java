@@ -13,17 +13,21 @@ public class ArmaEscopeta extends Arma {
     private boolean recargando = false;
     private int tiempoRecargaCompleta = 180; // 3 segundos
     private int contadorRecargaCompleta = 0;
-    private int armaCooldown = 60; // 1 segundo entre disparos
     private int contadorRecarga = 0;
+    private float cadenciaDisparo = 1.0f;
+    private int armaCooldown;
+    private static final int FRAMES_POR_SEGUNDO = 60;
     
     // Características únicas de la escopeta
     private int numPerdigones = 6; // Número de balas por disparo
     private float dispersion = 0.3f; // Ángulo de dispersión en radianes
+
     
+
     public ArmaEscopeta(AdministradorBalas adminBalas) {
         super("armas/escopeta.png", 30 * Juego.SCALE, 3.0f, adminBalas);
         this.nombre = "Escopeta";
-        this.tipoDaño = "fuego"; // Hace más daño al BOSS1
+        this.tipoDaño = ""; //TODO: agregar daño
     }
     
     @Override
@@ -72,6 +76,10 @@ public class ArmaEscopeta extends Arma {
     @Override
     public void update(float playerX, float playerY, AimController aimController) {
         super.update(playerX, playerY, aimController);
+
+        int cooldownBase = Math.round(FRAMES_POR_SEGUNDO / cadenciaDisparo);
+        this.armaCooldown = Math.round(cooldownBase / modificadorCadencia);
+        
         
         if (contadorRecarga > 0) {
             contadorRecarga--;

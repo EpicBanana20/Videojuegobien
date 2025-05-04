@@ -9,7 +9,7 @@ import Elementos.AimController;
 
 public class MachineGun extends Arma {
     // Cadencia en disparos por segundo
-    private float cadenciaDisparo = 5.0f; // 5 disparos por segundo
+    private float cadenciaDisparo = 5.0f;
     private int contadorRecarga = 0;
     
     // Sistema de munición
