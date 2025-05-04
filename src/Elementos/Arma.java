@@ -19,6 +19,7 @@ public abstract class Arma {
     protected boolean apuntadoIzquierda = false;
     protected String tipoDaño;
     protected AdministradorBalas adminBalas;
+    protected float modificadorCadencia = 1.0f;
 
     private float[] positionResult = new float[2];
 
@@ -95,5 +96,13 @@ public abstract class Arma {
 
     public String getTipoDaño() {
         return tipoDaño;
+    }
+
+    public void setModificadorCadencia(float modificador) {
+        this.modificadorCadencia = modificador;
+    }
+    
+    public float getModificadorCadencia() {
+        return modificadorCadencia;
     }
 }

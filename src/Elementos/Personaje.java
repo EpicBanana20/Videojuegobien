@@ -13,6 +13,7 @@ public class Personaje {
         private final String spriteAtlas;
         private final float vidaMaxima;
         private final float velocidad;
+
         
         TipoPersonaje(String nombre, String spriteAtlas, float vidaMaxima, float velocidad) {
             this.nombre = nombre;
@@ -26,6 +27,12 @@ public class Personaje {
         public float getVidaMaxima() { return vidaMaxima; }
         public float getVelocidad() { return velocidad; }
     }
+
+    private boolean habilidadActiva = false;
+    private int duracionHabilidad = 600; // 10 segundos
+    private int cooldownHabilidad = 1800; // 30 segundos
+    private int timerHabilidad = 0;
+    private int timerCooldown = 0;
     
     private TipoPersonaje tipo;
     
@@ -39,9 +46,14 @@ public class Personaje {
     public float getVelocidad() { return tipo.getVelocidad(); }
     
     public void usarHabilidadEspecial() {
+        if (timerCooldown > 0 || habilidadActiva) return;
+        
         switch(tipo) {
             case ECLIPSA:
                 System.out.println("¡Eclipsa usa su habilidad de loba!");
+                habilidadActiva = true;
+                timerHabilidad = duracionHabilidad;
+                timerCooldown = cooldownHabilidad;
                 break;
             case HALAN:
                 System.out.println("¡Dr. Halan usa su conocimiento químico!");
@@ -50,5 +62,27 @@ public class Personaje {
                 System.out.println("¡Valthor usa su defensa de caballero!");
                 break;
         }
+    }
+
+    public void update() {
+        if (habilidadActiva) {
+            timerHabilidad--;
+            if (timerHabilidad <= 0) {
+                habilidadActiva = false;
+                System.out.println("Habilidad especial terminada.");
+            }
+        }
+        
+        if (timerCooldown > 0) {
+            timerCooldown--;
+        }
+    }
+
+    public boolean isHabilidadActiva() {
+        return habilidadActiva;
+    }
+    
+    public float getModificadorCadencia() {
+        return (habilidadActiva && tipo == TipoPersonaje.ECLIPSA) ? 2.0f : 1.0f;
     }
 }

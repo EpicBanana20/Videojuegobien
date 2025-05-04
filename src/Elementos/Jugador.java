@@ -127,6 +127,8 @@ public class Jugador extends Cascaron {
         
         // Actualizamos qué animación mostrar basado en el estado del jugador
         determinarAnimacion();
+        personaje.update();
+        armaActual.setModificadorCadencia(personaje.getModificadorCadencia());
         
         aimController.update(getXCenter() - xlvlOffset, getYCenter() - yLvlOffset, currentMouseX, currentMouseY);
         armaActual.update(getXCenter(), getYCenter(), aimController);
