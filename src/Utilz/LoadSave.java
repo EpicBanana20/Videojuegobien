@@ -32,7 +32,10 @@ public class LoadSave {
     public static final String PLAYING_BG1_IMG = "BACKGR.png";
     public static final String PLAYING_BG2_IMG = "BACKGR2.png";
     public static final String PLAYING_BG3_IMG = "BACKGR3.png";
+
     public static final String PLAYER_ATLAS = "personajes/Eclipsa_Sprite2.png";
+    public static final String PLAYER_ATLAS_HALAN = "personajes/Halan_Sprite.png";
+    public static final String PLAYER_ATLAS_VALTHOR = "personajes/Valthor_Sprite.png";
     
     public static final String BULLET_MERCURIO = "balas/Bala_Mercurio.png";
     public static final String BULLET_MACHINEGUN = "balas/Bala_Machinegun.png";
