@@ -222,37 +222,46 @@ public class AdministradorDecoraciones {
                 crearEstacionQuimica(x, y, ancho, alto, "Estacion/EstacionQuimica.png");
             break;
             case 200: // Hidrógeno
-                crearElementoQuimico(x, y, "H");
+                crearElementoQuimico(x, y, "Ag");
                 break;
             case 201: // Oxígeno
-                crearElementoQuimico(x, y, "O");
+                crearElementoQuimico(x, y, "As");
                 break;
             case 202: // Carbono
-                crearElementoQuimico(x, y, "C");
+                crearElementoQuimico(x, y, "B");
             break;
             case 203: // Nitrógeno
-                crearElementoQuimico(x, y, "N");
+                crearElementoQuimico(x, y, "Br");
                 break;
             case 204: // Sodio
-                crearElementoQuimico(x, y, "Na");
+                crearElementoQuimico(x, y, "C");
                 break;
             case 205: // Cloro
                 crearElementoQuimico(x, y, "Cl");
                 break;
             case 206: // Azufre
-                crearElementoQuimico(x, y, "S");
+                crearElementoQuimico(x, y, "Cs");
                 break;
             case 207: // Fósforo
-                crearElementoQuimico(x, y, "P");
-                break;
-            case 208: // Cobre
                 crearElementoQuimico(x, y, "Cu");
                 break;
+            case 208: // Cobre
+                crearElementoQuimico(x, y, "I");
+                break;
             case 209: // Plata
-                crearElementoQuimico(x, y, "Ag");
+                crearElementoQuimico(x, y, "Na");
                 break;
             case 210: // Platino
+                crearElementoQuimico(x, y, "O");
+                break;
+            case 211:
+                crearElementoQuimico(x, y, "P");
+                break;
+            case 212:
                 crearElementoQuimico(x, y, "Pt");
+                break;
+            case 213:
+                crearElementoQuimico(x, y, "S");
                 break;
         }
     }
