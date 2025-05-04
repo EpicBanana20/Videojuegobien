@@ -72,7 +72,11 @@ public class MachineGun extends Arma {
     @Override
     public void update(float playerX, float playerY, AimController aimController) {
         super.update(playerX, playerY, aimController);
-        this.armaCooldown = Math.round(armaCooldown / modificadorCadencia);
+        
+        // Recalcular el cooldown base cuando cambia el modificador
+        int cooldownBase = Math.round(FRAMES_POR_SEGUNDO / cadenciaDisparo);
+        this.armaCooldown = Math.round(cooldownBase / modificadorCadencia);
+        
         // Actualizar contador de cooldown
         if(contadorRecarga > 0) {
             contadorRecarga--;

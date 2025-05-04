@@ -35,6 +35,7 @@ public class PanelJuego extends JPanel {
         super.paint(g);
         Juego game = getGame();
         game.render(g);
+        dibujarBarraVida(g);
         
         // Dibujar información del nivel actual (opcional)
         g.setColor(Color.WHITE);
@@ -52,5 +53,42 @@ public class PanelJuego extends JPanel {
         // Actualiza la información del mouse en el jugador antes de la actualización general
         game.updateMouseInfo(ev.getMouseX(), ev.getMouseY());
         // La actualización normal del juego continúa en el método update() de la clase Juego
+    }
+
+    private void dibujarBarraVida(Graphics g) {
+        int barraX = 20;
+        int barraY = 70;
+        int barraAncho = 200;
+        int barraAlto = 20;
+        
+        // Fondo de la barra
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(barraX, barraY, barraAncho, barraAlto);
+        
+        // Vida actual
+        float porcentajeVida = game.getPlayer().getVidaActual() / 
+                               game.getPlayer().getVidaMaxima();
+        int vidaAncho = (int)(barraAncho * porcentajeVida);
+        
+        // Color según porcentaje
+        if (porcentajeVida > 0.6f)
+            g.setColor(Color.GREEN);
+        else if (porcentajeVida > 0.3f)
+            g.setColor(Color.YELLOW);
+        else
+            g.setColor(Color.RED);
+        
+        g.fillRect(barraX, barraY, vidaAncho, barraAlto);
+        
+        // Borde
+        g.setColor(Color.BLACK);
+        g.drawRect(barraX, barraY, barraAncho, barraAlto);
+        
+        // Texto
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 14));
+        g.drawString("Vida: " + (int)game.getPlayer().getVidaActual() + 
+                     "/" + (int)game.getPlayer().getVidaMaxima(), 
+                     barraX + 5, barraY + 15);
     }
 }

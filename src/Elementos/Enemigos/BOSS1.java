@@ -161,12 +161,10 @@ public class BOSS1 extends Enemigo {
             case FASE_ENOJADO:
                 this.velocidadMovimiento = 3f * Juego.SCALE;
                 this.disparoMaxCooldown = 45;
-                System.out.println("¡El jefe está enojado! Comienza a alejarse");
                 break;
             case FASE_FURIOSO:
                 this.velocidadMovimiento = 5f * Juego.SCALE;
                 this.disparoMaxCooldown = 30;
-                System.out.println("¡El jefe está FURIOSO! Se aleja más rápido");
                 break;
         }
     }
@@ -186,9 +184,6 @@ public class BOSS1 extends Enemigo {
         
         int nuevoPatron = (patronAtaqueActual + 1) % numPatrones;
         patronAtaqueActual = nuevoPatron;
-        
-        System.out.println("Jefe cambia a patrón: " + patronAtaqueActual);
-        
         // Configurar comportamiento según el patrón
         switch (patronAtaqueActual) {
             case 0: // Patrón: Moverse de lado a lado

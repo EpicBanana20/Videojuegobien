@@ -29,6 +29,15 @@ public class Jugador extends Cascaron {
     private float xDrawOffset = 15 * Juego.SCALE;
     private float yDrawOffset = 20 * Juego.SCALE;
 
+    private float vidaActual;
+    private float vidaMaxima;
+    private boolean muerto = false;
+    private boolean invulnerable = false;
+    private int invulnerabilidadTimer = 0;
+    private static final int INVULNERABILIDAD_DURACION = 60; // 1 segundo
+    private int tiempoMuerte = 0;
+    private static final int TIEMPO_RESPAWN = 180; // 3 segundos
+
     ///// graveda y salto
     private float airSpeed = -1f;
     private float gravity = 0.02f * Juego.SCALE; // Aumentamos ligeramente la gravedad
@@ -62,6 +71,9 @@ public class Jugador extends Cascaron {
         super(x, y, w, h);
         this.personaje = new Personaje(tipoPersonaje);
         this.playerSpeed = personaje.getVelocidad();
+        this.vidaMaxima = personaje.getVidaMaxima();
+        this.vidaActual = vidaMaxima;
+
         loadAnimation();
         initHitBox(x, y, 20 * Juego.SCALE, 27 * Juego.SCALE);
         aimController = new AimController(200* Juego.SCALE);
@@ -86,19 +98,17 @@ public class Jugador extends Cascaron {
         g.setColor(Color.RED);
         g.fillOval((int)aimX - cursorSize/2, (int)aimY - cursorSize/2, cursorSize, cursorSize);
         
-        // Debug info
-        if (sobreUnaPlataforma) {
-            g.setColor(Color.GREEN);
-            g.drawString("¡Sobre plataforma!", (int)aimX, (int)aimY - 20);
-        }
-        
-        if (quiereBajarPlataforma) {
-            g.setColor(Color.YELLOW);
-            g.drawString("¡Bajando!", (int)aimX, (int)aimY - 40);
-        }
     }
 
     public void update(int xlvlOffset, int yLvlOffset) {
+        if (muerto) return;
+        
+        if (invulnerable) {
+            invulnerabilidadTimer--;
+            if (invulnerabilidadTimer <= 0) {
+                invulnerable = false;
+            }
+        }
         // Verificar si estamos sobre una plataforma atravesable
         sobreUnaPlataforma = isEntityOnPlatform(hitbox, lvlData);
         
@@ -117,7 +127,6 @@ public class Jugador extends Cascaron {
             airSpeed = 2.0f;
             // Mover ligeramente hacia abajo para salir de la colisión
             hitbox.y += 1;
-            System.out.println("Iniciando caída a través de plataforma");
         }
         
         actuPosicion();
@@ -128,6 +137,11 @@ public class Jugador extends Cascaron {
         // Actualizamos qué animación mostrar basado en el estado del jugador
         determinarAnimacion();
         personaje.update();
+
+        if (personaje.necesitaCambioSprite()) {
+            loadAnimation();
+        }
+
         armaActual.setModificadorCadencia(personaje.getModificadorCadencia());
         
         aimController.update(getXCenter() - xlvlOffset, getYCenter() - yLvlOffset, currentMouseX, currentMouseY);
@@ -200,7 +214,8 @@ public class Jugador extends Cascaron {
         inAir = false;
         airSpeed = 0;
     }
-    // Añadir al final de la clase Jugador
+
+
     public void cambiarArma() {
         indiceArmaActual = (indiceArmaActual + 1) % inventarioArmas.size();
         armaActual = inventarioArmas.get(indiceArmaActual);
@@ -370,6 +385,24 @@ public class Jugador extends Cascaron {
         animaciones.setNumFramesPorAnimacion(CAYENDO, GetNoSprite(CAYENDO));
     }
 
+    public void recibirDaño(float cantidad) {
+        if (invulnerable || muerto) return;
+        
+        vidaActual -= cantidad;
+        invulnerable = true;
+        invulnerabilidadTimer = INVULNERABILIDAD_DURACION;
+        
+        if (vidaActual <= 0) {
+            vidaActual = 0;
+            morir();
+        }
+    }
+
+    private void morir() {
+        muerto = true;
+        resetDirBooleans();
+    }
+
     //GETTERS Y SETTERS
     public void setMoving(boolean moving) {
         this.moving = moving;
@@ -442,4 +475,9 @@ public class Jugador extends Cascaron {
     public void usarHabilidadEspecial() {
         personaje.usarHabilidadEspecial();
     }
+
+    public float getVidaActual() { return vidaActual; }
+    public float getVidaMaxima() { return vidaMaxima; }
+    public boolean estaMuerto() { return muerto; }
+
 }

@@ -33,6 +33,7 @@ public class Personaje {
     private int cooldownHabilidad = 1800; // 30 segundos
     private int timerHabilidad = 0;
     private int timerCooldown = 0;
+    private boolean necesitaCambioSprite = false;
     
     private TipoPersonaje tipo;
     
@@ -41,7 +42,6 @@ public class Personaje {
     }
     
     public String getNombre() { return tipo.getNombre(); }
-    public String getSpriteAtlas() { return tipo.getSpriteAtlas(); }
     public float getVidaMaxima() { return tipo.getVidaMaxima(); }
     public float getVelocidad() { return tipo.getVelocidad(); }
     
@@ -50,8 +50,8 @@ public class Personaje {
         
         switch(tipo) {
             case ECLIPSA:
-                System.out.println("¡Eclipsa usa su habilidad de loba!");
                 habilidadActiva = true;
+                necesitaCambioSprite = true;
                 timerHabilidad = duracionHabilidad;
                 timerCooldown = cooldownHabilidad;
                 break;
@@ -69,13 +69,29 @@ public class Personaje {
             timerHabilidad--;
             if (timerHabilidad <= 0) {
                 habilidadActiva = false;
-                System.out.println("Habilidad especial terminada.");
+                necesitaCambioSprite = true; 
             }
         }
         
         if (timerCooldown > 0) {
             timerCooldown--;
         }
+    }
+
+    public boolean necesitaCambioSprite() {
+        if (necesitaCambioSprite) {
+            necesitaCambioSprite = false;
+            return true;
+        }
+        return false;
+    }
+    
+    public String getSpriteAtlas() { 
+        // Si es Eclipsa y la habilidad está activa, usar sprite enojado
+        if (tipo == TipoPersonaje.ECLIPSA && habilidadActiva) {
+            return LoadSave.PLAYER_ATLAS_ECLIPSA_ENOJADA;
+        }
+        return tipo.getSpriteAtlas(); 
     }
 
     public boolean isHabilidadActiva() {

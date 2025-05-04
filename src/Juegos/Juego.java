@@ -106,11 +106,17 @@ public class Juego {
                 }
                 
                 player.update(camera.getxLvlOffset(), camera.getyLvlOffset());
+                if (player.estaMuerto()) {
+                    volverAlMenu();
+                    return;
+                }
                 levelMan.update();
                 pan.updateGame();
                 adminEnemigos.update();
+                comprobarColisionEnemigosConJugador();
+                administrarDañoBalasEnemigas();
                 adminDecoraciones.update();
-    
+                
                 if (player.getArmaActual() != null) {
                     adminEnemigos.comprobarColisionesBalas(player.getArmaActual().getAdminBalas());
                 }
@@ -128,6 +134,33 @@ public class Juego {
         }
     }
 
+    private void comprobarColisionEnemigosConJugador() {
+        if (player.estaMuerto()) return;
+        
+        for (Enemigo enemigo : adminEnemigos.getEnemigos()) {
+            if (enemigo.estaActivo() && 
+                enemigo.getHitBox().intersects(player.getHitBox())) {
+                player.recibirDaño(5); // Daño por contacto
+            }
+        }
+    }
+
+    private void administrarDañoBalasEnemigas() {
+        if (player.estaMuerto()) return;
+        
+        for (Enemigo enemigo : adminEnemigos.getEnemigos()) {
+            if (enemigo.getAdminBalas() != null) {
+                ArrayList<Bala> balas = enemigo.getAdminBalas().getBalas();
+                for (Bala bala : balas) {
+                    if (bala.estaActiva() && 
+                        bala.getHitBox().intersects(player.getHitBox())) {
+                        player.recibirDaño(bala.getDaño());
+                        bala.desactivar();
+                    }
+                }
+            }
+        }
+    }
     public void configurarJugadorConPersonaje(Personaje.TipoPersonaje tipoPersonaje) {
         float x = player != null ? (float) player.getHitBox().getCenterX() : 200;
         float y = player != null ? (float) player.getHitBox().getCenterY() : 200;
@@ -219,21 +252,32 @@ public class Juego {
         nivelDestino = -1;
     }
     
-    private void comprobarColisionesBalasEnemigasConJugador(AdministradorBalas adminBalas) {
-    if (adminBalas == null || player == null) return;
-    
-    ArrayList<Bala> balas = adminBalas.getBalas();
-    
-    for (Bala bala : balas) {
-        if (bala.estaActiva() && bala.getHitBox().intersects(player.getHitBox())) {
-            // La bala impactó en el jugador
-            // Aquí puedes implementar lógica de daño al jugador
-            System.out.println("¡Jugador recibió impacto de bala enemiga!");
-            bala.desactivar();
+        private void comprobarColisionesBalasEnemigasConJugador(AdministradorBalas adminBalas) {
+        if (adminBalas == null || player == null) return;
+        
+        ArrayList<Bala> balas = adminBalas.getBalas();
+        
+        for (Bala bala : balas) {
+            if (bala.estaActiva() && bala.getHitBox().intersects(player.getHitBox())) {
+                // La bala impactó en el jugador
+                // Aquí puedes implementar lógica de daño al jugador
+                System.out.println("¡Jugador recibió impacto de bala enemiga!");
+                bala.desactivar();
+            }
         }
     }
-}
     
+    private void volverAlMenu() {
+        // Limpiar recursos
+        player.getArmaActual().getAdminBalas().limpiarBalas();
+        adminEnemigos.limpiarEnemigos();
+        adminDecoraciones.limpiarDecoraciones();
+        
+        // Cambiar al menú
+        estadoJuego = EstadoJuego.MENU;
+        
+    }
+
 
     public void interactuarConEstacionQuimica() {
     // Buscar estaciones químicas en las decoraciones
