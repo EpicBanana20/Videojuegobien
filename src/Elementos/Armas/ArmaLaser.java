@@ -37,6 +37,7 @@ public class ArmaLaser extends Arma {
         intentandoDisparar = true;
         if (energiaActual > 0) {
             disparando = true;
+            calcularPuntoImpacto();
         }
     }
     
@@ -44,6 +45,9 @@ public class ArmaLaser extends Arma {
     public void detenerDisparo() {
         intentandoDisparar = false;
         disparando = false;
+        puntoImpacto[0] = x;
+        puntoImpacto[1] = y;
+        alcanceReal = 0f;
     }
     
     @Override
@@ -83,7 +87,7 @@ public class ArmaLaser extends Arma {
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         super.render(g, xLvlOffset, yLvlOffset);
         
-        if (disparando && energiaActual > 0) {
+        if (disparando && energiaActual > 0 && alcanceReal > 0) {
             renderizarLaser(g, xLvlOffset, yLvlOffset);
         }
         
