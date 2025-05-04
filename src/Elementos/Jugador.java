@@ -34,23 +34,18 @@ public class Jugador extends Cascaron {
     private boolean muerto = false;
     private boolean invulnerable = false;
     private int invulnerabilidadTimer = 0;
-    private static final int INVULNERABILIDAD_DURACION = 60; // 1 segundo
-    private int tiempoMuerte = 0;
-    private static final int TIEMPO_RESPAWN = 180; // 3 segundos
+    private static final int INVULNERABILIDAD_DURACION = 60;
 
-    ///// graveda y salto
+    //graveda y salto
     private float airSpeed = -1f;
-    private float gravity = 0.02f * Juego.SCALE; // Aumentamos ligeramente la gravedad
-    private float jumpSpeed = -2.23f * Juego.SCALE; // Hacemos el salto un poco más potente
+    private float gravity = 0.02f * Juego.SCALE;
+    private float jumpSpeed = -2.23f * Juego.SCALE; 
     private boolean inAir = false;
     
     // Variable para controlar si el jugador quiere bajar a través de plataformas
     private boolean quiereBajarPlataforma = false;
-    // Cooldown para evitar volver a subir a la plataforma inmediatamente
     private int bajarPlataformaCooldown = 0;
     private static final int MAX_BAJAR_COOLDOWN = 20;
-    
-    // Para debug
     private boolean sobreUnaPlataforma = false;
 
     // Apuntado
@@ -164,18 +159,19 @@ public class Jugador extends Cascaron {
     // Nuevo método para determinar qué animación mostrar
     private void determinarAnimacion() {
             int nuevaAnimacion = INACTIVO; // Por defecto, estamos inactivos
-    if (inAir) {
-            if (airSpeed < 0) {
-                nuevaAnimacion = SALTAR;
-            } else {
-                nuevaAnimacion = CAYENDO;
+            if (invulnerable) {
+                nuevaAnimacion = DAÑO;
+            } else if (inAir) {
+                if (airSpeed < 0) {
+                    nuevaAnimacion = SALTAR;
+                } else {
+                    nuevaAnimacion = CAYENDO;
+                }
+            } else if (moving) {
+                nuevaAnimacion = CORRER;
             }
-        }
-        else if (moving) {
-            nuevaAnimacion = CORRER;
-        }
         
-        // Configuramos la nueva acción en el objeto de animaciones
+        
         animaciones.setAccion(nuevaAnimacion);
     }
 
@@ -376,13 +372,12 @@ public class Jugador extends Cascaron {
 
         // Creamos la instancia de Animaciones con los sprites cargados
         animaciones = new Animaciones(spritesJugador);
-        
-        // Configuramos manualmente la cantidad correcta de frames para cada animación
-        // Aplicamos directamente la configuración para cada tipo de animación
         animaciones.setNumFramesPorAnimacion(INACTIVO, GetNoSprite(INACTIVO));
         animaciones.setNumFramesPorAnimacion(CORRER, GetNoSprite(CORRER));
         animaciones.setNumFramesPorAnimacion(SALTAR, GetNoSprite(SALTAR));
         animaciones.setNumFramesPorAnimacion(CAYENDO, GetNoSprite(CAYENDO));
+        animaciones.setNumFramesPorAnimacion(DAÑO, GetNoSprite(DAÑO));
+        animaciones.setNumFramesPorAnimacion(MUERTE, GetNoSprite(MUERTE));
     }
 
     public void recibirDaño(float cantidad) {
