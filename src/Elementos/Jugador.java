@@ -97,6 +97,11 @@ public class Jugador extends Cascaron {
 
     public void update(int xlvlOffset, int yLvlOffset) {
         if (muerto) return;
+
+        if (hitbox.y + hitbox.height > Juego.NIVEL_ACTUAL_ALTO) {
+            morir();
+            return;
+        }
         
         if (invulnerable) {
             invulnerabilidadTimer--;
