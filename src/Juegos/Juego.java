@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import Elementos.Bala;
 import Elementos.Enemigo;
 import Elementos.Jugador;
+import Elementos.Personaje;
 import Elementos.Administradores.AdministradorEnemigos;
 import Elementos.Decoraciones.Decoracion;
 import Elementos.Decoraciones.EstacionQuimica;
@@ -75,7 +76,7 @@ public class Juego {
         NIVEL_ACTUAL_ANCHO = levelMan.getCurrentLevel().getLvlData()[0].length * TILES_SIZE;
         NIVEL_ACTUAL_DATA = levelMan.getCurrentLevel().getLvlData();  
         MetodoAyuda.actualizarBloquesSinHitbox(levelMan.getCurrentLevelIndex());
-        player = new Jugador(200, 200, (int) (48 * SCALE), (int) (48 * SCALE));
+        player = new Jugador(200, 200, (int) (48 * SCALE), (int) (48 * SCALE), Personaje.TipoPersonaje.ECLIPSA);
         jugadorActual = player;
         hudQuimico = new HUDQuimico(player.getSistemaQuimico());
         player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
@@ -125,6 +126,16 @@ public class Juego {
             default:
                 break;
         }
+    }
+
+    public void configurarJugadorConPersonaje(Personaje.TipoPersonaje tipoPersonaje) {
+        float x = player != null ? (float) player.getHitBox().getCenterX() : 200;
+        float y = player != null ? (float) player.getHitBox().getCenterY() : 200;
+        
+        player = new Jugador(x, y, (int) (48 * SCALE), (int) (48 * SCALE), tipoPersonaje);
+        player.loadLvlData(levelMan.getCurrentLevel().getLvlData());
+        jugadorActual = player;
+        hudQuimico = new HUDQuimico(player.getSistemaQuimico());
     }
 
     public void render(Graphics g) {

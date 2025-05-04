@@ -24,7 +24,7 @@ public class Jugador extends Cascaron {
     private boolean moving = false;
     private boolean attacking = false;
     private boolean left, right, down, up, jump;
-    private float playerSpeed = 20f;
+    private float playerSpeed;
     private int[][] lvlData;
     private float xDrawOffset = 15 * Juego.SCALE;
     private float yDrawOffset = 20 * Juego.SCALE;
@@ -55,12 +55,14 @@ public class Jugador extends Cascaron {
 
     //Balas
     private AdministradorBalas adminBalasCentral;
-
     private SistemaQuimico sistemaQuimico;
 
-    public Jugador(float x, float y, int w, int h) {
+    private Personaje personaje;
+    public Jugador(float x, float y, int w, int h, Personaje.TipoPersonaje tipoPersonaje) {
         super(x, y, w, h);
-        loadAnimation();  // Cargamos las animaciones
+        this.personaje = new Personaje(tipoPersonaje);
+        this.playerSpeed = personaje.getVelocidad();
+        loadAnimation();
         initHitBox(x, y, 20 * Juego.SCALE, 27 * Juego.SCALE);
         aimController = new AimController(200* Juego.SCALE);
         adminBalasCentral = new AdministradorBalas();
@@ -184,7 +186,6 @@ public class Jugador extends Cascaron {
         this.y = y;
         hitbox.x = x;
         hitbox.y = y;
-        // Reiniciar otras propiedades si es necesario
         resetDirBooleans();
         inAir = false;
         airSpeed = 0;
@@ -340,7 +341,7 @@ public class Jugador extends Cascaron {
 
     private void loadAnimation() {
         // Cargamos los sprites como antes
-        BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
+        BufferedImage img = LoadSave.GetSpriteAtlas(personaje.getSpriteAtlas());
         spritesJugador = new BufferedImage[7][7];
         for (int i = 0; i < spritesJugador.length; i++)
             for (int j = 0; j < spritesJugador[i].length; j++)
@@ -424,5 +425,9 @@ public class Jugador extends Cascaron {
 
     public SistemaQuimico getSistemaQuimico() {
         return sistemaQuimico;
+    }
+
+    public void usarHabilidadEspecial() {
+        personaje.usarHabilidadEspecial();
     }
 }

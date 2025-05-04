@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
+import Elementos.Personaje;
 import Juegos.EstadoJuego;
 import Juegos.Juego;
 import Utilz.LoadSave;
@@ -132,12 +133,25 @@ public class SelectorPersonajes {
         enTransicion = true;
     }
     
+    public Personaje.TipoPersonaje getTipoPersonajeSeleccionado() {
+        switch (personajeSeleccionado) {
+            case 0:
+                return Personaje.TipoPersonaje.ECLIPSA;
+            case 1:
+                return Personaje.TipoPersonaje.HALAN;
+            case 2:
+                return Personaje.TipoPersonaje.VALTHOR;
+            default:
+                return Personaje.TipoPersonaje.ECLIPSA;
+        }
+    }
+
     private void iniciarJuegoConPersonaje() {
         System.out.println("Iniciando juego con: " + getNombrePersonaje(personajeSeleccionado));
-        // TODO: Configurar el jugador según el personaje seleccionado
-
+        juego.configurarJugadorConPersonaje(getTipoPersonajeSeleccionado());
         juego.setEstadoJuego(EstadoJuego.PLAYING);
     }
+    
     
     private String getNombrePersonaje(int indice) {
         switch (indice) {

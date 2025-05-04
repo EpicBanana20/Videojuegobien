@@ -26,6 +26,8 @@ public class EventoMouse extends MouseAdapter{
             case PLAYING:
                 if(e.getButton()==MouseEvent.BUTTON1)
                     pan.getGame().getPlayer().setAttacking(true);
+                else if(e.getButton()==MouseEvent.BUTTON3)
+                    pan.getGame().getPlayer().usarHabilidadEspecial();
                 break;
             case OPCIONES:
                 //TODO:. Implementar menú de opciones
@@ -72,6 +74,8 @@ public class EventoMouse extends MouseAdapter{
         switch (pan.getGame().getEstadoJuego()) {
             case MENU:
                 pan.getGame().getMenu().mouseMoved(e);
+                break;
+            case SELECCION_PERSONAJE:
                 break;
             case PLAYING:
                 break;
