@@ -16,6 +16,7 @@ import Elementos.Administradores.AdministradorDecoraciones;
 import Niveles.LevelManager;
 import Utilz.MetodoAyuda;
 import Menus.Menu;
+import Menus.MenuPausa;
 import Menus.SelectorPersonajes;
 
 
@@ -57,6 +58,7 @@ public class Juego {
 
     private EstadoJuego estadoJuego = EstadoJuego.MENU;
     private Menu menu;
+    private MenuPausa menuPausa;
     private SelectorPersonajes selectorPersonajes;
 
     public Juego() {
@@ -90,6 +92,7 @@ public class Juego {
         levelMan.cargarDecoraciones();
         levelMan.cargarEntidades(this);
         menu = new Menu(this);
+        menuPausa = new MenuPausa(this);
         selectorPersonajes = new SelectorPersonajes(this);
     }
 
@@ -212,6 +215,23 @@ public class Juego {
                     // Por ejemplo, dibujar una pantalla de carga o un efecto de fade
                 }
                 break;
+            case PAUSA:
+                background.draw(g, camera.getxLvlOffset());
+        
+                if(levelMan.getCurrentLevelIndex() != 2){
+                    adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                    levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                } else {
+                    levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                    adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                }
+                adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                
+                if (!cambiandoNivel) {
+                    hudQuimico.render(g);
+                }
+                menuPausa.draw(g);
             default:
                 break;
         }
@@ -392,4 +412,7 @@ public class Juego {
         return necesitaReinicio;
     }
     
+    public MenuPausa getMenuPausa() {
+        return menuPausa;
+    }
 }

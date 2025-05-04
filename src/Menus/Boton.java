@@ -33,8 +33,8 @@ public class Boton {
         initBounds();
     }
 
-    private void initBounds() {
-        bounds = new Rectangle(x - xOffsetCenter, y, B_WIDTH, B_HEIGHT);
+    public void initBounds() {
+        bounds = new Rectangle(x - B_WIDTH / 2, y, B_WIDTH, B_HEIGHT);
     }
 
     public void draw(Graphics g) {

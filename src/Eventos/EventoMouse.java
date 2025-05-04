@@ -36,7 +36,7 @@ public class EventoMouse extends MouseAdapter{
                 //TODO: Implementar menú de LOGROS
                 break;
             case PAUSA:
-                //TODO: Implementar menú de PAUSA
+                    pan.getGame().getMenuPausa().mousePressed(e);
                 break;
         }
     }
@@ -61,7 +61,7 @@ public class EventoMouse extends MouseAdapter{
             //TODO: Implementar menú de LOGROS
             break;
         case PAUSA:
-            //TODO: Implementar menú de PAUSA
+                pan.getGame().getMenuPausa().mousePressed(e);
             break;
     }
 }
@@ -86,7 +86,7 @@ public class EventoMouse extends MouseAdapter{
                 //TODO: Implementar menú de LOGROS
                 break;
             case PAUSA:
-                //todo: Implementar menú de PAUSA
+                    pan.getGame().getMenuPausa().mousePressed(e);
                 break;
         }
     }

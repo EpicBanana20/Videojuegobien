@@ -2,6 +2,7 @@ package Eventos;
 
 import java.awt.event.*;
 
+import Juegos.EstadoJuego;
 import Juegos.PanelJuego;
 
 public class EventoTeclado implements KeyListener {
@@ -44,6 +45,13 @@ public class EventoTeclado implements KeyListener {
                         break;
                     case KeyEvent.VK_E:
                             pan.getGame().interactuarConEstacionQuimica();
+                        break;
+                    case KeyEvent.VK_ESCAPE:
+                        if (pan.getGame().getEstadoJuego() == EstadoJuego.PLAYING) {
+                            pan.getGame().setEstadoJuego(EstadoJuego.PAUSA);
+                        } else if (pan.getGame().getEstadoJuego() == EstadoJuego.PAUSA) {
+                            pan.getGame().setEstadoJuego(EstadoJuego.PLAYING);
+                        }
                         break;
                 }
             default:

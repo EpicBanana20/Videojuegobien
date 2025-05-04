@@ -1,8 +1,6 @@
 package Menus;
 
 import java.awt.Graphics;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
@@ -89,13 +87,6 @@ public class SelectorPersonajes {
                           MARCO_WIDTH, MARCO_HEIGHT, null);
             }
         }
-        
-        // Mostrar información del personaje seleccionado
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        String nombrePersonaje = getNombrePersonaje(personajeSeleccionado);
-        g.drawString("Personaje: " + nombrePersonaje, centerX, 100);
-        g.drawString("Indice: "+personajeSeleccionado, centerX, 150);
     }
     
     public void keyPressed(KeyEvent e) {
@@ -147,24 +138,11 @@ public class SelectorPersonajes {
     }
 
     private void iniciarJuegoConPersonaje() {
-        System.out.println("Iniciando juego con: " + getNombrePersonaje(personajeSeleccionado));
         juego.configurarJugadorConPersonaje(getTipoPersonajeSeleccionado());
         juego.setEstadoJuego(EstadoJuego.PLAYING);
     }
     
     
-    private String getNombrePersonaje(int indice) {
-        switch (indice) {
-            case 0:
-                return "Eclipsa (Mujer Loba)";
-            case 1:
-                return "Dr. Halan (Científico)";
-            case 2:
-                return "Valthor (Caballero)";
-            default:
-                return "Desconocido";
-        }
-    }
     
     // Para eventos del mouse (si quieres soporte de mouse)
     public void mouseMoved(int x, int y) {
