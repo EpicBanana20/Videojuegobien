@@ -449,12 +449,11 @@ public class Jugador extends Cascaron {
             dodgeInvulnerabilidad = false;
         }
         
-        System.out.println("Frame actual: " + frameActual + ", Invulnerabilidad: " + dodgeInvulnerabilidad);
         // SIEMPRE mover durante el dodge, independientemente del estado previo
         float dodgeVelocidad = dodgeSpeed * (mirandoIzquierda ? -1 : 1);
         MetodoAyuda.moverHorizontal(hitbox, dodgeVelocidad, lvlData);
         
-        if (animaciones.esUltimoFrame() && animaciones.getAnimVelocidad() == 0) {
+        if (animaciones.esUltimoFrame()) {
             dodgeEnProgreso = false;
             dodgeInvulnerabilidad = false;
             dodgeCooldown = DODGE_COOLDOWN_MAX;
