@@ -508,7 +508,7 @@ public class BOSS2 extends Enemigo {
             origenX, 
             origenY, 
             angulo, 
-            LoadSave.BULLET_ENEMY, // Podría ser reemplazado por un sprite específico para Zefir
+            LoadSave.BULLET_ZEFIR, // Podría ser reemplazado por un sprite específico para Zefir
             daño,
             velocidad
         );
