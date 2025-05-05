@@ -51,7 +51,7 @@ public class Jugador extends Cascaron {
     // DODGE ROLL
     private boolean hacerDodgeRoll = false;
     private boolean dodgeEnProgreso = false;
-    private float dodgeSpeed = 3.5f * Juego.SCALE;
+    private float dodgeSpeed = 2.5f * Juego.SCALE;
     private boolean dodgeInvulnerabilidad = false;
     private int dodgeCooldown = 0;
     private static final int DODGE_COOLDOWN_MAX = 120;
@@ -443,7 +443,7 @@ public class Jugador extends Cascaron {
         int frameActual = animaciones.getAnimIndice();
         
         // Invulnerabilidad desde el frame 3 hasta el final
-        if (frameActual >= 3 && frameActual <= framesAnimacion - 1) {
+        if (frameActual >= 1 && frameActual <= framesAnimacion - 1) {
             dodgeInvulnerabilidad = true;
         } else {
             dodgeInvulnerabilidad = false;

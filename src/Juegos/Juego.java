@@ -162,18 +162,40 @@ public class Juego {
             if (enemigo.getAdminBalas() != null) {
                 ArrayList<Bala> balas = enemigo.getAdminBalas().getBalas();
                 for (Bala bala : balas) {
-                    if (bala.estaActiva() && 
-                        bala.getHitBox().intersects(player.getHitBox())) {
-                        player.recibirDaño(bala.getDaño());
-                        // Solo desactivar la bala si el jugador no está en invulnerabilidad
-                        if (!player.isInvulnerable() && !player.isDodgeInvulnerable()) {
-                            bala.desactivar();
+                    if (bala.estaActiva() && bala.getHitBox().intersects(player.getHitBox())) {
+                        boolean enDodgeroll = player.isDodgeInvulnerable();
+                        
+                        // Usar el nuevo método para manejar la colisión
+                        bala.colisionConJugador(enDodgeroll);
+                        
+                        // Solo aplicar daño si no está invulnerable
+                        if (!player.isInvulnerable() && !enDodgeroll) {
+                            player.recibirDaño(bala.getDaño());
                         }
                     }
                 }
             }
         }
     }
+
+    private void comprobarColisionesBalasEnemigasConJugador(AdministradorBalas adminBalas) {
+        if (adminBalas == null || player == null) return;
+        
+        ArrayList<Bala> balas = adminBalas.getBalas();
+        
+        for (Bala bala : balas) {
+            if (bala.estaActiva() && bala.getHitBox().intersects(player.getHitBox())) {
+                boolean enDodgeroll = player.isDodgeInvulnerable();
+                
+                // Solo procesamos el impacto si no está en dodgeroll
+                if (!enDodgeroll) {
+                    bala.colisionConJugador(false);
+                    System.out.println("¡Jugador recibió impacto de bala enemiga!");
+                }
+            }
+        }
+    }
+
     public void configurarJugadorConPersonaje(Personaje.TipoPersonaje tipoPersonaje) {
         float x = player != null ? (float) player.getHitBox().getCenterX() : 200;
         float y = player != null ? (float) player.getHitBox().getCenterY() : 200;
@@ -283,20 +305,7 @@ public class Juego {
         nivelDestino = -1;
     }
     
-        private void comprobarColisionesBalasEnemigasConJugador(AdministradorBalas adminBalas) {
-        if (adminBalas == null || player == null) return;
-        
-        ArrayList<Bala> balas = adminBalas.getBalas();
-        
-        for (Bala bala : balas) {
-            if (bala.estaActiva() && bala.getHitBox().intersects(player.getHitBox())) {
-                // La bala impactó en el jugador
-                // Aquí puedes implementar lógica de daño al jugador
-                System.out.println("¡Jugador recibió impacto de bala enemiga!");
-                bala.desactivar();
-            }
-        }
-    }
+    
     
     private void volverAlMenu() {
         // Limpiar recursos

@@ -183,6 +183,15 @@ public class Bala extends Cascaron {
         }
         return false;
     }
+
+    public void colisionConJugador(boolean jugadorInvulnerable) {
+        // Solo iniciar el impacto si el jugador no es invulnerable
+        if (!jugadorInvulnerable) {
+            iniciarImpacto();
+        }
+        // Si es invulnerable (en dodgeroll), no hacemos nada
+        // y la bala continúa su trayectoria
+    }
     
     // Método para iniciar la animación de impacto
     private void iniciarImpacto() {
