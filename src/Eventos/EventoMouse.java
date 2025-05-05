@@ -38,6 +38,9 @@ public class EventoMouse extends MouseAdapter{
             case PAUSA:
                     pan.getGame().getMenuPausa().mousePressed(e);
                 break;
+            case MUERTE:
+                pan.getGame().getMenuMuerte().mousePressed(e);
+                break;
         }
     }
 
@@ -63,6 +66,9 @@ public class EventoMouse extends MouseAdapter{
         case PAUSA:
                 pan.getGame().getMenuPausa().mouseReleased(e);
             break;
+        case MUERTE:
+            pan.getGame().getMenuMuerte().mouseReleased(e);
+            break;
     }
 }
 
@@ -87,6 +93,9 @@ public class EventoMouse extends MouseAdapter{
                 break;
             case PAUSA:
                     pan.getGame().getMenuPausa().mouseMoved(e);
+                break;
+            case MUERTE:
+                pan.getGame().getMenuMuerte().mouseMoved(e);
                 break;
         }
     }

@@ -87,7 +87,6 @@ public class BOSS1 extends Enemigo {
         if (!disparoEnProceso && Juego.jugadorActual != null) {
             manejarDisparo(Juego.jugadorActual);
         }
-        System.out.println("Fase: " + faseActual + ", Vida: " + vida + ", Patrón: " + patronAtaqueActual);
     }
 
 

@@ -6,5 +6,6 @@ public enum EstadoJuego {
     PLAYING,
     OPCIONES,
     LOGROS,
-    PAUSA
+    PAUSA,
+    MUERTE
 }
