@@ -9,7 +9,7 @@ import Elementos.AimController;
 
 public class MachineGun extends Arma {
     // Cadencia en disparos por segundo
-    private float cadenciaDisparo = 5.0f;
+    private float cadenciaDisparo = 4.0f;
     private int contadorRecarga = 0;
     
     // Sistema de munición
@@ -24,9 +24,10 @@ public class MachineGun extends Arma {
     private static final int FRAMES_POR_SEGUNDO = 60;
 
     public MachineGun(AdministradorBalas adminBalas) {
-        super("armas/machinegun.png", 30 * Juegos.Juego.SCALE, 3.0f,adminBalas);
+        super("armas/AK47.png", 30 * Juegos.Juego.SCALE, 3.0f,adminBalas);
         this.nombre = "MachineGun";
         this.armaCooldown = Math.round(FRAMES_POR_SEGUNDO / cadenciaDisparo);
+        this.tipoDaño = "Corrosivo";
     }
     
     @Override
