@@ -48,7 +48,7 @@ public class BOSS1 extends Enemigo {
         this.velocidadMovimiento = 0.7f * Juego.SCALE;
         this.puedeDisparar = true;
         this.disparoMaxCooldown = 45;
-        this.rangoDeteccionJugador = 1000 * Juego.SCALE;
+        this.rangoDeteccionJugador = 1200 * Juego.SCALE;
         
         // Cargar animaciones
         cargarAnimaciones();
