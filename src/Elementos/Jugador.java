@@ -54,6 +54,8 @@ public class Jugador extends Cascaron {
     private int dodgeFrame = 0;
     private float dodgeSpeed = 3.5f * Juego.SCALE;
     private boolean dodgeInvulnerabilidad = false;
+    private int dodgeCooldown = 0;
+    private static final int DODGE_COOLDOWN_MAX = 120;
 
     // Apuntado
     private AimController aimController;
@@ -100,6 +102,17 @@ public class Jugador extends Cascaron {
         g.setColor(Color.RED);
         g.fillOval((int)aimX - cursorSize/2, (int)aimY - cursorSize/2, cursorSize, cursorSize);
         
+        if (dodgeCooldown > 0) {
+            float porcentajeCooldown = (float)dodgeCooldown / DODGE_COOLDOWN_MAX;
+            int barraX = (int)(hitbox.x - xlvlOffset);
+            int barraY = (int)(hitbox.y - 10 - ylvlOffset);
+            int barraAncho = (int)(hitbox.width * porcentajeCooldown);
+            
+            g.setColor(Color.YELLOW);
+            g.fillRect(barraX, barraY, barraAncho, 5);
+            g.setColor(Color.BLACK);
+            g.drawRect(barraX, barraY, (int)hitbox.width, 5);
+        }
     }
 
     public void update(int xlvlOffset, int yLvlOffset) {
@@ -108,6 +121,10 @@ public class Jugador extends Cascaron {
         if (hitbox.y + hitbox.height > Juego.NIVEL_ACTUAL_ALTO) {
             morir();
             return;
+        }
+
+        if (dodgeCooldown > 0) {
+            dodgeCooldown--;
         }
 
         if (hacerDodgeRoll && !dodgeEnProgreso) {
@@ -263,6 +280,26 @@ public class Jugador extends Cascaron {
         // Para plataformas atravesables, tenemos una lógica diferente
         boolean enSuelo = false;
         
+        if (dodgeEnProgreso) {
+            // Solo aplicar gravedad
+            if (inAir) {
+                airSpeed += gravity;
+                if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, lvlData)) {
+                    hitbox.y += airSpeed;
+                } else {
+                    hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed, false);
+                    if (airSpeed > 0) {
+                        airSpeed = 0;
+                        inAir = false;
+                    } else {
+                        airSpeed = 0.1f;
+                    }
+                }
+            }
+            y = hitbox.y;
+            return; // Salir temprano, no procesar otros movimientos
+        }
+
         if (quiereBajarPlataforma) {
             // Si queremos bajar, no consideramos plataformas atravesables como suelo
             enSuelo = isEntityOnFloor(hitbox, lvlData, true);
@@ -385,13 +422,16 @@ public class Jugador extends Cascaron {
     }
 
     private void iniciarDodgeRoll() {
+        if (dodgeCooldown > 0) return;
+        
         dodgeEnProgreso = true;
         dodgeFrame = 0;
         hacerDodgeRoll = false;
         animaciones.setAccion(DODGEROLL);
         animaciones.resetearAnimacion();
+        resetDirBooleans();
     }
-    
+
     private void actualizarDodgeRoll() {
         dodgeFrame++;
         
@@ -410,6 +450,7 @@ public class Jugador extends Cascaron {
         if (dodgeFrame >= 9) {
             dodgeEnProgreso = false;
             dodgeInvulnerabilidad = false;
+            dodgeCooldown = DODGE_COOLDOWN_MAX; // Iniciar cooldown
         }
     }
 
@@ -429,6 +470,7 @@ public class Jugador extends Cascaron {
         animaciones.setNumFramesPorAnimacion(CAYENDO, GetNoSprite(CAYENDO));
         animaciones.setNumFramesPorAnimacion(DAÑO, GetNoSprite(DAÑO));
         animaciones.setNumFramesPorAnimacion(MUERTE, GetNoSprite(MUERTE));
+        animaciones.setNumFramesPorAnimacion(DODGEROLL, GetNoSprite(DODGEROLL));
     }
 
     public void recibirDaño(float cantidad) {
@@ -525,7 +567,7 @@ public class Jugador extends Cascaron {
     public float getVidaActual() { 
         return vidaActual; 
     }
-    
+
     public float getVidaMaxima() { 
         return vidaMaxima; 
     }
