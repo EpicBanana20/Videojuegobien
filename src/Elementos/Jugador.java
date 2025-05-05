@@ -260,8 +260,9 @@ public class Jugador extends Cascaron {
         inventarioArmas.clear();
         
         // Añadir todas las armas disponibles
+        inventarioArmas.add(new Elementos.Armas.Eclipse(adminBalasCentral));
+        inventarioArmas.add(new Elementos.Armas.ArmaIon(adminBalasCentral));
         inventarioArmas.add(new Elementos.Armas.ArmaMercurio(adminBalasCentral));
-        inventarioArmas.add(new Elementos.Armas.MachineGun(adminBalasCentral));
         inventarioArmas.add(new Elementos.Armas.ArmaEscopeta(adminBalasCentral));
         inventarioArmas.add(new Elementos.Armas.ArmaLaser(adminBalasCentral));
         inventarioArmas.add(new Elementos.Armas.ArmaFrancotirador(adminBalasCentral));
