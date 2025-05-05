@@ -35,6 +35,7 @@ public class Jugador extends Cascaron {
     private boolean invulnerable = false;
     private int invulnerabilidadTimer = 0;
     private static final int INVULNERABILIDAD_DURACION = 60;
+    private boolean prevLeft, prevRight, prevUp, prevDown;
 
     //graveda y salto
     private float airSpeed = -1f;
@@ -429,36 +430,44 @@ public class Jugador extends Cascaron {
         animaciones.resetearAnimacion();
         animaciones.setAnimVelocidad(8);
         
-        // Si no hay dirección actual del jugador, usar la dirección a la que está mirando
-        if (!left && !right) {
-            // Mantener la dirección actual de mirada para el dash
-        }
+        // Guardar el estado actual de las teclas de dirección
+        prevLeft = left;
+        prevRight = right;
+        prevUp = up;
+        prevDown = down;
         
         resetDirBooleans(); // Esto previene control durante el dash
     }
 
     private void actualizarDodgeRoll() {
-        // Usar el sistema de animación
-        int framesAnimacion = animaciones.getNumFramesPorAnimacion(DODGEROLL);
-        int frameActual = animaciones.getAnimIndice();
-        
-        // Invulnerabilidad desde el frame 3 hasta el final
-        if (frameActual >= 1 && frameActual <= framesAnimacion - 1) {
-            dodgeInvulnerabilidad = true;
-        } else {
-            dodgeInvulnerabilidad = false;
-        }
-        
-        // SIEMPRE mover durante el dodge, independientemente del estado previo
-        float dodgeVelocidad = dodgeSpeed * (mirandoIzquierda ? -1 : 1);
-        MetodoAyuda.moverHorizontal(hitbox, dodgeVelocidad, lvlData);
-        
-        if (animaciones.esUltimoFrame()) {
-            dodgeEnProgreso = false;
-            dodgeInvulnerabilidad = false;
-            dodgeCooldown = DODGE_COOLDOWN_MAX;
-        }
+    // Usar el sistema de animación
+    int framesAnimacion = animaciones.getNumFramesPorAnimacion(DODGEROLL);
+    int frameActual = animaciones.getAnimIndice();
+    
+    // Invulnerabilidad desde el frame 3 hasta el final
+    if (frameActual >= 1 && frameActual <= framesAnimacion - 1) {
+        dodgeInvulnerabilidad = true;
+    } else {
+        dodgeInvulnerabilidad = false;
     }
+    
+    // SIEMPRE mover durante el dodge, independientemente del estado previo
+    float dodgeVelocidad = dodgeSpeed * (mirandoIzquierda ? -1 : 1);
+    MetodoAyuda.moverHorizontal(hitbox, dodgeVelocidad, lvlData);
+    
+    if (animaciones.esUltimoFrame()) {
+        dodgeEnProgreso = false;
+        dodgeInvulnerabilidad = false;
+        dodgeCooldown = DODGE_COOLDOWN_MAX;
+        
+        // Restaurar el estado previo de las teclas de dirección
+        left = prevLeft;
+        right = prevRight;
+        up = prevUp;
+        down = prevDown;
+    }
+}
+
 
     private void loadAnimation() {
         // Cargamos los sprites como antes

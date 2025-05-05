@@ -49,6 +49,8 @@ public class BOSS1 extends Enemigo {
         this.puedeDisparar = true;
         this.disparoMaxCooldown = 45;
         this.rangoDeteccionJugador = 1200 * Juego.SCALE;
+        this.vidaMaxima = 500;
+        this.vida = vidaMaxima;
         
         // Cargar animaciones
         cargarAnimaciones();
@@ -87,6 +89,7 @@ public class BOSS1 extends Enemigo {
         if (!disparoEnProceso && Juego.jugadorActual != null) {
             manejarDisparo(Juego.jugadorActual);
         }
+        System.out.println("Fase: " + faseActual + ", Vida: " + vida + ", Patrón: " + patronAtaqueActual);
     }
 
 
@@ -367,10 +370,12 @@ public class BOSS1 extends Enemigo {
         if (tipoDaño == null) return 1.0f;
         
         switch (tipoDaño) {
-            case "fuego":
-                return 1.5f; // Débil al fuego
-            case "hielo":
-                return 0.5f; // Resistente al hielo
+            case "Corrosivo":
+                return 1.5f;
+            case "Luz":
+                return 0.5f;
+            case "Mutagenico":
+                return 0.75f;
             default:
                 return 1.0f;
         }
