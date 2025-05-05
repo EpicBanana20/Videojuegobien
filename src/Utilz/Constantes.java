@@ -16,6 +16,7 @@ public class Constantes {
         public static final int CAYENDO=3;
         public static final int DAÑO=4;
         public static final int MUERTE=5;
+        public static final int DODGEROLL=6;
 
     
     public static int GetNoSprite(int player_action){
@@ -32,6 +33,8 @@ public class Constantes {
                 return 2;
             case MUERTE:
                 return 2;
+            case DODGEROLL:
+                return 9;
             default:
                  return 1;
         }
