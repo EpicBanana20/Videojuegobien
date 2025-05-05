@@ -16,8 +16,8 @@ public class MenuPausa {
     private BufferedImage[][] botonesImgs;
     
     // Constantes para posiciones de botones
-    private final int BOTON_SPACING = 150;
-    private final int ALTURA_PRIMER_BOTON = 350;
+    private final int BOTON_SPACING = 200;
+    private final int ALTURA_PRIMER_BOTON = 450;
     private final int BOTON_X_POSICION = Juego.GAME_WIDTH / 2;
     
     // Índices de botones en el menú de pausa
@@ -30,6 +30,8 @@ public class MenuPausa {
     private static final int SPRITE_OPCIONES = 1;
     private static final int SPRITE_MENU = 5;
 
+    private BufferedImage pausaImg;
+
     public MenuPausa(Juego juego) {
         this.juego = juego;
         cargarImagenes();
@@ -37,6 +39,7 @@ public class MenuPausa {
     }
 
     private void cargarImagenes() {
+        pausaImg = LoadSave.GetSpriteAtlas("PAUSA.png");
         // Cargar sprites de botones (ahora 6 filas, 40x25 cada uno)
         BufferedImage botonesSprite = LoadSave.GetSpriteAtlas("Botones 40x25.png");
         botonesImgs = new BufferedImage[6][3];
@@ -84,7 +87,12 @@ public class MenuPausa {
         // Dibujar fondo semitransparente oscuro
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, Juego.GAME_WIDTH, Juego.GAME_HEIGHT);
-    
+        
+        // Dibujar imagen de pausa (centrada horizontalmente y arriba de los botones)
+        int pausaX = Juego.GAME_WIDTH / 2 - pausaImg.getWidth() / 2;
+        int pausaY = ALTURA_PRIMER_BOTON - 400; // 100 píxeles arriba del primer botón
+        g.drawImage(pausaImg, pausaX, pausaY, null);
+        
         // Dibujar botones
         for (Boton b : botones)
             b.draw(g);
