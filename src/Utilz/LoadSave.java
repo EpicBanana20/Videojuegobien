@@ -71,7 +71,7 @@ public class LoadSave {
     
     public static final int[][] TILES_PLATAFORMAS = {
         {6,7,8},     // Nivel 1: tiles 15, 16, 17 son plataformas atravesables
-        {42}, // Nivel 2: tiles 36-39 son plataformas atravesables
+        {42,41}, // Nivel 2: tiles 36-39 son plataformas atravesables
         {24,25,26,27,44}      // Nivel 3: tiles 42-44 son plataformas atravesables
     };
 
