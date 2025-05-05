@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import Elementos.Administradores.AdministradorBalas;
+import Elementos.Armas.ArmaEspadaBoomerang;
 import Elementos.Quimica.SistemaQuimico;
 import Juegos.Juego;
 import Utilz.LoadSave;
@@ -65,6 +66,9 @@ public class Jugador extends Cascaron {
     private ArrayList<Arma> inventarioArmas = new ArrayList<>();
     private int indiceArmaActual = 0;
 
+    private ArmaEspadaBoomerang espadaBoomerang;
+    private ArrayList<Arma> inventarioArmasOriginal = new ArrayList<>();
+    private boolean habilidadValthorActiva = false;
     //Balas
     private AdministradorBalas adminBalasCentral;
     private SistemaQuimico sistemaQuimico;
@@ -120,6 +124,25 @@ public class Jugador extends Cascaron {
         if (hitbox.y + hitbox.height > Juego.NIVEL_ACTUAL_ALTO) {
             morir();
             return;
+        }
+        
+        if (personaje.isHabilidadValthorActiva() && !habilidadValthorActiva) {
+            activarHabilidadValthor();
+        } else if (!personaje.isHabilidadValthorActiva() && habilidadValthorActiva) {
+            // Si la habilidad terminó, desactivarla
+            desactivarHabilidadValthor();
+        }
+
+        if (habilidadValthorActiva) {
+            // Si el jugador está atacando y la espada puede dispararse
+            if (attacking && !espadaBoomerang.estaEspadaLanzada()) {
+                espadaBoomerang.disparar();
+            }
+            
+            // Actualizar la espada
+            espadaBoomerang.update(getXCenter(), getYCenter(), aimController);
+        } else {
+            armaActual.update(getXCenter(), getYCenter(), aimController);
         }
 
         if (dodgeCooldown > 0) {
@@ -235,7 +258,11 @@ public class Jugador extends Cascaron {
         }
         drawHitBox(g, xlvlOffset, yLvlOffset);
         renderAim(g, xlvlOffset, yLvlOffset);
-        armaActual.render(g, xlvlOffset, yLvlOffset);
+        if (habilidadValthorActiva) {
+            espadaBoomerang.render(g, xlvlOffset, yLvlOffset);
+        } else {
+            armaActual.render(g, xlvlOffset, yLvlOffset);
+        }
         adminBalasCentral.render(g, xlvlOffset, yLvlOffset);
     }
     
@@ -266,6 +293,8 @@ public class Jugador extends Cascaron {
         inventarioArmas.add(new Elementos.Armas.ArmaEscopeta(adminBalasCentral));
         inventarioArmas.add(new Elementos.Armas.ArmaLaser(adminBalasCentral));
         inventarioArmas.add(new Elementos.Armas.ArmaFrancotirador(adminBalasCentral));
+
+        espadaBoomerang = new Elementos.Armas.ArmaEspadaBoomerang(adminBalasCentral);
         
         if (!inventarioArmas.isEmpty()) {
             indiceArmaActual = 0;
@@ -273,6 +302,48 @@ public class Jugador extends Cascaron {
         }
     }
 
+    private void activarHabilidadValthor() {
+        habilidadValthorActiva = true;
+        
+        // Guardar el inventario de armas actual
+        inventarioArmasOriginal.clear();
+        inventarioArmasOriginal.addAll(inventarioArmas);
+        
+        
+        // Limpiar inventario y asignar la espada boomerang
+        inventarioArmas.clear();
+        armaActual = espadaBoomerang;
+        espadaBoomerang.reiniciarPosicion(getXCenter(), getYCenter());
+        // Hacer al jugador invencible
+        invulnerable = true;
+        invulnerabilidadTimer = Integer.MAX_VALUE; // Duración "infinita"
+        
+        System.out.println("¡Valthor activa su espada boomerang y se vuelve invencible!");
+    }
+
+    private void desactivarHabilidadValthor() {
+        espadaBoomerang.forzarRegreso();
+        habilidadValthorActiva = false;
+        
+        // Restaurar el inventario de armas original
+        inventarioArmas.clear();
+        inventarioArmas.addAll(inventarioArmasOriginal);
+        
+        // Restaurar el arma actual al primer elemento (o al que tenía antes)
+        if (!inventarioArmas.isEmpty()) {
+            indiceArmaActual = 0;
+            armaActual = inventarioArmas.get(0);
+        }
+        
+        // Desactivar invencibilidad
+        invulnerable = false;
+        invulnerabilidadTimer = 0;
+        
+        // Finalizar la habilidad en la clase Personaje
+        personaje.finalizarHabilidadValthor();
+        
+    }
+    
     private void actuPosicion() {
         moving = false;
         

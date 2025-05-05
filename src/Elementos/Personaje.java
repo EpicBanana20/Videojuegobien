@@ -59,6 +59,9 @@ public class Personaje {
                 System.out.println("¡Dr. Halan usa su conocimiento químico!");
                 break;
             case VALTHOR:
+                habilidadActiva = true;
+                timerHabilidad = duracionHabilidad; // 5 segundos a 60 FPS
+                timerCooldown = cooldownHabilidad;
                 System.out.println("¡Valthor usa su defensa de caballero!");
                 break;
         }
@@ -103,5 +106,15 @@ public class Personaje {
     }
     public TipoPersonaje getTipo() {
         return tipo;
+    }
+
+    public boolean isHabilidadValthorActiva() {
+        return tipo == TipoPersonaje.VALTHOR && habilidadActiva;
+    }
+    
+    public void finalizarHabilidadValthor() {
+        if (tipo == TipoPersonaje.VALTHOR && habilidadActiva) {
+            habilidadActiva = false;
+        }
     }
 }
