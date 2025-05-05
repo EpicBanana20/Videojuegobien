@@ -16,8 +16,8 @@ public class Menu {
     private BufferedImage[][] botonesImgs;
     
     // Constantes para posiciones de botones
-    private final int BOTON_SPACING = 150;
-    private final int ALTURA_PRIMER_BOTON = 300;
+    private final int BOTON_SPACING = 200;
+    private final int ALTURA_PRIMER_BOTON = 200;
     private final int BOTON_X_POSICION = 400;
     
     // Índices de botones
