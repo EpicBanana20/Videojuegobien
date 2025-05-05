@@ -232,6 +232,7 @@ public class Juego {
                     hudQuimico.render(g);
                 }
                 menuPausa.draw(g);
+                menuPausa.update();
             default:
                 break;
         }
