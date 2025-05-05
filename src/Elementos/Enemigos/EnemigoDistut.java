@@ -2,6 +2,7 @@ package Elementos.Enemigos;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import Elementos.Enemigo;
 import Elementos.Jugador;
 import Juegos.Juego;
@@ -9,7 +10,7 @@ import Utilz.LoadSave;
 import Utilz.Animaciones;
 
 public class EnemigoDistut extends Enemigo{
-     // Constantes específicas de este tipo de enemigo
+    // Constantes específicas de este tipo de enemigo
     private static final int ANCHO_DEFAULT = 96;
     private static final int ALTO_DEFAULT = 72;
     private static final int VIDA_DEFAULT = 50;
@@ -22,6 +23,15 @@ public class EnemigoDistut extends Enemigo{
     
     // Ajuste específico para este enemigo
     private int ajuste = -40;
+    
+    // Control de enemigos invocados
+    private ArrayList<Enemigo> enemigosInvocados = new ArrayList<>();
+    private static final int MAX_ENEMIGOS_INVOCADOS = 8;
+    
+    // Estados especiales
+    private boolean enModoHuida = false;
+    private static final float DISTANCIA_SEGURA = 600 * Juego.SCALE; // Distancia segura del jugador
+    private static final float VELOCIDAD_HUIDA = 1.2f * Juego.SCALE; // Más rápido al huir
     
     public EnemigoDistut(float x, float y, Elementos.Administradores.AdministradorEnemigos adminEnemigos) {
         super(x, y, 
@@ -42,7 +52,6 @@ public class EnemigoDistut extends Enemigo{
         
         cargarAnimaciones();
     }
-    
     
     @Override
     protected void determinarAnimacion() {
@@ -79,10 +88,6 @@ public class EnemigoDistut extends Enemigo{
         // Cargar la hoja de sprites del enemigo verde
         BufferedImage img = LoadSave.GetSpriteAtlas("enemigos/DISTUT180x180.png");
         
-        // Basado en la imagen, tiene 3 filas (acciones) con varios frames cada una
-        // Fila 1 (índice 0): 6 frames - Inactivo/Idle
-        // Fila 2 (índice 1): 6 frames - Correr/Moverse
-        // Fila 3 (índice 2): 2 frames - Daño/Herido
         spritesEnemigo = new BufferedImage[4][6]; // 3 acciones, máximo 6 frames
         
         // Ancho y alto de cada frame del sprite 
@@ -161,96 +166,207 @@ public class EnemigoDistut extends Enemigo{
     }
 
     @Override
-protected void manejarDisparo(Jugador jugador) {
-    if (!puedeDisparar || !activo) return;
-    
-    // Reducir cooldown si está activo
-    if (disparoCooldown > 0) {
-        disparoCooldown--;
-        return;
-    }
-    
-    // Verificar si el jugador está en rango
-    if (puedeVerJugador(jugador)) {
-        // Detener movimiento temporalmente para disparar
-        patrullando = false;
-        velocidadX = 0;
+    protected void manejarDisparo(Jugador jugador) {
+        if (!puedeDisparar || !activo) return;
         
-        // Orientar hacia el jugador
-        float jugadorX = jugador.getXCenter();
-        float enemigoX = hitbox.x + hitbox.width/2;
-        movimientoHaciaIzquierda = jugadorX < enemigoX;
-        
-        // Disparar
-        float angulo = calcularAnguloHaciaJugador(jugador);
-        disparar(angulo);
-        disparoCooldown = disparoMaxCooldown;
-        
-        // Reanudar movimiento después de un tiempo, pero verificando si es seguro
-        new java.util.Timer().schedule(
-            new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    // Solo reanudar patrulla y movimiento si es seguro
-                    patrullando = true;
-                    
-                    if (esSeguroMoverse()) {
-                        velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
-                    } else {
-                        // No es seguro moverse, mantener quieto pero seguir orientado al jugador
-                        velocidadX = 0;
-                    }
-                }
-            },
-            1000 // Reanudar después de 1 segundo
-        );
-    }
-}
-
-@Override
-public void update() {
-    super.update();
-    
-    // Verificar si es momento de crear la bala durante la animación
-    if (disparoPendiente && disparoEnProceso && 
-        animaciones.getAccionActual() == DISPARO && 
-        animaciones.getAnimIndice() == frameDisparo) {
-        
-        // Calcular posición de origen de la bala
-        float origenX = hitbox.x + hitbox.width/2;
-        float origenY = hitbox.y + hitbox.height/2;
-        
-        // Ajustar el origen según la dirección
-        if (movimientoHaciaIzquierda) {
-            origenX -= 20 * Juego.SCALE;
-        } else {
-            origenX += 20 * Juego.SCALE;
+        // Si estamos en modo huida o al máximo de invocaciones, no disparar
+        if (enModoHuida || enemigosInvocados.size() >= MAX_ENEMIGOS_INVOCADOS) {
+            return;
         }
         
+        // Reducir cooldown si está activo
+        if (disparoCooldown > 0) {
+            disparoCooldown--;
+            return;
+        }
         
-        // NUEVO: Generar enemigos
-        generarEnemigos(origenX, origenY);
+        // Verificar si el jugador está en rango
+        if (puedeVerJugador(jugador)) {
+            // Detener movimiento temporalmente para disparar
+            patrullando = false;
+            velocidadX = 0;
+            
+            // Orientar hacia el jugador
+            float jugadorX = jugador.getXCenter();
+            float enemigoX = hitbox.x + hitbox.width/2;
+            movimientoHaciaIzquierda = jugadorX < enemigoX;
+            
+            // Disparar
+            float angulo = calcularAnguloHaciaJugador(jugador);
+            disparar(angulo);
+            disparoCooldown = disparoMaxCooldown;
+            
+            // Reanudar movimiento después de un tiempo, pero verificando si es seguro
+            new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        // Solo reanudar patrulla y movimiento si es seguro
+                        patrullando = true;
+                        
+                        if (esSeguroMoverse()) {
+                            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+                        } else {
+                            // No es seguro moverse, mantener quieto pero seguir orientado al jugador
+                            velocidadX = 0;
+                        }
+                    }
+                },
+                1000 // Reanudar después de 1 segundo
+            );
+        }
+    }
+
+    @Override
+    public void update() {
+        super.update();
         
-        // Ya disparamos, no repetir hasta la próxima animación
-        disparoPendiente = false;
+        // Limpiar la lista de enemigos muertos
+        limpiarEnemigosInvocadosMuertos();
+        
+        // Actualizar el estado de huida
+        actualizarModoHuida();
+        
+        // Si estamos en modo huida, manejar el comportamiento de huida
+        if (enModoHuida && Juego.jugadorActual != null) {
+            manejarHuida(Juego.jugadorActual);
+        }
+        
+        // Verificar si es momento de crear la bala durante la animación
+        if (disparoPendiente && disparoEnProceso && 
+            animaciones.getAccionActual() == DISPARO && 
+            animaciones.getAnimIndice() == frameDisparo) {
+            
+            // Calcular posición de origen de la bala
+            float origenX = hitbox.x + hitbox.width/2;
+            float origenY = hitbox.y + hitbox.height/2;
+            
+            // Ajustar el origen según la dirección
+            if (movimientoHaciaIzquierda) {
+                origenX -= 20 * Juego.SCALE;
+            } else {
+                origenX += 20 * Juego.SCALE;
+            }
+            
+            // Generar enemigos solo si no hemos alcanzado el límite
+            if (puedeGenerarMasEnemigos()) {
+                generarEnemigos(origenX, origenY);
+            } else {
+                System.out.println("Distut ha alcanzado el límite de invocaciones!");
+            }
+            
+            // Ya disparamos, no repetir hasta la próxima animación
+            disparoPendiente = false;
+        }
+        
+        // Intentar detectar al jugador y disparar (solo si no estamos en modo huida)
+        if (!disparoEnProceso && !enModoHuida && Juego.jugadorActual != null) {
+            manejarDisparo(Juego.jugadorActual);
+        }
     }
     
-    // Intentar detectar al jugador y disparar
-    if (!disparoEnProceso && Juego.jugadorActual != null) {
-        manejarDisparo(Juego.jugadorActual);
+    // Método para actualizar el modo huida
+    private void actualizarModoHuida() {
+        limpiarEnemigosInvocadosMuertos();
+        
+        // Entrar en modo huida si tenemos el máximo de enemigos
+        if (enemigosInvocados.size() >= MAX_ENEMIGOS_INVOCADOS && !enModoHuida) {
+            enModoHuida = true;
+            patrullando = false;
+        } 
+        // Salir del modo huida si tenemos menos del máximo
+        else if (enemigosInvocados.size() < MAX_ENEMIGOS_INVOCADOS && enModoHuida) {
+            enModoHuida = false;
+            patrullando = true;
+            // Restaurar velocidad normal de patrulla
+            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+        }
     }
-}
+    
+    // Método para manejar el comportamiento de huida
+    private void manejarHuida(Jugador jugador) {
+        if (!activo) return;
+        
+        float jugadorX = jugador.getXCenter();
+        float enemigoX = hitbox.x + hitbox.width/2;
+        float distancia = Math.abs(jugadorX - enemigoX);
+        
+        // Si estamos suficientemente lejos, volver a patrullar
+        if (distancia >= DISTANCIA_SEGURA) {
+            enModoHuida = false;
+            patrullando = true;
+            velocidadX = movimientoHaciaIzquierda ? -velocidadMovimiento : velocidadMovimiento;
+            return;
+        }
+        
+        // Si no estamos lo suficientemente lejos, intentar huir
+        // Primero, determinar la dirección de huida ideal
+        boolean deberiaIrDerecha = jugadorX < enemigoX;
+        
+        // Guardar el estado actual del sprite
+        boolean orientacionOriginal = movimientoHaciaIzquierda;
+        
+        // Intentar moverse en la dirección ideal para huir
+        if (deberiaIrDerecha) {
+            movimientoHaciaIzquierda = false;
+            velocidadX = VELOCIDAD_HUIDA;
+        } else {
+            movimientoHaciaIzquierda = true;
+            velocidadX = -VELOCIDAD_HUIDA;
+        }
+        
+        // Verificar si podemos movernos en esa dirección
+        if (!esSeguroMoverse()) {
+            // No podemos huir en la dirección ideal, intentar la opuesta
+            movimientoHaciaIzquierda = !movimientoHaciaIzquierda;
+            velocidadX = -velocidadX;
+            
+            // Si tampoco podemos ir en la dirección opuesta, estamos atrapados
+            if (!esSeguroMoverse()) {
+                // Atrapado: detenerse y mantener la animación de idle
+                velocidadX = 0;
+                
+                // Mantener la orientación mirando hacia donde está el jugador
+                movimientoHaciaIzquierda = jugadorX < enemigoX;
+                
+                // Asegurarse de que se muestre la animación de INACTIVO
+                animaciones.setAccion(INACTIVO);
+            }
+        }
+    }
+    
+    // Método para verificar si podemos generar más enemigos
+    private boolean puedeGenerarMasEnemigos() {
+        limpiarEnemigosInvocadosMuertos();
+        return enemigosInvocados.size() < MAX_ENEMIGOS_INVOCADOS;
+    }
+    
+    // Método para limpiar enemigos muertos de la lista
+    private void limpiarEnemigosInvocadosMuertos() {
+        enemigosInvocados.removeIf(enemigo -> !enemigo.estaActivo());
+    }
+    
     private void generarEnemigos(float origenX, float origenY) {
         if (adminEnemigos == null) return;
         
         // Generar enemigos pequeños
         for (int i = 0; i < numEnemigosGenerar; i++) {
+            // Verificar nuevamente si podemos generar más enemigos
+            if (!puedeGenerarMasEnemigos()) {
+                break;
+            }
+            
             // Calcular posición aleatoria cercana
             float offsetX = (float) ((Math.random() * 100 - 50) * Juego.SCALE);
             float offsetY = (float) ((Math.random() * 20 - 40) * Juego.SCALE); // Aparecer encima
             
             // Crear un enemigo pequeño (usamos Skeler que es más pequeño)
-            adminEnemigos.crearEnemigoSkeler(origenX + offsetX, origenY + offsetY);
+            Enemigo nuevoEnemigo = adminEnemigos.crearEnemigoSkeler(origenX + offsetX, origenY + offsetY);
+            
+            // Añadir a la lista de enemigos invocados
+            if (nuevoEnemigo != null) {
+                enemigosInvocados.add(nuevoEnemigo);
+            }
         }
     }
 }

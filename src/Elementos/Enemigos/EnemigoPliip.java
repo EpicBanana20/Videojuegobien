@@ -11,7 +11,7 @@ import Utilz.LoadSave;
 import Utilz.Animaciones;
 
 public class EnemigoPliip extends Enemigo{
-     // Constantes específicas de este tipo de enemigo
+    // Constantes específicas de este tipo de enemigo
     private static final int ANCHO_DEFAULT = 96;
     private static final int ALTO_DEFAULT = 72;
     private static final int VIDA_DEFAULT = 50;
@@ -23,6 +23,10 @@ public class EnemigoPliip extends Enemigo{
     
     // Ajuste específico para este enemigo
     private int ajuste = -30;
+    
+    // Configuración del patrón de escopeta
+    private static final int NUM_BALAS_ESCOPETA = 3;
+    private static final float ANGULO_DISPERSION = 0.4f; // Ángulo de dispersión en radianes (aproximadamente 23 grados)
     
     public EnemigoPliip(float x, float y) {
         super(x, y, 
@@ -37,7 +41,7 @@ public class EnemigoPliip extends Enemigo{
         this.checkOffset = 20 * Juego.SCALE; // Ajustar el offset de verificación para el salto
 
         this.puedeDisparar = true;
-        this.disparoMaxCooldown = 180; // Cada 3 segundos
+        this.disparoMaxCooldown = 40; // Cada 3 segundos
         this.rangoDeteccionJugador = 400 * Juego.SCALE; // Mayor rango
         
         // Cargar animaciones
@@ -227,16 +231,8 @@ public class EnemigoPliip extends Enemigo{
                 origenX += 20 * Juego.SCALE;
             }
             
-            // Crear la bala real
-            Bala nuevaBala = new Bala(
-            origenX, 
-            origenY, 
-            anguloDisparo,
-            LoadSave.BULLET_PIILIP,
-            4, // Daño enemigo
-            1.8f // Velocidad
-        );
-            adminBalas.agregarBala(nuevaBala);
+            // NUEVO: Disparar patrón de escopeta en lugar de una sola bala
+            dispararPatronEscopeta(origenX, origenY, anguloDisparo);
             
             // Ya disparamos, no repetir hasta la próxima animación
             disparoPendiente = false;
@@ -245,6 +241,36 @@ public class EnemigoPliip extends Enemigo{
         // Intentar detectar al jugador y disparar
         if (!disparoEnProceso && Juego.jugadorActual != null) {
             manejarDisparo(Juego.jugadorActual);
+        }
+    }
+    
+    // Método nuevo para disparar múltiples balas en patrón de escopeta
+    private void dispararPatronEscopeta(float origenX, float origenY, float anguloCentral) {
+        // Calcular el ángulo entre cada bala
+        float anguloEntreBala = ANGULO_DISPERSION / (NUM_BALAS_ESCOPETA - 1);
+        
+        // Calcular el ángulo inicial (para centrar el patrón)
+        float anguloInicial = anguloCentral - (ANGULO_DISPERSION / 2);
+        
+        // Disparar cada bala con su ángulo correspondiente
+        for (int i = 0; i < NUM_BALAS_ESCOPETA; i++) {
+            float anguloActual = anguloInicial + (anguloEntreBala * i);
+            
+            // Añadir un poco de variación aleatoria para hacer el patrón más natural
+            float variacionAleatoria = (float)(Math.random() - 0.5) * 0.05f;
+            anguloActual += variacionAleatoria;
+            
+            // Crear la bala con el ángulo calculado
+            Bala nuevaBala = new Bala(
+                origenX, 
+                origenY, 
+                anguloActual,
+                LoadSave.BULLET_PIILIP,
+                2, // Daño reducido por bala (de 4 a 2) para balancear
+                1.8f // Velocidad
+            );
+            
+            adminBalas.agregarBala(nuevaBala);
         }
     }
 }
