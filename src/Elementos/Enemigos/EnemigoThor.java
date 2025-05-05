@@ -14,7 +14,7 @@ public class EnemigoThor extends Enemigo{
      // Constantes específicas de este tipo de enemigo
     private static final int ANCHO_DEFAULT = 96;
     private static final int ALTO_DEFAULT = 80;
-    private static final int VIDA_DEFAULT = 50;
+    private static final int VIDA_DEFAULT = 200;
 
     private boolean disparoEnProceso = false;
     private int frameDisparo = 2; // El disparo ocurrirá en el tercer frame (0,1,2,3)
