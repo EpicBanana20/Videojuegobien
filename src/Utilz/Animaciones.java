@@ -64,7 +64,6 @@ public class Animaciones {
             animIndice++;
             if (animIndice >= getSpritesPorAccion(accionActual)) {
                 animIndice = 0;
-                // Aquí podríamos añadir un callback para notificar que la animación terminó
             }
         }
     }

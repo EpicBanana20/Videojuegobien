@@ -51,7 +51,6 @@ public class Jugador extends Cascaron {
     // DODGE ROLL
     private boolean hacerDodgeRoll = false;
     private boolean dodgeEnProgreso = false;
-    private int dodgeFrame = 0;
     private float dodgeSpeed = 3.5f * Juego.SCALE;
     private boolean dodgeInvulnerabilidad = false;
     private int dodgeCooldown = 0;
@@ -425,39 +424,47 @@ public class Jugador extends Cascaron {
         if (dodgeCooldown > 0) return;
         
         dodgeEnProgreso = true;
-        dodgeFrame = 0;
         hacerDodgeRoll = false;
         animaciones.setAccion(DODGEROLL);
         animaciones.resetearAnimacion();
-        resetDirBooleans();
+        animaciones.setAnimVelocidad(8);
+        
+        // Si no hay dirección actual del jugador, usar la dirección a la que está mirando
+        if (!left && !right) {
+            // Mantener la dirección actual de mirada para el dash
+        }
+        
+        resetDirBooleans(); // Esto previene control durante el dash
     }
 
     private void actualizarDodgeRoll() {
-        dodgeFrame++;
+        // Usar el sistema de animación
+        int framesAnimacion = animaciones.getNumFramesPorAnimacion(DODGEROLL);
+        int frameActual = animaciones.getAnimIndice();
         
         // Invulnerabilidad desde el frame 3 hasta el final
-        if (dodgeFrame >= 3 && dodgeFrame <= 9) {
+        if (frameActual >= 3 && frameActual <= framesAnimacion - 1) {
             dodgeInvulnerabilidad = true;
         } else {
             dodgeInvulnerabilidad = false;
         }
         
-        // Movimiento horizontal durante el dodge
+        System.out.println("Frame actual: " + frameActual + ", Invulnerabilidad: " + dodgeInvulnerabilidad);
+        // SIEMPRE mover durante el dodge, independientemente del estado previo
         float dodgeVelocidad = dodgeSpeed * (mirandoIzquierda ? -1 : 1);
         MetodoAyuda.moverHorizontal(hitbox, dodgeVelocidad, lvlData);
         
-        // Terminar el dodge roll después del frame 9
-        if (dodgeFrame >= 9) {
+        if (animaciones.esUltimoFrame() && animaciones.getAnimVelocidad() == 0) {
             dodgeEnProgreso = false;
             dodgeInvulnerabilidad = false;
-            dodgeCooldown = DODGE_COOLDOWN_MAX; // Iniciar cooldown
+            dodgeCooldown = DODGE_COOLDOWN_MAX;
         }
     }
 
     private void loadAnimation() {
         // Cargamos los sprites como antes
         BufferedImage img = LoadSave.GetSpriteAtlas(personaje.getSpriteAtlas());
-        spritesJugador = new BufferedImage[7][7];
+        spritesJugador = new BufferedImage[7][9];
         for (int i = 0; i < spritesJugador.length; i++)
             for (int j = 0; j < spritesJugador[i].length; j++)
                 spritesJugador[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
@@ -471,6 +478,10 @@ public class Jugador extends Cascaron {
         animaciones.setNumFramesPorAnimacion(DAÑO, GetNoSprite(DAÑO));
         animaciones.setNumFramesPorAnimacion(MUERTE, GetNoSprite(MUERTE));
         animaciones.setNumFramesPorAnimacion(DODGEROLL, GetNoSprite(DODGEROLL));
+
+        if (animaciones.getAccionActual() == DODGEROLL) {
+            animaciones.setAnimVelocidad(30); // Ajusta este valor según necesites
+        }
     }
 
     public void recibirDaño(float cantidad) {
