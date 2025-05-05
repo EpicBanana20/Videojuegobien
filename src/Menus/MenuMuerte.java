@@ -2,7 +2,6 @@ package Menus;
 
 import java.awt.Graphics;
 import java.awt.Color;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
@@ -10,37 +9,37 @@ import Juegos.EstadoJuego;
 import Juegos.Juego;
 import Utilz.LoadSave;
 
-public class MenuPausa {
+public class MenuMuerte {
     private Juego juego;
-    private Boton[] botones = new Boton[3];
+    private Boton[] botones = new Boton[2];
     private BufferedImage[][] botonesImgs;
     
     // Constantes para posiciones de botones
     private final int BOTON_SPACING = 200;
-    private final int ALTURA_PRIMER_BOTON = 450;
+    private final int ALTURA_PRIMER_BOTON = 600;
     private final int BOTON_X_POSICION = Juego.GAME_WIDTH / 2;
     
-    // Índices de botones en el menú de pausa
+    // Índices de botones
     private static final int BOTON_REINTENTAR = 0;
-    private static final int BOTON_OPCIONES = 1;
-    private static final int BOTON_MENU = 2;
+    private static final int BOTON_MENU = 1;
     
     // Índices reales en el sprite sheet
     private static final int SPRITE_REINTENTAR = 4;
-    private static final int SPRITE_OPCIONES = 1;
     private static final int SPRITE_MENU = 5;
 
-    private BufferedImage pausaImg;
+    private BufferedImage gameOverImg;
 
-    public MenuPausa(Juego juego) {
+    public MenuMuerte(Juego juego) {
         this.juego = juego;
         cargarImagenes();
         cargarBotones();
     }
 
     private void cargarImagenes() {
-        pausaImg = LoadSave.GetSpriteAtlas("PAUSA.png");
-        // Cargar sprites de botones (ahora 6 filas, 40x25 cada uno)
+        // Cargar imagen de GAME OVER (deberá existir en recursos)
+        gameOverImg = LoadSave.GetSpriteAtlas("MUERTE.png");
+        
+        // Cargar sprites de botones
         BufferedImage botonesSprite = LoadSave.GetSpriteAtlas("Botones 40x25.png");
         botonesImgs = new BufferedImage[6][3];
         
@@ -57,23 +56,15 @@ public class MenuPausa {
         botones[BOTON_REINTENTAR] = new Boton(
             BOTON_X_POSICION, 
             ALTURA_PRIMER_BOTON, 
-            BOTON_REINTENTAR,  // Cambiar de SPRITE_REINTENTAR a BOTON_REINTENTAR
+            BOTON_REINTENTAR, 
             botonesImgs[SPRITE_REINTENTAR]
-        );
-        
-        // Botón Opciones
-        botones[BOTON_OPCIONES] = new Boton(
-            BOTON_X_POSICION, 
-            ALTURA_PRIMER_BOTON + BOTON_SPACING, 
-            BOTON_OPCIONES,  // Cambiar de SPRITE_OPCIONES a BOTON_OPCIONES
-            botonesImgs[SPRITE_OPCIONES]
         );
         
         // Botón Menú
         botones[BOTON_MENU] = new Boton(
             BOTON_X_POSICION, 
-            ALTURA_PRIMER_BOTON + BOTON_SPACING * 2, 
-            BOTON_MENU,  // Cambiar de SPRITE_MENU a BOTON_MENU
+            ALTURA_PRIMER_BOTON + BOTON_SPACING, 
+            BOTON_MENU, 
             botonesImgs[SPRITE_MENU]
         );
     }
@@ -85,13 +76,13 @@ public class MenuPausa {
 
     public void draw(Graphics g) {
         // Dibujar fondo semitransparente oscuro
-        g.setColor(new Color(0, 0, 0, 150));
+        g.setColor(new Color(0, 0, 0, 200));
         g.fillRect(0, 0, Juego.GAME_WIDTH, Juego.GAME_HEIGHT);
         
-        // Dibujar imagen de pausa (centrada horizontalmente y arriba de los botones)
-        int pausaX = Juego.GAME_WIDTH / 2 - pausaImg.getWidth() / 2;
-        int pausaY = ALTURA_PRIMER_BOTON - 400; // 100 píxeles arriba del primer botón
-        g.drawImage(pausaImg, pausaX, pausaY, null);
+        // Dibujar imagen de GAME OVER (centrada horizontalmente)
+        int gameOverX = Juego.GAME_WIDTH / 2 - gameOverImg.getWidth() / 2;
+        int gameOverY = ALTURA_PRIMER_BOTON - 600; // 300 píxeles arriba del primer botón
+        g.drawImage(gameOverImg, gameOverX, gameOverY, null);
         
         // Dibujar botones
         for (Boton b : botones)
@@ -117,10 +108,6 @@ public class MenuPausa {
                             juego.reiniciarJuego();
                             juego.setEstadoJuego(EstadoJuego.PLAYING);
                             break;
-                        case BOTON_OPCIONES:
-                            // TODO: Implementar menú de opciones
-                            System.out.println("Opciones - Por implementar");
-                            break;
                         case BOTON_MENU:
                             juego.setEstadoJuego(EstadoJuego.MENU);
                             break;
@@ -143,11 +130,6 @@ public class MenuPausa {
                 break;
             }
         }
-    }
-
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
-            juego.setEstadoJuego(EstadoJuego.PLAYING);
     }
 
     private void resetBotones() {

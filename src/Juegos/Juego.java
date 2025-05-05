@@ -16,11 +16,9 @@ import Elementos.Administradores.AdministradorDecoraciones;
 import Niveles.LevelManager;
 import Utilz.MetodoAyuda;
 import Menus.Menu;
+import Menus.MenuMuerte;
 import Menus.MenuPausa;
 import Menus.SelectorPersonajes;
-
-
-
 
 public class Juego {
     private VtaJuego vta;
@@ -59,6 +57,7 @@ public class Juego {
     private EstadoJuego estadoJuego = EstadoJuego.MENU;
     private Menu menu;
     private MenuPausa menuPausa;
+    private MenuMuerte menuMuerte;
     private SelectorPersonajes selectorPersonajes;
 
     public Juego() {
@@ -93,6 +92,7 @@ public class Juego {
         levelMan.cargarEntidades(this);
         menu = new Menu(this);
         menuPausa = new MenuPausa(this);
+        menuMuerte = new MenuMuerte(this);
         selectorPersonajes = new SelectorPersonajes(this);
     }
 
@@ -138,6 +138,9 @@ public class Juego {
                         comprobarColisionesBalasEnemigasConJugador(enemigo.getAdminBalas());
                     }
                 }
+                break;
+            case MUERTE:
+                menuMuerte.update();
                 break;
             default:
                 break;
@@ -258,6 +261,24 @@ public class Juego {
                 }
                 menuPausa.draw(g);
                 menuPausa.update();
+                break;
+            case MUERTE:
+                background.draw(g, camera.getxLvlOffset());
+            
+                // Dibujamos otros elementos del juego
+                if(levelMan.getCurrentLevelIndex() != 2){
+                    adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                    levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                } else {
+                    levelMan.draw(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                    adminDecoraciones.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                }
+                adminEnemigos.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                player.render(g, camera.getxLvlOffset(), camera.getyLvlOffset());
+                
+                // Dibujamos el menú de muerte
+                menuMuerte.draw(g);
+                break;
             default:
                 break;
         }
@@ -308,14 +329,7 @@ public class Juego {
     
     
     private void volverAlMenu() {
-        // Limpiar recursos
-        player.getArmaActual().getAdminBalas().limpiarBalas();
-        adminEnemigos.limpiarEnemigos();
-        adminDecoraciones.limpiarDecoraciones();
-        necesitaReinicio = true;
-        // Cambiar al menú
-        estadoJuego = EstadoJuego.MENU;
-        
+        estadoJuego = EstadoJuego.MUERTE;      
     }
 
     public void reiniciarJuego() {
@@ -410,9 +424,22 @@ public class Juego {
     }
     
     public void setEstadoJuego(EstadoJuego estadoJuego) {
+        // Si venimos de MUERTE o PLAYING y vamos a MENU, marcar para reiniciar
+        if ((this.estadoJuego == EstadoJuego.MUERTE || this.estadoJuego == EstadoJuego.PLAYING || this.estadoJuego == EstadoJuego.PAUSA) 
+                && estadoJuego == EstadoJuego.MENU) {
+            necesitaReinicio = true;
+        }
+        
+        // Si iniciamos un nuevo juego desde el menú, asegurar que esté reiniciado
+        if (this.estadoJuego == EstadoJuego.MENU && estadoJuego == EstadoJuego.SELECCION_PERSONAJE) {
+            if (necesitaReinicio) {
+                reiniciarJuego();
+            }
+        }
+        
         this.estadoJuego = estadoJuego;
     }
-    
+
     public Menu getMenu() {
         return menu;
     }
@@ -427,5 +454,9 @@ public class Juego {
     
     public MenuPausa getMenuPausa() {
         return menuPausa;
+    }
+
+    public MenuMuerte getMenuMuerte() {
+        return menuMuerte;
     }
 }
