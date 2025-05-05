@@ -303,9 +303,6 @@ public class EnemigoDistut extends Enemigo{
         // Primero, determinar la dirección de huida ideal
         boolean deberiaIrDerecha = jugadorX < enemigoX;
         
-        // Guardar el estado actual del sprite
-        boolean orientacionOriginal = movimientoHaciaIzquierda;
-        
         // Intentar moverse en la dirección ideal para huir
         if (deberiaIrDerecha) {
             movimientoHaciaIzquierda = false;

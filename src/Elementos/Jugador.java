@@ -48,6 +48,13 @@ public class Jugador extends Cascaron {
     private static final int MAX_BAJAR_COOLDOWN = 20;
     private boolean sobreUnaPlataforma = false;
 
+    // DODGE ROLL
+    private boolean hacerDodgeRoll = false;
+    private boolean dodgeEnProgreso = false;
+    private int dodgeFrame = 0;
+    private float dodgeSpeed = 3.5f * Juego.SCALE;
+    private boolean dodgeInvulnerabilidad = false;
+
     // Apuntado
     private AimController aimController;
     private int currentMouseX, currentMouseY;
@@ -101,6 +108,14 @@ public class Jugador extends Cascaron {
         if (hitbox.y + hitbox.height > Juego.NIVEL_ACTUAL_ALTO) {
             morir();
             return;
+        }
+
+        if (hacerDodgeRoll && !dodgeEnProgreso) {
+            iniciarDodgeRoll();
+        }
+        
+        if (dodgeEnProgreso) {
+            actualizarDodgeRoll();
         }
         
         if (invulnerable) {
@@ -163,19 +178,21 @@ public class Jugador extends Cascaron {
 
     // Nuevo método para determinar qué animación mostrar
     private void determinarAnimacion() {
-            int nuevaAnimacion = INACTIVO; // Por defecto, estamos inactivos
-            if (invulnerable) {
-                nuevaAnimacion = DAÑO;
-            } else if (inAir) {
-                if (airSpeed < 0) {
-                    nuevaAnimacion = SALTAR;
-                } else {
-                    nuevaAnimacion = CAYENDO;
-                }
-            } else if (moving) {
-                nuevaAnimacion = CORRER;
+        int nuevaAnimacion = INACTIVO;
+    
+        if (dodgeEnProgreso) {
+            nuevaAnimacion = DODGEROLL;
+        } else if (invulnerable) {
+            nuevaAnimacion = DAÑO;
+        } else if (inAir) {
+            if (airSpeed < 0) {
+                nuevaAnimacion = SALTAR;
+            } else {
+                nuevaAnimacion = CAYENDO;
             }
-        
+        } else if (moving) {
+            nuevaAnimacion = CORRER;
+        }
         
         animaciones.setAccion(nuevaAnimacion);
     }
@@ -367,6 +384,35 @@ public class Jugador extends Cascaron {
         airSpeed = jumpSpeed;
     }
 
+    private void iniciarDodgeRoll() {
+        dodgeEnProgreso = true;
+        dodgeFrame = 0;
+        hacerDodgeRoll = false;
+        animaciones.setAccion(DODGEROLL);
+        animaciones.resetearAnimacion();
+    }
+    
+    private void actualizarDodgeRoll() {
+        dodgeFrame++;
+        
+        // Invulnerabilidad desde el frame 3 hasta el final
+        if (dodgeFrame >= 3 && dodgeFrame <= 9) {
+            dodgeInvulnerabilidad = true;
+        } else {
+            dodgeInvulnerabilidad = false;
+        }
+        
+        // Movimiento horizontal durante el dodge
+        float dodgeVelocidad = dodgeSpeed * (mirandoIzquierda ? -1 : 1);
+        MetodoAyuda.moverHorizontal(hitbox, dodgeVelocidad, lvlData);
+        
+        // Terminar el dodge roll después del frame 9
+        if (dodgeFrame >= 9) {
+            dodgeEnProgreso = false;
+            dodgeInvulnerabilidad = false;
+        }
+    }
+
     private void loadAnimation() {
         // Cargamos los sprites como antes
         BufferedImage img = LoadSave.GetSpriteAtlas(personaje.getSpriteAtlas());
@@ -386,7 +432,7 @@ public class Jugador extends Cascaron {
     }
 
     public void recibirDaño(float cantidad) {
-        if (invulnerable || muerto) return;
+        if (invulnerable || muerto || dodgeInvulnerabilidad) return;
         
         vidaActual -= cantidad;
         invulnerable = true;
@@ -476,15 +522,33 @@ public class Jugador extends Cascaron {
         personaje.usarHabilidadEspecial();
     }
 
-    public float getVidaActual() { return vidaActual; }
-    public float getVidaMaxima() { return vidaMaxima; }
-    public boolean estaMuerto() { return muerto; }
+    public float getVidaActual() { 
+        return vidaActual; 
+    }
+    
+    public float getVidaMaxima() { 
+        return vidaMaxima; 
+    }
+
+    public boolean estaMuerto() { 
+        return muerto; 
+    }
 
     public Personaje getPersonaje() {
         return personaje;
     }
     
-
+    public void setHacerDodgeRoll(boolean hacerDodgeRoll) {
+        this.hacerDodgeRoll = hacerDodgeRoll;
+    }
+    
+    public boolean isDodgeInvulnerable() {
+        return dodgeInvulnerabilidad;
+    }
+    
+    public boolean isInvulnerable() {
+        return invulnerable;
+    }
 }
 
 

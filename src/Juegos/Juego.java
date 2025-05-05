@@ -157,7 +157,7 @@ public class Juego {
 
     private void administrarDañoBalasEnemigas() {
         if (player.estaMuerto()) return;
-        
+    
         for (Enemigo enemigo : adminEnemigos.getEnemigos()) {
             if (enemigo.getAdminBalas() != null) {
                 ArrayList<Bala> balas = enemigo.getAdminBalas().getBalas();
@@ -165,7 +165,10 @@ public class Juego {
                     if (bala.estaActiva() && 
                         bala.getHitBox().intersects(player.getHitBox())) {
                         player.recibirDaño(bala.getDaño());
-                        bala.desactivar();
+                        // Solo desactivar la bala si el jugador no está en invulnerabilidad
+                        if (!player.isInvulnerable() && !player.isDodgeInvulnerable()) {
+                            bala.desactivar();
+                        }
                     }
                 }
             }

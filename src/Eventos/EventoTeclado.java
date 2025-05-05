@@ -46,6 +46,9 @@ public class EventoTeclado implements KeyListener {
                     case KeyEvent.VK_E:
                             pan.getGame().interactuarConEstacionQuimica();
                         break;
+                    case KeyEvent.VK_SHIFT:
+                        pan.getGame().getPlayer().setHacerDodgeRoll(true);
+                        break;
                 }
                 default:
                 break;
@@ -76,7 +79,10 @@ public class EventoTeclado implements KeyListener {
                 break;
             case KeyEvent.VK_SPACE:
                 pan.getGame().getPlayer().setJump(false);;
-            break;
+                break;
+            case KeyEvent.VK_SHIFT:
+                pan.getGame().getPlayer().setHacerDodgeRoll(false);
+                break;
         }
         if (e.getKeyCode() >= KeyEvent.VK_1 && e.getKeyCode() <= KeyEvent.VK_5 || 
             e.getKeyCode() == KeyEvent.VK_ESCAPE) {
