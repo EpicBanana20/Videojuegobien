@@ -6,9 +6,6 @@ import java.awt.image.BufferedImage;
 
 public class Boton {
     private int x, y, index;
-    @SuppressWarnings("unused")
-    //NO ELIMINAR: Se mantiene para compatibilidad con el constructor
-    private int rowIndex, xOffsetCenter;
     private boolean mouseOver, mousePressed;
     private Rectangle bounds;
     private BufferedImage[] imgs;
@@ -26,9 +23,7 @@ public class Boton {
     public Boton(int x, int y, int rowIndex, BufferedImage[] imgs) {
         this.x = x;
         this.y = y;
-        this.rowIndex = rowIndex;
         this.imgs = imgs;
-        this.xOffsetCenter = B_WIDTH / 2;
         this.index = ESTADO_NORMAL;
         initBounds();
     }
@@ -38,7 +33,7 @@ public class Boton {
     }
 
     public void draw(Graphics g) {
-        g.drawImage(imgs[index], x - xOffsetCenter, y, B_WIDTH, B_HEIGHT, null);
+        g.drawImage(imgs[index], x - B_WIDTH / 2, y, B_WIDTH, B_HEIGHT, null);
     }
 
     public void update() {

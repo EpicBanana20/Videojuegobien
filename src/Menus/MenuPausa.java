@@ -54,32 +54,27 @@ public class MenuPausa {
         botones[BOTON_REINTENTAR] = new Boton(
             BOTON_X_POSICION, 
             ALTURA_PRIMER_BOTON, 
-            SPRITE_REINTENTAR, 
+            BOTON_REINTENTAR,  // Cambiar de SPRITE_REINTENTAR a BOTON_REINTENTAR
             botonesImgs[SPRITE_REINTENTAR]
         );
-        
-        // Inicializar bounds
-        botones[BOTON_REINTENTAR].initBounds();
         
         // Botón Opciones
         botones[BOTON_OPCIONES] = new Boton(
             BOTON_X_POSICION, 
             ALTURA_PRIMER_BOTON + BOTON_SPACING, 
-            SPRITE_OPCIONES, 
+            BOTON_OPCIONES,  // Cambiar de SPRITE_OPCIONES a BOTON_OPCIONES
             botonesImgs[SPRITE_OPCIONES]
         );
-        botones[BOTON_OPCIONES].initBounds();
         
         // Botón Menú
         botones[BOTON_MENU] = new Boton(
             BOTON_X_POSICION, 
             ALTURA_PRIMER_BOTON + BOTON_SPACING * 2, 
-            SPRITE_MENU, 
+            BOTON_MENU,  // Cambiar de SPRITE_MENU a BOTON_MENU
             botonesImgs[SPRITE_MENU]
         );
-        botones[BOTON_MENU].initBounds();
     }
-    
+
     public void update() {
         for (Boton b : botones)
             b.update();
@@ -89,14 +84,7 @@ public class MenuPausa {
         // Dibujar fondo semitransparente oscuro
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, Juego.GAME_WIDTH, Juego.GAME_HEIGHT);
-        
-        // Dibujar título "PAUSA"
-        g.setColor(Color.WHITE);
-        g.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 60));
-        String titulo = "PAUSA";
-        int tituloAncho = g.getFontMetrics().stringWidth(titulo);
-        g.drawString(titulo, Juego.GAME_WIDTH / 2 - tituloAncho / 2, 200);
-        
+    
         // Dibujar botones
         for (Boton b : botones)
             b.draw(g);

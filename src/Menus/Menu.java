@@ -38,7 +38,7 @@ public class Menu {
         
         // Cargar sprites de botones
         BufferedImage botonesSprite = LoadSave.GetSpriteAtlas("Botones 40x25.png");
-        botonesImgs = new BufferedImage[4][3];
+        botonesImgs = new BufferedImage[6][3];
         
         for (int j = 0; j < botonesImgs.length; j++) {
             for (int i = 0; i < botonesImgs[j].length; i++) {
